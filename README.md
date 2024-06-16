@@ -1,44 +1,29 @@
-# Friday Night Funkin' 
+# QOL Changes for Funkin'
 
-Friday Night Funkin' is a rhythm game. Built using HaxeFlixel for Ludum Dare 47.
+Friday Night Funkin' is a game. But the base engine has some problems, other than its offset strumline for the player.
 
-This game was made with love to Newgrounds and its community. Extra love to Tom Fulp.
+Normal terms:
+That is why I decided to create a fork that adds some nice features without completely overhauling the entire game. Because I am not a programmer.
+Using my amazing skillset of looking at the other code and guessing what to do to make something happen by copying what is already there, I somehow changed the engine into being with more features than will ever be added. At least for now.
 
-- [Playable web demo on Newgrounds!](https://www.newgrounds.com/portal/view/770371)
-- [Demo download builds for Windows, Mac, and Linux from Itch.io!](https://ninja-muffin24.itch.io/funkin)
+Gen Alpha terms:
+That is why I decided to be a sigma alpha wolf and create a fork that adds some nice features without completely overhauling the entire game. Because I am not a programmer.
+Using my skibidi skillset of looking at the other code and guessing what to do to make something happen by copying what has been on a mewing streak, I somehow rizzed the engine into being an omega fanum taxer. At least while they are still on their edging streak.
 
-# Getting Started
+- [Play the regular game!](https://www.newgrounds.com/portal/view/770371)
+- [Download base game builds for Windows, Mac, and Linux on itch.io!](https://ninja-muffin24.itch.io/funkin)
 
-**PLEASE USE THE LINKS ABOVE IF YOU JUST WANT TO PLAY THE GAME**
+# Features
 
-To learn how to install the necessary dependencies and compile the game from source, please check out our [building the game](/docs/COMPILING.md) guide.
-
-# Contributing
-
-Please check out our [Contributor's guide](./CONTRIBUTORS.md) on how you can actively participate in the development of Friday Night Funkin'.
+- Lined up the Note Splash effect.
+- Added Middlescroll (no opponent strums)
+- Added Ghost Tapping (probably not as robust as other engines, but does its job at preventing penalties when there are no notes)
+- Added Judgement Counter
+- Changed Score Text to be similar to that of Psych Engine (or basically any other engine)
 
 # Credits and Special Thanks
 
 Full credits can be found in-game, or wherever the credits.json file is.
 
 ## Programming
-- [ninjamuffin99](https://twitter.com/ninja_muffin99) - Lead Programmer
-- [EliteMasterEric](https://twitter.com/EliteMasterEric) - Programmer
-- [MtH](https://twitter.com/emmnyaa) - Charting and Additional Programming
-- [GeoKureli](https://twitter.com/Geokureli/) - Additional Programming
-- Our contributors on GitHub
-
-## Art / Animation / UI
-- [PhantomArcade3K](https://twitter.com/phantomarcade3k) - Artist and Animator
-- [Evilsk8r](https://twitter.com/evilsk8r) - Art
-- [Moawling](https://twitter.com/moawko) - Week 6 Pixel Art
-- [IvanAlmighty](https://twitter.com/IvanA1mighty) - Misc UI Design
-
-## Music
-- [Kawaisprite](https://twitter.com/kawaisprite) - Musician
-- [BassetFilms](https://twitter.com/Bassetfilms) - Music for "Monster", Additional Character Design
-
-## Special Thanks
-- [Tom Fulp](https://twitter.com/tomfulp) - For being a great guy and for Newgrounds
-- [JohnnyUtah](https://twitter.com/JohnnyUtahNG/) - Voice of Tankman
-- [L0Litsmonica](https://twitter.com/L0Litsmonica) - Voice of Mommy Mearest
+- [fianalins](https://www.youtube.com/fianalins) - New Features 
