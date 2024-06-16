@@ -1603,7 +1603,7 @@ class PlayState extends MusicBeatSubState
 
     // The judgement text on the left half.
     // I'm just copying scoreText, which is why it is here :)
-    if (Preferences.judgementCounter == true)
+    if (Preferences.judgementCounter)
     {
       judgementText = new FlxText(20, FlxG.height / 2, FlxG.width / 3, '', 20);
       judgementText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -1618,7 +1618,12 @@ class PlayState extends MusicBeatSubState
     healthBar.cameras = [camHUD];
     healthBarBG.cameras = [camHUD];
     scoreText.cameras = [camHUD];
-    judgementText.cameras = [camHUD];
+
+    if (Preferences.judgementCounter)
+    {
+      // Could honestly put this in the first if but I don't care enough
+      judgementText.cameras = [camHUD];
+    }
   }
 
   /**
@@ -2125,11 +2130,11 @@ class PlayState extends MusicBeatSubState
    */
   function updatejudgementText():Void
   {
-    if (isBotPlayMode)
+    if (Preferences.judgementCounter && isBotPlayMode)
     {
       judgementText.text = '';
     }
-    else
+    else if (Preferences.judgementCounter)
     {
       judgementText.text = 'Combo: ' + Highscore.tallies.combo + '\nSick: ' + Highscore.tallies.sick + '\nGood: ' + Highscore.tallies.good + '\nBad: '
         + Highscore.tallies.bad + '\nShit: ' + Highscore.tallies.shit;
