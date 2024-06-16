@@ -91,6 +91,9 @@ class Save
           // Reasonable defaults.
           naughtyness: true,
           downscroll: false,
+          middlescroll: false,
+          ghosttap: false,
+          judgementCounter: false,
           flashingLights: true,
           zoomCamera: true,
           debugDisplay: false,
@@ -1066,6 +1069,24 @@ typedef SaveDataOptions =
    * @default `false`
    */
   var downscroll:Bool;
+
+  /**
+   * If enabled, the strumline is in the middle of the screen rather than the right.
+   * @default `false`
+   */
+  var middlescroll:Bool;
+
+  /**
+   * If enabled, ghost tapping won't have any consequences.
+   * @default `false`
+   */
+  var ghosttap:Bool;
+
+  /**
+   * If enabled, a list of all judgements appears on the left half.
+   * @default `false`
+   */
+  var judgementCounter:Bool;
 
   /**
    * If disabled, flashing lights in the main menu and other areas will be less intense.

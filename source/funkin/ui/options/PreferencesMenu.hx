@@ -55,6 +55,15 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Downscroll', 'Enable to make notes move downwards', function(value:Bool):Void {
       Preferences.downscroll = value;
     }, Preferences.downscroll);
+    createPrefItemCheckbox('Middlescroll', 'Enable to make notes in the middle', function(value:Bool):Void {
+      Preferences.middlescroll = value;
+    }, Preferences.middlescroll);
+    createPrefItemCheckbox('Ghost Tapping', 'Enable for no penalty when there are no notes', function(value:Bool):Void {
+      Preferences.ghosttap = value;
+    }, Preferences.ghosttap);
+    createPrefItemCheckbox('Judgement Counter', 'Enable to show a list of judgements on the left side', function(value:Bool):Void {
+      Preferences.judgementCounter = value;
+    }, Preferences.judgementCounter);
     createPrefItemCheckbox('Flashing Lights', 'Disable to dampen flashing effects', function(value:Bool):Void {
       Preferences.flashingLights = value;
     }, Preferences.flashingLights);

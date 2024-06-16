@@ -46,6 +46,63 @@ class Preferences
   }
 
   /**
+   * If enabled, the strumline is in the middle of the screen rather than the right.
+   * @default `false`
+   */
+  public static var middlescroll(get, set):Bool;
+
+  static function get_middlescroll():Bool
+  {
+    return Save?.instance?.options?.middlescroll;
+  }
+
+  static function set_middlescroll(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.middlescroll = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, ghost tapping won't have any consequences.
+   * @default `false`
+   */
+  public static var ghosttap(get, set):Bool;
+
+  static function get_ghosttap():Bool
+  {
+    return Save?.instance?.options?.ghosttap;
+  }
+
+  static function set_ghosttap(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.ghosttap = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, a list of all judgements appears on the left half.
+   * @default `false`
+   */
+  public static var judgementCounter(get, set):Bool;
+
+  static function get_judgementCounter():Bool
+  {
+    return Save?.instance?.options?.judgementCounter;
+  }
+
+  static function set_judgementCounter(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.judgementCounter = value;
+    save.flush();
+    return value;
+  }
+
+  /**
    * If disabled, flashing lights in the main menu and other areas will be less intense.
    * @default `true`
    */

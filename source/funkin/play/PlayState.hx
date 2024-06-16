@@ -210,6 +210,11 @@ class PlayState extends MusicBeatSubState
   public var songScore:Int = 0;
 
   /**
+   * The player's current rating.
+   */
+  public var songRating:String = '';
+
+  /**
    * Start at this point in the song once the countdown is done.
    * For example, if `startTimestamp` is `30000`, the song will start at the 30 second mark.
    * Used for chart playtesting or practice.
@@ -458,6 +463,11 @@ class PlayState extends MusicBeatSubState
    * The FlxText which displays the current score.
    */
   var scoreText:FlxText;
+
+  /**
+   * The FlxText which displays the current ratings.
+   */
+  var judgementText:FlxText;
 
   /**
    * The bar which displays the player's health.
@@ -825,9 +835,25 @@ class PlayState extends MusicBeatSubState
 
     super.update(elapsed);
 
+    // I love Shadow Mario <3
+    songRating = "N/A";
+    if (Highscore.tallies.missed == 0)
+    {
+      if (Highscore.tallies.bad > 0 || Highscore.tallies.shit > 0) songRating = 'FC';
+      else if (Highscore.tallies.good > 0) songRating = 'GFC';
+      else if (Highscore.tallies.sick > 0) songRating = 'PFC';
+    }
+    else
+    {
+      if (Highscore.tallies.missed < 10) songRating = 'SDCB';
+      else
+        songRating = 'Clear';
+    }
+
     var list = FlxG.sound.list;
     updateHealthBar();
     updateScoreText();
+    updatejudgementText();
 
     // Handle restarting the song when needed (player death or pressing Retry)
     if (needsReset)
@@ -1100,6 +1126,8 @@ class PlayState extends MusicBeatSubState
 
     songScore = 0;
     updateScoreText();
+
+    updatejudgementText();
 
     health = Constants.HEALTH_STARTING;
     healthLerp = health;
@@ -1566,16 +1594,31 @@ class PlayState extends MusicBeatSubState
     add(healthBar);
 
     // The score text below the health bar.
-    scoreText = new FlxText(healthBarBG.x + healthBarBG.width - 190, healthBarBG.y + 30, 0, '', 20);
-    scoreText.setFormat(Paths.font('vcr.ttf'), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    scoreText = new FlxText(0, healthBarBG.y + 30, FlxG.width, '', 20);
+    scoreText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    scoreText.alignment = "center";
     scoreText.scrollFactor.set();
-    scoreText.zIndex = 802;
+    scoreText.zIndex = 851;
     add(scoreText);
+
+    // The judgement text on the left half.
+    // I'm just copying scoreText, which is why it is here :)
+    if (Preferences.judgementCounter == true)
+    {
+      judgementText = new FlxText(20, FlxG.height / 2, FlxG.width / 3, '', 20);
+      judgementText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+      judgementText.y = FlxG.height / 2 - judgementText.height;
+      judgementText.alignment = "left";
+      judgementText.scrollFactor.set();
+      judgementText.zIndex = 851;
+      add(judgementText);
+    }
 
     // Move the health bar to the HUD camera.
     healthBar.cameras = [camHUD];
     healthBarBG.cameras = [camHUD];
     scoreText.cameras = [camHUD];
+    judgementText.cameras = [camHUD];
   }
 
   /**
@@ -1770,16 +1813,38 @@ class PlayState extends MusicBeatSubState
     add(playerStrumline);
     add(opponentStrumline);
 
-    // Position the player strumline on the right half of the screen
-    playerStrumline.x = FlxG.width / 2 + Constants.STRUMLINE_X_OFFSET; // Classic style
-    // playerStrumline.x = FlxG.width - playerStrumline.width - Constants.STRUMLINE_X_OFFSET; // Centered style
+    // playerStrumline.x = FlxG.width / 2 + Constants.STRUMLINE_X_OFFSET; // Classic style
+
+    if (Preferences.middlescroll == false)
+    {
+      // Position the player strumline on the right half of the screen
+      playerStrumline.x = FlxG.width - playerStrumline.width - Constants.STRUMLINE_X_OFFSET; // Normal offset style
+    }
+    else
+    {
+      // Position the player strumline in the middle of the screen
+      playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2; // Centered style
+    }
     playerStrumline.y = Preferences.downscroll ? FlxG.height - playerStrumline.height - Constants.STRUMLINE_Y_OFFSET : Constants.STRUMLINE_Y_OFFSET;
     playerStrumline.zIndex = 1001;
     playerStrumline.cameras = [camHUD];
 
     // Position the opponent strumline on the left half of the screen
-    opponentStrumline.x = Constants.STRUMLINE_X_OFFSET;
-    opponentStrumline.y = Preferences.downscroll ? FlxG.height - opponentStrumline.height - Constants.STRUMLINE_Y_OFFSET : Constants.STRUMLINE_Y_OFFSET;
+    if (Preferences.middlescroll == false)
+    {
+      // Position the opponent strumline on the left half of the screen
+      opponentStrumline.x = Constants.STRUMLINE_X_OFFSET;
+      opponentStrumline.y = Preferences.downscroll ? FlxG.height - opponentStrumline.height - Constants.STRUMLINE_Y_OFFSET : Constants.STRUMLINE_Y_OFFSET;
+    }
+    else
+    {
+      // Make the opponent strumline disappear, like magic!
+      // Using alpha only changes falling notes, NOT EVEN THE HOLD NOTES, so this is kinda scuffed
+      // And because it only changes falling notes, it won't be like sike engine :cry:
+      opponentStrumline.x = FlxG.width - 999999;
+      opponentStrumline.y = Preferences.downscroll ? FlxG.height - 999999 : 999999;
+      opponentStrumline.alpha = 0;
+    }
     opponentStrumline.zIndex = 1000;
     opponentStrumline.cameras = [camHUD];
 
@@ -2051,7 +2116,23 @@ class PlayState extends MusicBeatSubState
     }
     else
     {
-      scoreText.text = 'Score:' + songScore;
+      scoreText.text = 'Score: ' + songScore + ' • Misses: ' + Highscore.tallies.missed + ' • Rating: ' + songRating;
+    }
+  }
+
+  /**
+   * Updates the position and contents of the ratings display.
+   */
+  function updatejudgementText():Void
+  {
+    if (isBotPlayMode)
+    {
+      judgementText.text = '';
+    }
+    else
+    {
+      judgementText.text = 'Combo: ' + Highscore.tallies.combo + '\nSick: ' + Highscore.tallies.sick + '\nGood: ' + Highscore.tallies.good + '\nBad: '
+        + Highscore.tallies.bad + '\nShit: ' + Highscore.tallies.shit;
     }
   }
 
@@ -2373,11 +2454,15 @@ class PlayState extends MusicBeatSubState
       {
         // Pressed a wrong key with no notes nearby.
         // Perform a ghost miss (anti-spam).
-        ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
+
+        if (Preferences.ghosttap == false)
+        {
+          ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
+          trace('PENALTY Score: ${songScore}');
+        }
 
         // Play the strumline animation.
         playerStrumline.playPress(input.noteDirection);
-        trace('PENALTY Score: ${songScore}');
       }
       else if (Constants.GHOST_TAPPING && (!playerStrumline.mayGhostTap()) && notesInDirection.length == 0)
       {
