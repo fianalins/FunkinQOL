@@ -122,6 +122,25 @@ class Preferences
   }
 
   /**
+   * If disabled, harsher colors (default) will be used for the health bar.
+   * @default `true`
+   */
+  public static var softColors(get, set):Bool;
+
+  static function get_softColors():Bool
+  {
+    return Save?.instance?.options?.softColors;
+  }
+
+  static function set_softColors(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.softColors = value;
+    save.flush();
+    return value;
+  }
+
+  /**
    * If disabled, the camera bump synchronized to the beat.
    * @default `false`
    */
@@ -136,6 +155,25 @@ class Preferences
   {
     var save:Save = Save.instance;
     save.options.zoomCamera = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, score text bops when note hit, and reverse bops(?) when miss.
+   * @default `false`
+   */
+  public static var scoreZoom(get, set):Bool;
+
+  static function get_scoreZoom():Bool
+  {
+    return Save?.instance?.options?.scoreZoom;
+  }
+
+  static function set_scoreZoom(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.scoreZoom = value;
     save.flush();
     return value;
   }

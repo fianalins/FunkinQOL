@@ -464,6 +464,11 @@ class PlayState extends MusicBeatSubState
    */
   var scoreText:FlxText;
 
+  /*
+   * Tween the Score Text to Bop like Psych
+   */
+  var scoreTextBop:FlxTween;
+
   /**
    * The FlxText which displays the current ratings.
    */
@@ -590,6 +595,42 @@ class PlayState extends MusicBeatSubState
   var perfectMode:Bool = false;
 
   static final BACKGROUND_COLOR:FlxColor = FlxColor.BLACK;
+
+  public function scoreTextZoom():Void
+  {
+    // This is here because Where Do I Position?
+    if (!Preferences.scoreZoom) return;
+
+    if (scoreTextBop != null) scoreTextBop.cancel();
+
+    scoreText.scale.x = 1.1;
+    scoreText.scale.y = 1.1;
+
+    scoreTextBop = FlxTween.tween(scoreText.scale, {x: 1, y: 1}, 0.2,
+      {
+        onComplete: function(tween:FlxTween) {
+          scoreTextBop = null;
+        }
+      });
+  }
+
+  public function negativeScoreTextZoom():Void
+  {
+    // This is here because Where Do I Position?
+    if (!Preferences.scoreZoom) return;
+
+    if (scoreTextBop != null) scoreTextBop.cancel();
+
+    scoreText.scale.x = 0.9;
+    scoreText.scale.y = 0.9;
+
+    scoreTextBop = FlxTween.tween(scoreText.scale, {x: 1, y: 1}, 0.2,
+      {
+        onComplete: function(tween:FlxTween) {
+          scoreTextBop = null;
+        }
+      });
+  }
 
   /**
    * Instantiate a new PlayState.
@@ -1583,47 +1624,41 @@ class PlayState extends MusicBeatSubState
     healthBarBG = FunkinSprite.create(0, healthBarYPos, 'healthBar');
     healthBarBG.screenCenter(X);
     healthBarBG.scrollFactor.set(0, 0);
+    healthBarBG.alpha = Preferences.middlescroll ? 0.4 : 1;
     healthBarBG.zIndex = 800;
     add(healthBarBG);
 
     healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
       'healthLerp', 0, 2);
     healthBar.scrollFactor.set();
-    healthBar.createFilledBar(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
+    healthBar.createFilledBar(Preferences.softColors ? Constants.COLOR_HEALTH_BAR_SOFT_RED : Constants.COLOR_HEALTH_BAR_RED,
+      Preferences.softColors ? Constants.COLOR_HEALTH_BAR_SOFT_GREEN : Constants.COLOR_HEALTH_BAR_GREEN);
+    healthBar.alpha = Preferences.middlescroll ? 0.4 : 1;
     healthBar.zIndex = 801;
     add(healthBar);
 
     // The score text below the health bar.
     scoreText = new FlxText(0, healthBarBG.y + 30, FlxG.width, '', 20);
-    scoreText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-    scoreText.alignment = "center";
+    scoreText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     scoreText.scrollFactor.set();
     scoreText.zIndex = 851;
     add(scoreText);
 
     // The judgement text on the left half.
     // I'm just copying scoreText, which is why it is here :)
-    if (Preferences.judgementCounter)
-    {
-      judgementText = new FlxText(20, FlxG.height / 2, FlxG.width / 3, '', 20);
-      judgementText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-      judgementText.y = FlxG.height / 2 - judgementText.height;
-      judgementText.alignment = "left";
-      judgementText.scrollFactor.set();
-      judgementText.zIndex = 851;
-      add(judgementText);
-    }
+    judgementText = new FlxText(20, FlxG.height / 2, 0, '', 20);
+    judgementText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    judgementText.y = FlxG.height / 2 - judgementText.height;
+    judgementText.scrollFactor.set();
+    judgementText.zIndex = 851;
+    judgementText.visible = Preferences.judgementCounter;
+    add(judgementText);
 
     // Move the health bar to the HUD camera.
     healthBar.cameras = [camHUD];
     healthBarBG.cameras = [camHUD];
     scoreText.cameras = [camHUD];
-
-    if (Preferences.judgementCounter)
-    {
-      // Could honestly put this in the first if but I don't care enough
-      judgementText.cameras = [camHUD];
-    }
+    judgementText.cameras = [camHUD];
   }
 
   /**
@@ -1736,6 +1771,7 @@ class PlayState extends MusicBeatSubState
       iconP2 = new HealthIcon('dad', 1);
       iconP2.y = healthBar.y - (iconP2.height / 2);
       dad.initHealthIcon(true); // Apply the character ID here
+      iconP2.alpha = Preferences.middlescroll ? 0.6 : 1;
       iconP2.zIndex = 850;
       add(iconP2);
       iconP2.cameras = [camHUD];
@@ -1756,6 +1792,7 @@ class PlayState extends MusicBeatSubState
       iconP1 = new HealthIcon('bf', 0);
       iconP1.y = healthBar.y - (iconP1.height / 2);
       boyfriend.initHealthIcon(false); // Apply the character ID here
+      iconP1.alpha = Preferences.middlescroll ? 0.6 : 1;
       iconP1.zIndex = 850;
       add(iconP1);
       iconP1.cameras = [camHUD];
@@ -1844,7 +1881,7 @@ class PlayState extends MusicBeatSubState
     else
     {
       // Make the opponent strumline disappear, like magic!
-      // Using alpha only changes falling notes, NOT EVEN THE HOLD NOTES, so this is kinda scuffed
+      // Using alpha only changes falling notes, NOT EVEN HOLD NOTES, so this is kinda scuffed
       // And because it only changes falling notes, it won't be like sike engine :cry:
       opponentStrumline.x = FlxG.width - 999999;
       opponentStrumline.y = Preferences.downscroll ? FlxG.height - 999999 : 999999;
@@ -2130,11 +2167,11 @@ class PlayState extends MusicBeatSubState
    */
   function updatejudgementText():Void
   {
-    if (Preferences.judgementCounter && isBotPlayMode)
+    if (isBotPlayMode)
     {
       judgementText.text = '';
     }
-    else if (Preferences.judgementCounter)
+    else
     {
       judgementText.text = 'Combo: ' + Highscore.tallies.combo + '\nSick: ' + Highscore.tallies.sick + '\nGood: ' + Highscore.tallies.good + '\nBad: '
         + Highscore.tallies.bad + '\nShit: ' + Highscore.tallies.shit;
@@ -2358,6 +2395,9 @@ class PlayState extends MusicBeatSubState
         trace('Missed note! ${note.noteData}');
         onNoteMiss(note, event.playSound, event.healthChange);
 
+        // Reverse Bop the text because it is cool
+        negativeScoreTextZoom();
+
         note.handledMiss = true;
       }
     }
@@ -2464,6 +2504,8 @@ class PlayState extends MusicBeatSubState
         {
           ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
           trace('PENALTY Score: ${songScore}');
+          // Reverse Bop the text because it is cool
+          negativeScoreTextZoom();
         }
 
         // Play the strumline animation.
@@ -2503,6 +2545,9 @@ class PlayState extends MusicBeatSubState
 
         // Play the strumline animation.
         playerStrumline.playConfirm(input.noteDirection);
+
+        // Do Score Bop
+        scoreTextZoom();
       }
     }
 

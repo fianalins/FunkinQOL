@@ -95,7 +95,9 @@ class Save
           ghosttap: false,
           judgementCounter: false,
           flashingLights: true,
+          softColors: true,
           zoomCamera: true,
+          scoreZoom: false,
           debugDisplay: false,
           autoPause: true,
           inputOffset: 0,
@@ -1095,10 +1097,22 @@ typedef SaveDataOptions =
   var flashingLights:Bool;
 
   /**
+   * If disabled, harsher colors (default) will be used for the health bar.
+   * @default `true`
+   */
+  var softColors:Bool;
+
+  /**
    * If disabled, the camera bump synchronized to the beat.
    * @default `false`
    */
   var zoomCamera:Bool;
+
+  /**
+   * If enabled, score text bops when note hit, and reverse bops(?) when miss.
+   * @default `false`
+   */
+  var scoreZoom:Bool;
 
   /**
    * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.

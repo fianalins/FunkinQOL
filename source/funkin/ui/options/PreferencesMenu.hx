@@ -67,9 +67,15 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Flashing Lights', 'Disable to dampen flashing effects', function(value:Bool):Void {
       Preferences.flashingLights = value;
     }, Preferences.flashingLights);
+    createPrefItemCheckbox('Soft Health Colors', 'Disable to make health bar colors harsher', function(value:Bool):Void {
+      Preferences.softColors = value;
+    }, Preferences.softColors);
     createPrefItemCheckbox('Camera Zooming on Beat', 'Disable to stop the camera bouncing to the song', function(value:Bool):Void {
       Preferences.zoomCamera = value;
     }, Preferences.zoomCamera);
+    createPrefItemCheckbox('Score Text Zooming on Hit', 'Enable to make Score Text bounce on a note hit', function(value:Bool):Void {
+      Preferences.scoreZoom = value;
+    }, Preferences.scoreZoom);
     createPrefItemCheckbox('Debug Display', 'Enable to show FPS and other debug stats', function(value:Bool):Void {
       Preferences.debugDisplay = value;
     }, Preferences.debugDisplay);
