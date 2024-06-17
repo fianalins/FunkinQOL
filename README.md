@@ -16,6 +16,7 @@ Using my skibidi skillset of looking at the other code and guessing what to do t
 # Features
 
 - Lined up the Note Splash effect.
+- Fixed default offset of player strums
 - Added Middlescroll (no opponent strums)
 - Added Ghost Tapping (probably not as robust as other engines, but does its job at preventing penalties when there are no notes)
 - Added Judgement Counter
