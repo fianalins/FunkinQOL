@@ -20,10 +20,13 @@ Using my skibidi skillset of looking at the other code and guessing what to do t
 - Added Ghost Tapping (probably not as robust as other engines, but does its job at preventing penalties when there are no notes)
 - Added Judgement Counter
 - Changed Score Text to be similar to that of Psych Engine (or basically any other engine)
+- Changed Health Bar colors to be softer (with option to disable)
+- Added option to enable Score Text Zoom (zoom on hit, reverse zoom(?) on miss)
+- Changed Health Bar and Icons to be semi-transparent when using Middlescroll
 
 # Credits and Special Thanks
 
 Full credits can be found in-game, or wherever the credits.json file is.
 
 ## Programming
-- [fianalins](https://www.youtube.com/fianalins) - New Features 
+- [fianalins](https://www.youtube.com/fianalins) - New Features
