@@ -12,16 +12,17 @@ Using my amazing skillset of looking at the other code and guessing what to do t
 
 # Features
 
-- Lined up the Note Splash effect.
+- Lined up the Note Splash effect
 - Fixed default offset of player strums
-- Added Middlescroll (no opponent strums)
-- Added Ghost Tapping (probably not as robust as other engines, but does its job at preventing penalties when there are no notes)
-- Added Judgement Counter
-- Changed Score Text to be similar to that of Psych Engine (or basically any other engine)
-- Changed Health Bar colors to be softer (with option to disable)
-- Added option to enable Score Text Zoom (zoom on hit, reverse zoom(?) on miss)
-- Changed Health Bar and Icons to be semi-transparent when using Middlescroll
-- This text not being up-to-date
+- Middlescroll
+- Ghost Tapping
+- Judgement Counter
+- Changed Score Text to be similar to that of Psych Engine
+- Changed Health Bar colors to be softer
+- Option to enable Score Text Zoom
+- Ability to change transparency of Health Bar and Icons
+- Time Bar with four different modes
+- This text not being up-to-date, or showing all features
 
 # Credits and Special Thanks
 
