@@ -1,6 +1,13 @@
 {
   "entries": [
     {
+      "header": "Funkin' Quality of Life",
+      "body": [
+        { "line": "A mod created by" },
+        { "line": "fianalins" }
+      ]
+    },
+    {
       "header": "Friday Night Funkin'",
       "body": [
         { "line": "A video game created by" },

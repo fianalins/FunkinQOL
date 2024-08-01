@@ -492,7 +492,9 @@ class FunkinSound extends FlxSound implements ICloneable<FunkinSound>
 
     // split the path and get only after first :
     // we are bypassing the openfl/lime asset library fuss
+    #if web
     path = Paths.stripLibrary(path);
+    #end
 
     var soundRequest = FlxPartialSound.partialLoadFromFile(path, start, end);
 
@@ -533,11 +535,12 @@ class FunkinSound extends FlxSound implements ICloneable<FunkinSound>
    * Play a sound effect once, then destroy it.
    * @param key
    * @param volume
-   * @return static function construct():FunkinSound
+   * @return A `FunkinSound` object, or `null` if the sound could not be loaded.
    */
-  public static function playOnce(key:String, volume:Float = 1.0, ?onComplete:Void->Void, ?onLoad:Void->Void):Void
+  public static function playOnce(key:String, volume:Float = 1.0, ?onComplete:Void->Void, ?onLoad:Void->Void):Null<FunkinSound>
   {
-    var result = FunkinSound.load(key, volume, false, true, true, onComplete, onLoad);
+    var result:Null<FunkinSound> = FunkinSound.load(key, volume, false, true, true, onComplete, onLoad);
+    return result;
   }
 
   /**

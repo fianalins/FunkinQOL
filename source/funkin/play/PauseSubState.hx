@@ -51,6 +51,8 @@ class PauseSubState extends MusicBeatSubState
     {text: 'Restart Song', callback: restartPlayState},
     {text: 'Change Difficulty', callback: switchMode.bind(_, Difficulty)},
     {text: 'Enable Practice Mode', callback: enablePracticeMode, filter: () -> !(PlayState.instance?.isPracticeMode ?? false)},
+    // Can't use botplay just yet because botplay sucks massive ass and so I need to wait for base devs to make it better
+    // {text: 'Enable Botplay', callback: enableBotPlayMode, filter: () -> !(PlayState.instance?.isBotPlayMode ?? false)},
     {text: 'Exit to Menu', callback: quitToMenu},
   ];
 
@@ -60,6 +62,8 @@ class PauseSubState extends MusicBeatSubState
   static final PAUSE_MENU_ENTRIES_CHARTING:Array<PauseMenuEntry> = [
     {text: 'Resume', callback: resume},
     {text: 'Restart Song', callback: restartPlayState},
+    {text: 'Enable Practice Mode', callback: enablePracticeMode, filter: () -> !(PlayState.instance?.isPracticeMode ?? false)},
+    // {text: 'Enable Botplay', callback: enableBotPlayMode, filter: () -> !(PlayState.instance?.isBotPlayMode ?? false)},
     {text: 'Return to Chart Editor', callback: quitToChartEditor},
   ];
 
@@ -392,6 +396,7 @@ class PauseSubState extends MusicBeatSubState
     var delay:Float = 0.1;
     for (child in metadata.members)
     {
+      child.alpha = 0;
       FlxTween.tween(child, {alpha: 1, y: child.y + 5}, 1.8, {ease: FlxEase.quartOut, startDelay: delay});
       delay += 0.1;
     }
@@ -677,6 +682,18 @@ class PauseSubState extends MusicBeatSubState
     if (PlayState.instance == null) return;
 
     PlayState.instance.isPracticeMode = true;
+    state.regenerateMenu();
+  }
+
+  /**
+   * Force the game into botplay mode, then update the pause menu.
+   * @param state The current PauseSubState.
+   */
+  static function enableBotPlayMode(state:PauseSubState):Void
+  {
+    if (PlayState.instance == null) return;
+
+    PlayState.instance.isBotPlayMode = true;
     state.regenerateMenu();
   }
 

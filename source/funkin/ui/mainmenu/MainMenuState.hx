@@ -168,7 +168,7 @@ class MainMenuState extends MusicBeatState
 
     // This has to come AFTER!
     this.leftWatermarkText.text = Constants.VERSION;
-    // this.rightWatermarkText.text = "blablabla test";
+    this.rightWatermarkText.text = "Funkin QoL: v0.3.0";
 
     // NG.core.calls.event.logEvent('swag').send();
   }
@@ -409,8 +409,8 @@ class MainMenuState extends MusicBeatState
 
     if (controls.BACK && menuItems.enabled && !menuItems.busy)
     {
-      FunkinSound.playOnce(Paths.sound('cancelMenu'));
       FlxG.switchState(() -> new TitleState());
+      FunkinSound.playOnce(Paths.sound('cancelMenu'));
     }
   }
 }

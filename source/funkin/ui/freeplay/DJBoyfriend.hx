@@ -139,33 +139,36 @@ class DJBoyfriend extends FlxAtlasSprite
         // I shit myself.
     }
 
-    if (FlxG.keys.pressed.CONTROL)
-    {
-      if (FlxG.keys.justPressed.LEFT)
+    /*
+      if (FlxG.keys.pressed.CONTROL)
       {
-        this.offsetX -= FlxG.keys.pressed.ALT ? 0.1 : (FlxG.keys.pressed.SHIFT ? 10.0 : 1.0);
-      }
+        if (FlxG.keys.justPressed.LEFT)
+        {
+          this.offsetX -= FlxG.keys.pressed.ALT ? 0.1 : (FlxG.keys.pressed.SHIFT ? 10.0 : 1.0);
+        }
 
-      if (FlxG.keys.justPressed.RIGHT)
-      {
-        this.offsetX += FlxG.keys.pressed.ALT ? 0.1 : (FlxG.keys.pressed.SHIFT ? 10.0 : 1.0);
-      }
+        if (FlxG.keys.justPressed.RIGHT)
+        {
+          this.offsetX += FlxG.keys.pressed.ALT ? 0.1 : (FlxG.keys.pressed.SHIFT ? 10.0 : 1.0);
+        }
 
-      if (FlxG.keys.justPressed.UP)
-      {
-        this.offsetY -= FlxG.keys.pressed.ALT ? 0.1 : (FlxG.keys.pressed.SHIFT ? 10.0 : 1.0);
-      }
+        if (FlxG.keys.justPressed.UP)
+        {
+          this.offsetY -= FlxG.keys.pressed.ALT ? 0.1 : (FlxG.keys.pressed.SHIFT ? 10.0 : 1.0);
+        }
 
-      if (FlxG.keys.justPressed.DOWN)
-      {
-        this.offsetY += FlxG.keys.pressed.ALT ? 0.1 : (FlxG.keys.pressed.SHIFT ? 10.0 : 1.0);
-      }
+        if (FlxG.keys.justPressed.DOWN)
+        {
+          this.offsetY += FlxG.keys.pressed.ALT ? 0.1 : (FlxG.keys.pressed.SHIFT ? 10.0 : 1.0);
+        }
 
-      if (FlxG.keys.justPressed.SPACE)
-      {
-        currentState = (currentState == Idle ? TV : Idle);
+        if (FlxG.keys.justPressed.SPACE)
+        {
+          currentState = (currentState == Idle ? TV : Idle);
+        }
       }
-    }
+      Debug
+     */
   }
 
   function onFinishAnim():Void
@@ -243,6 +246,9 @@ class DJBoyfriend extends FlxAtlasSprite
     {
       // tv is OFF, but getting turned on
       FunkinSound.playOnce(Paths.sound('tv_on'), 1.0, function() {
+        // Fade out music to 40% volume over 1 second.
+        // This helps make the TV a bit more audible.
+        FlxG.sound.music?.fadeOut(1.0, FlxG.sound.music.volume * 0.4);
         loadCartoon();
       });
     }
@@ -260,6 +266,8 @@ class DJBoyfriend extends FlxAtlasSprite
 
   function loadCartoon()
   {
+    playingCartoon = true;
+
     cartoonSnd = FunkinSound.load(Paths.sound(getRandomFlashToon()), 1.0, false, true, true, function() {
       anim.play("Boyfriend DJ watchin tv OG", true, false, 60);
     });

@@ -152,13 +152,13 @@ class Conductor
   }
 
   /**
-   * Duration of a step (sixtennth note) in milliseconds. Calculated based on bpm.
+   * Duration of a step (sixteenth note) in milliseconds. Calculated based on bpm.
    */
   public var stepLengthMs(get, never):Float;
 
   function get_stepLengthMs():Float
   {
-    return beatLengthMs / timeSignatureNumerator;
+    return beatLengthMs / Constants.STEPS_PER_BEAT;
   }
 
   /**
@@ -227,7 +227,7 @@ class Conductor
 
   function get_instrumentalOffsetSteps():Float
   {
-    var startingStepLengthMs:Float = ((Constants.SECS_PER_MIN / startingBPM) * Constants.MS_PER_SEC) / timeSignatureNumerator;
+    var startingStepLengthMs:Float = ((Constants.SECS_PER_MIN / startingBPM) * Constants.MS_PER_SEC) / Constants.STEPS_PER_BEAT;
 
     return instrumentalOffset / startingStepLengthMs;
   }
@@ -430,7 +430,8 @@ class Conductor
     else if (currentTimeChange != null && this.songPosition > 0.0)
     {
       // roundDecimal prevents representing 8 as 7.9999999
-      this.currentStepTime = FlxMath.roundDecimal((currentTimeChange.beatTime * Constants.STEPS_PER_BEAT) + (this.songPosition - currentTimeChange.timeStamp) / stepLengthMs, 6);
+      this.currentStepTime = FlxMath.roundDecimal((currentTimeChange.beatTime * Constants.STEPS_PER_BEAT)
+        + (this.songPosition - currentTimeChange.timeStamp) / stepLengthMs, 6);
       this.currentBeatTime = currentStepTime / Constants.STEPS_PER_BEAT;
       this.currentMeasureTime = currentStepTime / stepsPerMeasure;
       this.currentStep = Math.floor(currentStepTime);
@@ -573,7 +574,7 @@ class Conductor
         }
       }
 
-      var lastStepLengthMs:Float = ((Constants.SECS_PER_MIN / lastTimeChange.bpm) * Constants.MS_PER_SEC) / timeSignatureNumerator;
+      var lastStepLengthMs:Float = ((Constants.SECS_PER_MIN / lastTimeChange.bpm) * Constants.MS_PER_SEC) / Constants.STEPS_PER_BEAT;
       var resultFractionalStep:Float = (ms - lastTimeChange.timeStamp) / lastStepLengthMs;
       resultStep += resultFractionalStep;
 
@@ -612,7 +613,7 @@ class Conductor
         }
       }
 
-      var lastStepLengthMs:Float = ((Constants.SECS_PER_MIN / lastTimeChange.bpm) * Constants.MS_PER_SEC) / timeSignatureNumerator;
+      var lastStepLengthMs:Float = ((Constants.SECS_PER_MIN / lastTimeChange.bpm) * Constants.MS_PER_SEC) / Constants.STEPS_PER_BEAT;
       resultMs += (stepTime - lastTimeChange.beatTime * Constants.STEPS_PER_BEAT) * lastStepLengthMs;
 
       return resultMs;
@@ -650,7 +651,7 @@ class Conductor
         }
       }
 
-      var lastStepLengthMs:Float = ((Constants.SECS_PER_MIN / lastTimeChange.bpm) * Constants.MS_PER_SEC) / timeSignatureNumerator;
+      var lastStepLengthMs:Float = ((Constants.SECS_PER_MIN / lastTimeChange.bpm) * Constants.MS_PER_SEC) / Constants.STEPS_PER_BEAT;
       resultMs += (beatTime - lastTimeChange.beatTime) * lastStepLengthMs * Constants.STEPS_PER_BEAT;
 
       return resultMs;

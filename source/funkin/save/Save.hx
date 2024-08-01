@@ -11,6 +11,7 @@ import funkin.save.migrator.SaveDataMigrator;
 import funkin.ui.debug.charting.ChartEditorState.ChartEditorLiveInputStyle;
 import funkin.ui.debug.charting.ChartEditorState.ChartEditorTheme;
 import funkin.util.SerializerUtil;
+import funkin.ui.options.MenuItemEnums;
 import thx.semver.Version;
 import thx.semver.Version;
 
@@ -92,8 +93,11 @@ class Save
           naughtyness: true,
           downscroll: false,
           middlescroll: false,
+          oppStrumVis: true,
           ghosttap: false,
           judgementCounter: false,
+          uiAlpha: 100,
+          timeBar: TimeBarDisplayType.Disabled,
           flashingLights: true,
           softColors: true,
           zoomCamera: true,
@@ -1079,16 +1083,34 @@ typedef SaveDataOptions =
   var middlescroll:Bool;
 
   /**
+   * If disabled, the opponent's strumline is removed/moved out of frame. (mod compat if changing alpha conflicts).
+   * @default `true`
+   */
+  var oppStrumVis:Bool;
+
+  /**
    * If enabled, ghost tapping won't have any consequences.
    * @default `false`
    */
   var ghosttap:Bool;
 
   /**
+   * When changed, the alpha (transparency/opacity) of the Health Bar follows.
+   * @default `100`
+   */
+  var uiAlpha:Int;
+
+  /**
    * If enabled, a list of all judgements appears on the left half.
    * @default `false`
    */
   var judgementCounter:Bool;
+
+  /**
+   * If enabled, If enabled, a timer showing selected option appears.
+   * @default `"disabled"`
+   */
+  var timeBar:String;
 
   /**
    * If disabled, flashing lights in the main menu and other areas will be less intense.

@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import funkin.ui.AtlasText.AtlasFont;
 import funkin.ui.options.OptionsState.Page;
+import funkin.ui.options.PreferencesMenu;
 import funkin.graphics.FunkinCamera;
 import funkin.ui.TextMenuList.TextMenuItem;
 import funkin.audio.FunkinSound;
@@ -14,10 +15,10 @@ import funkin.ui.options.items.CheckboxPreferenceItem;
 import funkin.ui.options.items.NumberPreferenceItem;
 import funkin.ui.options.items.EnumPreferenceItem;
 
-class PreferencesMenu extends Page
+class AccessibilityMenu extends Page
 {
   var items:TextMenuList;
-  var preferenceItems:FlxTypedSpriteGroup<FlxSprite>;
+  var accessItems:FlxTypedSpriteGroup<FlxSprite>;
 
   var menuCamera:FlxCamera;
   var camFollow:FlxObject;
@@ -26,15 +27,15 @@ class PreferencesMenu extends Page
   {
     super();
 
-    menuCamera = new FunkinCamera('prefMenu');
+    menuCamera = new FunkinCamera('accessMenu');
     FlxG.cameras.add(menuCamera, false);
     menuCamera.bgColor = 0x0;
     camera = menuCamera;
 
     add(items = new TextMenuList());
-    add(preferenceItems = new FlxTypedSpriteGroup<FlxSprite>());
+    add(accessItems = new FlxTypedSpriteGroup<FlxSprite>());
 
-    createPrefItems();
+    createAccessItems();
 
     camFollow = new FlxObject(FlxG.width / 2, 0, 140, 70);
     if (items != null) camFollow.y = items.selectedItem.y;
@@ -52,50 +53,14 @@ class PreferencesMenu extends Page
   /**
    * Create the menu items for each of the preferences.
    */
-  function createPrefItems():Void
+  function createAccessItems():Void
   {
-    createPrefItemCheckbox('Naughtyness', 'Toggle displaying raunchy content', function(value:Bool):Void {
-      Preferences.naughtyness = value;
-    }, Preferences.naughtyness);
-    createPrefItemCheckbox('Downscroll', 'Enable to make notes move downwards', function(value:Bool):Void {
-      Preferences.downscroll = value;
-    }, Preferences.downscroll);
-    createPrefItemCheckbox('Middlescroll', 'Enable to make notes in the middle', function(value:Bool):Void {
-      Preferences.middlescroll = value;
-    }, Preferences.middlescroll);
-    createPrefItemCheckbox('Show Opponent Strumline', 'Disable to remove opponent strums (Middlescroll Only)', function(value:Bool):Void {
-      Preferences.oppStrumVis = value;
-    }, Preferences.oppStrumVis);
-    createPrefItemCheckbox('Ghost Tapping', 'Enable for no penalty when there are no notes', function(value:Bool):Void {
-      Preferences.ghosttap = value;
-    }, Preferences.ghosttap);
-    createPrefItemPercentage('Health Bar Alpha', 'Changes the alpha (opacity/transparency) of the Health Bar', function(value:Int):Void {
-      Preferences.uiAlpha = value;
-    }, Preferences.uiAlpha);
-    createPrefItemCheckbox('Judgement Counter', 'Enable to show a list of judgements on the left side', function(value:Bool):Void {
-      Preferences.judgementCounter = value;
-    }, Preferences.judgementCounter);
-    createPrefItemEnum('Time Bar', 'Show a bar that displays the selected', [
-      TimeBarDisplayType.Disabled => "Disabled",
-      TimeBarDisplayType.TimeLeft => "Time Left",
-      TimeBarDisplayType.TimeElapsed => "Time Elapsed",
-      TimeBarDisplayType.TimeCombined => "Combined",
-      TimeBarDisplayType.SongName => "Song Name"
-    ], function(value:String):Void {
-      Preferences.timeBar = value;
-    }, Preferences.timeBar);
-    createPrefItemCheckbox('Camera Zooming on Beat', 'Disable to stop the camera bouncing to the song', function(value:Bool):Void {
-      Preferences.zoomCamera = value;
-    }, Preferences.zoomCamera);
-    createPrefItemCheckbox('Score Zooming on Hit', 'Enable to make Score Text bounce on a note hit', function(value:Bool):Void {
-      Preferences.scoreZoom = value;
-    }, Preferences.scoreZoom);
-    createPrefItemCheckbox('Debug Display', 'Enable to show FPS and other debug stats', function(value:Bool):Void {
-      Preferences.debugDisplay = value;
-    }, Preferences.debugDisplay);
-    createPrefItemCheckbox('Auto Pause', 'Automatically pause the game when it loses focus', function(value:Bool):Void {
-      Preferences.autoPause = value;
-    }, Preferences.autoPause);
+    createPrefItemCheckbox('Flashing Lights', 'Disable to dampen flashing effects', function(value:Bool):Void {
+      Preferences.flashingLights = value;
+    }, Preferences.flashingLights);
+    createPrefItemCheckbox('Soft Health Colors', 'Disable to make health bar colors harsher', function(value:Bool):Void {
+      Preferences.softColors = value;
+    }, Preferences.softColors);
   }
 
   override function update(elapsed:Float):Void
@@ -148,7 +113,7 @@ class PreferencesMenu extends Page
       checkbox.currentValue = value;
     }, true);
 
-    preferenceItems.add(checkbox);
+    accessItems.add(checkbox);
   }
 
   /**
@@ -166,7 +131,7 @@ class PreferencesMenu extends Page
   {
     var item = new NumberPreferenceItem(0, (120 * items.length) + 30, prefName, defaultValue, min, max, step, precision, onChange, valueFormatter);
     items.addItem(prefName, item);
-    preferenceItems.add(item.lefthandText);
+    accessItems.add(item.lefthandText);
   }
 
   /**
@@ -186,7 +151,7 @@ class PreferencesMenu extends Page
     };
     var item = new NumberPreferenceItem(0, (120 * items.length) + 30, prefName, defaultValue, min, max, 10, 0, newCallback, formatter);
     items.addItem(prefName, item);
-    preferenceItems.add(item.lefthandText);
+    accessItems.add(item.lefthandText);
   }
 
   /**
@@ -199,6 +164,6 @@ class PreferencesMenu extends Page
   {
     var item = new EnumPreferenceItem(0, (120 * items.length) + 30, prefName, values, defaultValue, onChange);
     items.addItem(prefName, item);
-    preferenceItems.add(item.lefthandText);
+    accessItems.add(item.lefthandText);
   }
 }

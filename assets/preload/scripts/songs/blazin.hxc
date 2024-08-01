@@ -55,6 +55,8 @@ class BlazinSong extends Song {
 		if (!this.hasHidden)
 		{
 			this.hasHidden = true;
+
+			// Can't Preference this...
 			hideOpponentStrumline();
 			centerPlayerStrumline();
 		}
@@ -75,11 +77,13 @@ class BlazinSong extends Song {
 	function centerPlayerStrumline()
 	{
     // This is a song gimmick we are never making middlescroll an option.
+		// I dislike this.
 
 		var playerStrumline:FlxSprite = PlayState.instance.playerStrumline;
 		if (playerStrumline != null)
 		{
-			playerStrumline.x = FlxG.width / 2 - playerStrumline.width / 2;
+			playerStrumline.x = (FlxG.width / 2 - playerStrumline.width / 2) + 5.5;
+			// Changed because My Way is perfectly aligned
 		}
 	}
 

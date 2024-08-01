@@ -7,8 +7,10 @@ import flixel.util.FlxDirectionFlags;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.tile.FlxDrawTrianglesItem;
+import funkin.graphics.shaders.HSVShader;
 import flixel.math.FlxMath;
 import funkin.ui.options.PreferencesMenu;
+import funkin.ui.options.AccessibilityMenu;
 
 /**
  * This is based heavily on the `FlxStrip` class. It uses `drawTriangles()` to clip a sustain note
@@ -33,6 +35,8 @@ class SustainTrail extends FlxSprite
   public var fullSustainLength:Float = 0;
   public var noteData:Null<SongNoteData>;
   public var parentStrumline:Strumline;
+
+  var hsvShader:HSVShader;
 
   public var cover:NoteHoldCover = null;
 
@@ -103,6 +107,8 @@ class SustainTrail extends FlxSprite
 
     antialiasing = true;
 
+    this.hsvShader = new HSVShader();
+
     this.isPixel = noteStyle.isHoldNotePixel();
     if (isPixel)
     {
@@ -160,7 +166,7 @@ class SustainTrail extends FlxSprite
    */
   public static inline function sustainHeight(susLength:Float, scroll:Float)
   {
-    return (susLength * 0.45 * scroll);
+    return (susLength * Constants.PIXELS_PER_MS * scroll);
   }
 
   function set_sustainLength(s:Float):Float
@@ -317,6 +323,16 @@ class SustainTrail extends FlxSprite
     #end
   }
 
+  public function desaturate():Void
+  {
+    this.hsvShader.saturation = 0.2;
+  }
+
+  public function setHue(hue:Float):Void
+  {
+    this.hsvShader.hue = hue;
+  }
+
   public override function kill():Void
   {
     super.kill();
@@ -344,6 +360,10 @@ class SustainTrail extends FlxSprite
     hitNote = false;
     missedNote = false;
     handledMiss = false;
+
+    this.hsvShader.hue = 1.0;
+    this.hsvShader.saturation = 1.0;
+    this.hsvShader.value = 1.0;
   }
 
   override public function destroy():Void

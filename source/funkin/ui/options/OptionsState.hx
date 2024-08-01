@@ -42,6 +42,7 @@ class OptionsState extends MusicBeatState
 
     var options = addPage(Options, new OptionsMenu());
     var preferences = addPage(Preferences, new PreferencesMenu());
+    var accessibility = addPage(Accessibility, new AccessibilityMenu());
     var controls = addPage(Controls, new ControlsMenu());
 
     if (options.hasMultipleOptions())
@@ -49,6 +50,7 @@ class OptionsState extends MusicBeatState
       options.onExit.add(exitToMainMenu);
       controls.onExit.add(exitControls);
       preferences.onExit.add(switchPage.bind(Options));
+      accessibility.onExit.add(switchPage.bind(Options));
     }
     else
     {
@@ -145,8 +147,8 @@ class Page extends FlxGroup
   {
     if (canExit && controls.BACK)
     {
-      FunkinSound.playOnce(Paths.sound('cancelMenu'));
       exit();
+      FunkinSound.playOnce(Paths.sound('cancelMenu'));
     }
   }
 
@@ -183,6 +185,7 @@ class OptionsMenu extends Page
 
     add(items = new TextMenuList());
     createItem("PREFERENCES", function() switchPage(Preferences));
+    createItem("ACCESSIBILITY", function() switchPage(Accessibility));
     createItem("CONTROLS", function() switchPage(Controls));
     createItem("INPUT OFFSETS", function() {
       FlxG.state.openSubState(new LatencyState());
@@ -266,4 +269,5 @@ enum abstract PageName(String)
   var Colors = "colors";
   var Mods = "mods";
   var Preferences = "preferences";
+  var Accessibility = "accessibility";
 }

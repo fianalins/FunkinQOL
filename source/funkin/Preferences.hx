@@ -65,6 +65,25 @@ class Preferences
   }
 
   /**
+   * If disabled, the opponent's strumline is removed/moved out of frame. (mod compat if changing alpha conflicts).
+   * @default `true`
+   */
+  public static var oppStrumVis(get, set):Bool;
+
+  static function get_oppStrumVis():Bool
+  {
+    return Save?.instance?.options?.oppStrumVis;
+  }
+
+  static function set_oppStrumVis(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.oppStrumVis = value;
+    save.flush();
+    return value;
+  }
+
+  /**
    * If enabled, ghost tapping won't have any consequences.
    * @default `false`
    */
@@ -84,6 +103,25 @@ class Preferences
   }
 
   /**
+   * When changed, the alpha (transparency/opacity) of the Health Bar follows.
+   * @default `100`
+   */
+  public static var uiAlpha(get, set):Int;
+
+  static function get_uiAlpha():Int
+  {
+    return Save?.instance?.options?.uiAlpha;
+  }
+
+  static function set_uiAlpha(value:Int):Int
+  {
+    var save:Save = Save.instance;
+    save.options.uiAlpha = value;
+    save.flush();
+    return value;
+  }
+
+  /**
    * If enabled, a list of all judgements appears on the left half.
    * @default `false`
    */
@@ -98,6 +136,25 @@ class Preferences
   {
     var save:Save = Save.instance;
     save.options.judgementCounter = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, a timer showing selected option appears.
+   * @default `"disabled"`
+   */
+  public static var timeBar(get, set):String;
+
+  static function get_timeBar():String
+  {
+    return Save?.instance?.options?.timeBar;
+  }
+
+  static function set_timeBar(value:String):String
+  {
+    var save:Save = Save.instance;
+    save.options.timeBar = value;
     save.flush();
     return value;
   }
