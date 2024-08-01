@@ -8,6 +8,7 @@ Using my amazing skillset of looking at the other code and guessing what to do t
 
 - [Play the regular game!](https://www.newgrounds.com/portal/view/770371)
 - [Download base game builds for Windows, Mac, and Linux on itch.io!](https://ninja-muffin24.itch.io/funkin)
+- [Check out the GameBanana page!](https://gamebanana.com/mods/522085)
 
 # Features
 
