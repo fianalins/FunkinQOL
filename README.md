@@ -2,7 +2,6 @@
 
 Friday Night Funkin' is a game. But the base engine has some problems, other than its offset strumline for the player.
 
-Normal terms:
 That is why I decided to create a fork that adds some nice features without completely overhauling the entire game. Because I am not a programmer.
 Using my amazing skillset of looking at the other code and guessing what to do to make something happen by copying what is already there, I somehow changed the engine into being with more features than will ever be added. At least for now.
 
