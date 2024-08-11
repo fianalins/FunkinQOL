@@ -192,7 +192,7 @@ class Countdown
   /**
    * Reset the countdown configuration to the default.
    */
-  public static function reset():Void
+  public static function reset()
   {
     noteStyle = NoteStyleRegistry.instance.fetchDefault();
     isPixel = false;
@@ -231,21 +231,20 @@ class Countdown
     spritePath = resolveGraphicPath(indexString);
 
     if (spritePath == null) return;
-    var countdownSprite:FunkinSprite = FunkinSprite.create(spritePath);
 
+    var countdownSprite:FunkinSprite = FunkinSprite.create(spritePath);
     countdownSprite.scrollFactor.set(0, 0);
-    if (isPixel)
-    {
-      countdownSprite.setGraphicSize(Std.int(countdownSprite.width * Constants.PIXEL_ART_SCALE));
-    }
+
+    if (isPixel) countdownSprite.setGraphicSize(Std.int(countdownSprite.width * Constants.PIXEL_ART_SCALE));
     else
-    {
       countdownSprite.setGraphicSize(Std.int(countdownSprite.width * 0.7));
-    }
+
     countdownSprite.antialiasing = !isPixel;
 
     countdownSprite.cameras = [PlayState.instance.camHUD];
+
     countdownSprite.updateHitbox();
+
     // Fade sprite in, then out, then destroy it.
     FlxTween.tween(countdownSprite, {alpha: 0}, Conductor.instance.beatLengthMs / 1000,
       {
@@ -254,6 +253,7 @@ class Countdown
           countdownSprite.destroy();
         }
       });
+
     PlayState.instance.add(countdownSprite);
     countdownSprite.screenCenter();
   }
@@ -275,14 +275,9 @@ class Countdown
     // If ABSOLUTELY nothing is found, revert it to default notestyle skin
     if (!Assets.exists(Paths.image(spritePath)))
     {
-      if (!isPixel)
-      {
-        spritePath = basePath + Constants.DEFAULT_NOTE_STYLE + '/$index';
-      }
+      if (!isPixel) spritePath = basePath + Constants.DEFAULT_NOTE_STYLE + '/$index';
       else
-      {
         spritePath = basePath + Constants.DEFAULT_PIXEL_NOTE_STYLE + '/$index';
-      }
     }
 
     trace('Resolved sprite path: ' + Paths.image(spritePath));
@@ -292,7 +287,7 @@ class Countdown
   /**
    * Retrieves the sound file to use for this step of the countdown.
    */
-  public static function playCountdownSound(step:CountdownStep):Void
+  public static function playCountdownSound(step:CountdownStep)
   {
     return FunkinSound.playOnce(Paths.sound(resolveSoundPath(step)), Constants.COUNTDOWN_VOLUME);
   }
@@ -315,14 +310,9 @@ class Countdown
     // If ABSOLUTELY nothing is found, revert it to default notestyle sound
     if (!Assets.exists(Paths.sound(soundPath)))
     {
-      if (!isPixel)
-      {
-        soundPath = basePath + Constants.DEFAULT_NOTE_STYLE + '/intro$step';
-      }
+      if (!isPixel) soundPath = basePath + Constants.DEFAULT_NOTE_STYLE + '/intro$step';
       else
-      {
         soundPath = basePath + Constants.DEFAULT_PIXEL_NOTE_STYLE + '/intro$step';
-      }
     }
 
     trace('Resolved sound path: ' + soundPath);
