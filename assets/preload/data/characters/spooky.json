@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Spooky Kids",
   "assetPath": "characters/SpookyKids",
+  "color": "#C6995B",
   "singTime": 8.0,
   "startingAnimation": "danceRight",
   "animations": [

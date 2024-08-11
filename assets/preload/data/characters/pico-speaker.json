@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Pico (Speaker Shooter)",
   "assetPath": "characters/picoSpeaker",
+  "color": "#B7D855",
   "startingAnimation": "idle",
   "singTime": 8.0,
   "offsets": [125, 0],

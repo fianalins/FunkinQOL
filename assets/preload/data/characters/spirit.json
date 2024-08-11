@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Spirit",
   "assetPath": "characters/spirit",
+  "color": "#FF3C6E",
   "singTime": 8.0,
   "renderType": "packer",
   "isPixel": true,

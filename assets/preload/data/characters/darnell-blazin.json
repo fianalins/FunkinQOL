@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Darnell (Blazin')",
   "assetPath": "characters/darnellBlazin",
+  "color": "#735EB0",
   "healthIcon": {
     "id": "darnell"
   },

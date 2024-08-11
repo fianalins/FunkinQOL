@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Senpai (Angry)",
   "assetPath": "characters/senpai",
+  "color": "#FFAA6F",
   "singTime": 8.0,
   "isPixel": true,
   "scale": 6,

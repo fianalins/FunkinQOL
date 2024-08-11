@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Boyfriend (Christmas)",
   "assetPath": "characters/bfChristmas",
+  "color": "#31B0D1",
   "flipX": true,
   "healthIcon": {
     "id": "bf"

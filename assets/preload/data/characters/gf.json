@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Girlfriend",
   "assetPath": "characters/GF_assets",
+  "color": "#A5004D",
   "startingAnimation": "danceRight",
   "singTime": 8.0,
   "animations": [

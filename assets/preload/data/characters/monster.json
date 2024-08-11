@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Monster",
   "assetPath": "characters/Monster_Assets",
+  "color": "#F3FF6E",
   "animations": [
     {
       "name": "idle",

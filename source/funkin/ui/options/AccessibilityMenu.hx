@@ -58,9 +58,13 @@ class AccessibilityMenu extends Page
     createPrefItemCheckbox('Flashing Lights', 'Disable to dampen flashing effects', function(value:Bool):Void {
       Preferences.flashingLights = value;
     }, Preferences.flashingLights);
-    createPrefItemCheckbox('Soft Health Colors', 'Disable to make health bar colors harsher', function(value:Bool):Void {
-      Preferences.softColors = value;
-    }, Preferences.softColors);
+    createPrefItemEnum('Health Bar Colors', 'Changes the health bar colors to the selected', [
+      HealthBarColorType.Default => "Default",
+      HealthBarColorType.Soft => "Soft",
+      HealthBarColorType.IconColored => "Icon Colored"
+    ], function(value:String):Void {
+      Preferences.healthColors = value;
+    }, Preferences.healthColors);
   }
 
   override function update(elapsed:Float):Void

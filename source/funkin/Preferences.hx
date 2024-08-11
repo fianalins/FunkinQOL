@@ -179,20 +179,20 @@ class Preferences
   }
 
   /**
-   * If disabled, harsher colors (default) will be used for the health bar.
-   * @default `true`
+   * When changed, the health bar colors will follow the selected.
+   * @default `"soft"`
    */
-  public static var softColors(get, set):Bool;
+  public static var healthColors(get, set):String;
 
-  static function get_softColors():Bool
+  static function get_healthColors():String
   {
-    return Save?.instance?.options?.softColors;
+    return Save?.instance?.options?.healthColors;
   }
 
-  static function set_softColors(value:Bool):Bool
+  static function set_healthColors(value:String):String
   {
     var save:Save = Save.instance;
-    save.options.softColors = value;
+    save.options.healthColors = value;
     save.flush();
     return value;
   }

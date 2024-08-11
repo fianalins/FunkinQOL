@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Mommy Mearest (Car)",
   "assetPath": "characters/momCar",
+  "color": "#D8558E",
   "singTime": 8.0,
   "healthIcon": {
     "id": "mom"

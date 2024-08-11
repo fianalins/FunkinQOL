@@ -99,7 +99,7 @@ class Save
           uiAlpha: 100,
           timeBar: TimeBarDisplayType.Disabled,
           flashingLights: true,
-          softColors: true,
+          healthColors: HealthBarColorType.Soft,
           zoomCamera: true,
           scoreZoom: false,
           debugDisplay: false,
@@ -1107,7 +1107,7 @@ typedef SaveDataOptions =
   var judgementCounter:Bool;
 
   /**
-   * If enabled, If enabled, a timer showing selected option appears.
+   * If enabled, a timer showing selected option appears.
    * @default `"disabled"`
    */
   var timeBar:String;
@@ -1119,10 +1119,10 @@ typedef SaveDataOptions =
   var flashingLights:Bool;
 
   /**
-   * If disabled, harsher colors (default) will be used for the health bar.
+   * When changed, the health bar colors will follow the selected.
    * @default `true`
    */
-  var softColors:Bool;
+  var healthColors:String;
 
   /**
    * If disabled, the camera bump synchronized to the beat.

@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Nene",
   "assetPath": "characters/Nene",
+  "color": "#EE6CA7",
   "startingAnimation": "danceRight",
   "animations": [
     {

@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Monster (Christmas)",
   "assetPath": "characters/monsterChristmas",
+  "color": "#F3FF6E",
   "healthIcon": {
     "id": "monster"
   },

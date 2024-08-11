@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Boyfriend (Holding GF)",
   "assetPath": "characters/bfAndGF",
+  "color": "#31B0D1",
   "flipX": true,
   "renderType": "multisparrow",
   "healthIcon": {

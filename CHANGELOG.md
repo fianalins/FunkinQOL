@@ -4,6 +4,39 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.?.?] - 8/10/2024 (not final)
+### Added
+- [Colored Health Bar dependant on Icons.](#info-about-colored-health-bar)
+### Changed
+- Soft Health Bar Colors setting is replaced by Health Bar Color Type (Default, Soft, Icon Colored)
+- All base characters now have new `"color"` value
+### Fixed
+- put pr here
+### Known Issues
+- Senpai Erect (Erect and Nightmare) loops when reaching the end, probably caused due to either the fixed resync or something with the chart editor. When opening the song in the chart editor, then testing and going back, the end of the song disappears
+- Cannot build on my machine, geting stuck at the Git Commit ID (probably doesn't affect others)
+### Log of Pull Requests
+- [Fix Camera Tweening When Paused](https://github.com/FunkinCrew/Funkin/pull/3098/files)
+- [[BUGFIX]Player's left notes being selected when they shouldn't](https://github.com/FunkinCrew/Funkin/pull/3093)
+- [[BUGFIX] Animation Editor not saving the file name](https://github.com/FunkinCrew/Funkin/pull/3090/files)
+- [[BUGFIX] Ensure the variation used for the next song is valid.](https://github.com/FunkinCrew/Funkin/pull/3037/files)
+- [Change UI Controls Order](https://github.com/FunkinCrew/Funkin/pull/3027/files)
+- [[ENHANCEMENT] Custom Popups and Countdowns](https://github.com/FunkinCrew/Funkin/pull/3020)
+### Wanted Pull Requests - Reason Not Added
+- [Add Mod Menu](https://github.com/FunkinCrew/Funkin/pull/3060) - Crashes on Quit, no reordering
+### Info about Colored Health Bar
+For the Colored Health Bar to work, there is a new Data Input called `"color"`. If there is no `"color"` string in the Character data file, it is defaulted to White
+#### How to add Color
+Inside of the .json file of the Character, you need to add the line
+`"color": "#FF00AA",`
+It does not matter where the line is put, just so long as it is in the file.
+
+The color is formatted as a Hex Code value, however you can [read the documentation on FlxColor - fromString](https://api.haxeflixel.com/flixel/util/FlxColor.html#fromString) to see other ways you can format the string.
+#### Stuffs I want to add
+In the Character Debug page, there should be a way to add the Color input for the Character, and a preview, like Psych.
+#### What doesn't work
+Not tested, but the way setting the Health Bar color is, I can't change the color on command so switching characters does not change the color. Copying Psych Engine and making a new Bar that can actually change the colors would make this work, but as much as I would like stealing, I won't. Also, there is no character switching in base game, and modding is not my main priority, otherwise I would've made this a script.
+
 ## [0.3.0] - 2024-08-1
 ### BIG STUFF
 - [Preferences Menu now can use Strings, Numbers, and "Percents"](https://github.com/FunkinCrew/Funkin/pull/2942)

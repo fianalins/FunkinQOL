@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "name": "Boyfriend (Car)",
   "assetPath": "characters/bfCar",
+  "color": "#31B0D1",
   "flipX": true,
   "renderType": "multisparrow",
   "singTime": 8.0,
