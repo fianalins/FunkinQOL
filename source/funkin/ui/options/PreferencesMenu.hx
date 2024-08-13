@@ -13,6 +13,7 @@ import funkin.ui.options.MenuItemEnums;
 import funkin.ui.options.items.CheckboxPreferenceItem;
 import funkin.ui.options.items.NumberPreferenceItem;
 import funkin.ui.options.items.EnumPreferenceItem;
+import funkin.save.Save;
 
 class PreferencesMenu extends Page
 {
@@ -96,6 +97,8 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Auto Pause', 'Automatically pause the game when it loses focus', function(value:Bool):Void {
       Preferences.autoPause = value;
     }, Preferences.autoPause);
+    // TODO: Make this work
+    // createPrefItemButton('Sync Data with Base Game', 'Automagically transfers save data from Base Game to QoL');
   }
 
   override function update(elapsed:Float):Void
@@ -149,6 +152,18 @@ class PreferencesMenu extends Page
     }, true);
 
     preferenceItems.add(checkbox);
+  }
+
+  /**
+   * Creates a button that calls a function
+   * @param onChange Gets called every time the player selects the item;
+   */
+  function createPrefItemButton(prefName:String, prefDesc:String):Void
+  {
+    items.createItem(0, (120 * items.length) + 30, prefName, AtlasFont.BOLD, function() {
+      Save.mergeBaseSaveData(1);
+      FlxG.resetState();
+    });
   }
 
   /**

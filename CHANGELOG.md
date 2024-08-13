@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.?.?] - 8/11/2024 (not final)
 ### Added
 - [Colored Health Bar dependant on Icons.](#info-about-colored-health-bar)
+- [Independent Save File](#info-about-new-save-data)
 ### Changed
 - Soft Health Bar Colors setting is replaced by Health Bar Color Type (Default, Soft, Icon Colored)
 - All base characters now have new `"color"` value
+- Merch button has dissapeared
 ### Fixed
 - ONLY IN FINAL BUILD!! [Visualizer last bar not displaying + memory leak](#how-2-fix-funkinvis)
 ### Known Issues
@@ -44,6 +46,12 @@ I don't know how to do this hmm stuff + these are two seperate Pull Requests tha
 
 1. [Do this stuff](https://github.com/FunkinCrew/funkVis/pull/8/files)
 2. [Do this other stuff](https://github.com/FunkinCrew/funkVis/pull/7/files)
+### Info about New Save Data
+All Save Data is being migrated to its own folder, `FunkinQoL-Dev`.
+
+To make this work, instead of transferring from Legacy Funkin', the game first checks if you have a Save from the base game, and transfers all data to the new file. If you somehow don't have any Save Data, it then returns to checking Legacy Funkin'.
+
+There is also a new shiny button in Options that lets you transfer any new data from base game. In theory.
 
 ## [0.3.0] - 2024-08-1
 ### BIG STUFF
