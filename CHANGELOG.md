@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Change UI Controls Order](https://github.com/FunkinCrew/Funkin/pull/3027/files)
 - [[ENHANCEMENT] Custom Popups and Countdowns](https://github.com/FunkinCrew/Funkin/pull/3020)
 ### Wanted Pull Requests - Reason Not Added
-- [Add Mod Menu](https://github.com/FunkinCrew/Funkin/pull/3060) - Crashes on Quit, no reordering
+- [Add Mod Menu](https://github.com/FunkinCrew/Funkin/pull/3060) - Crashes on Quit, no reordering. !!Issue with new haxeui stuff, crashes on Chart Editor as well!!
 - [[ENHANCEMENT] Note Kind Scripts](https://github.com/FunkinCrew/Funkin/pull/2635/files) - Too scared to add
 - [[ENHANCEMENT] Softcode Week 5 Cutscenes](https://github.com/FunkinCrew/Funkin/pull/2880/files) - Too scared because the [Custom Popups and Countdowns](https://github.com/FunkinCrew/Funkin/pull/3020) changes some of the stuff because it was hardcoded
 - [[ENHANCEMENT + BUGFIX] soft codable visualizers + polymod download fix](https://github.com/FunkinCrew/Funkin/pull/2994) - For some unknown reason it removes the faces and hands to some of the poses in Blazin'??
