@@ -14,7 +14,6 @@ import flixel.text.FlxText;
 import flixel.util.FlxStringUtil;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import funkin.api.newgrounds.NGio;
@@ -61,6 +60,7 @@ import funkin.ui.options.PreferencesMenu;
 import funkin.ui.options.AccessibilityMenu;
 import funkin.ui.story.StoryMenuState;
 import funkin.ui.transition.LoadingState;
+import funkin.util.BarUtil;
 import funkin.util.SerializerUtil;
 import haxe.Int64;
 import lime.ui.Haptic;
@@ -504,7 +504,7 @@ class PlayState extends MusicBeatSubState
    * The bar which displays the player's health.
    * Dynamically updated based on the value of `healthLerp` (which is based on `health`).
    */
-  public var healthBar:FlxBar;
+  public var healthBar:BarUtil;
 
   /**
    * The background image used for the health bar.
@@ -532,7 +532,7 @@ class PlayState extends MusicBeatSubState
    */
   public var opponentStrumline:Strumline;
 
-  public var timeBar:FlxBar;
+  public var timeBar:BarUtil;
 
   public var timeText:FlxText;
 
@@ -931,45 +931,39 @@ class PlayState extends MusicBeatSubState
       songPerc = (Highscore.tallies.sick + Highscore.tallies.good) / (Highscore.tallies.totalNotesHit + Highscore.tallies.missed);
     }
 
-    // whole lotta if statements, like the world intended.
-    if (Preferences.timeBar == 'timeLeft')
+    switch (Preferences.timeBar)
     {
-      if (startingSong || endingSong)
-      {
-        timeText.text = '-:--'; // Why does it go to 2000 minutes normally?
-      }
-      else
-      {
-        timeText.text = FlxStringUtil.formatTime((currentSongLengthMs - Conductor.instance.songPosition) / 1000, false);
-      }
-    }
-    else if (Preferences.timeBar == 'timeElapsed')
-    {
-      if (startingSong || endingSong)
-      {
-        timeText.text = '-:--';
-      }
-      else
-      {
-        timeText.text = FlxStringUtil.formatTime(Conductor.instance.songPosition / 1000, false);
-      }
-    }
-    else if (Preferences.timeBar == 'combined')
-    {
-      if (startingSong || endingSong)
-      {
-        timeText.text = '-:--';
-      }
-      else
-      {
-        timeText.text = FlxStringUtil.formatTime((currentSongLengthMs - Conductor.instance.songPosition) / 1000, false)
-          + '/'
-          + FlxStringUtil.formatTime(currentSongLengthMs / 1000, false);
-      }
-    }
-    else if (Preferences.timeBar == 'songName')
-    {
-      timeText.text = currentChart.songName;
+      case 'timeLeft':
+        if (startingSong || endingSong)
+        {
+          timeText.text = '-:--'; // Why does it go to 2000 minutes normally?
+        }
+        else
+        {
+          timeText.text = FlxStringUtil.formatTime((currentSongLengthMs - Conductor.instance.songPosition) / 1000, false);
+        }
+      case 'timeElapsed':
+        if (startingSong || endingSong)
+        {
+          timeText.text = '-:--';
+        }
+        else
+        {
+          timeText.text = FlxStringUtil.formatTime(Conductor.instance.songPosition / 1000, false);
+        }
+      case 'combined':
+        if (startingSong || endingSong)
+        {
+          timeText.text = '-:--';
+        }
+        else
+        {
+          timeText.text = FlxStringUtil.formatTime((currentSongLengthMs - Conductor.instance.songPosition) / 1000, false)
+            + '/'
+            + FlxStringUtil.formatTime(currentSongLengthMs / 1000, false);
+        }
+      case 'songName':
+        timeText.text = currentChart.songName;
     }
 
     if (Highscore.tallies.totalNotesHit == 0) ratingName = '?';
@@ -1275,9 +1269,9 @@ class PlayState extends MusicBeatSubState
 
     timePerc = 0;
 
-    healthBar.value = healthLerp;
+    healthBar.percent = healthLerp;
 
-    timeBar.value = timePerc;
+    timeBar.percent = timePerc;
 
     if (!isMinimalMode)
     {
@@ -1679,43 +1673,32 @@ class PlayState extends MusicBeatSubState
   function initHealthBar():Void
   {
     var healthBarYPos:Float = Preferences.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-    healthBarBG = FunkinSprite.create(0, healthBarYPos, 'healthBar');
-    healthBarBG.screenCenter(X);
-    healthBarBG.alpha = Preferences.uiAlpha / 100; // PR formats as Int, meaning its Whole Numbers and 100% (100) should only be 1
-    healthBarBG.zIndex = 800;
-    add(healthBarBG);
-
-    healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
-      'healthLerp', 0, 2);
-    updateHealthColors();
+    healthBar = new BarUtil(0, healthBarYPos, 'healthBar', function() return healthLerp, 0, 2);
+    healthBar.screenCenter(X);
+    healthBar.leftToRight = false;
     healthBar.alpha = Preferences.uiAlpha / 100;
-    healthBar.zIndex = 801;
+    healthBar.zIndex = 800;
+    updateHealthColors();
     add(healthBar);
 
     var timeBarYPos:Float = Preferences.downscroll ? FlxG.height * 0.95 : FlxG.height * 0.025;
-    timeBarBG = FunkinSprite.create(0, timeBarYPos, 'timeBar');
-    timeBarBG.screenCenter(X);
-    timeBarBG.zIndex = 802;
-    timeBarBG.visible = Preferences.timeBar != 'disabled';
-    add(timeBarBG);
+    timeBar = new BarUtil(0, timeBarYPos, 'timeBar', function() return timePerc, 0, 1);
+    timeBar.screenCenter(X);
+    timeBar.zIndex = 802;
+    timeBar.visible = Preferences.timeBar != 'disabled';
+    timeBar.setColors(0xFFF1F1F1, 0xFF0F0F0F);
+    add(timeBar);
 
-    timeText = new FlxText(0, timeBarBG.y - 7, 400, '', 20);
+    timeText = new FlxText(0, timeBarYPos - 7, 400, '', 20);
     timeText.setFormat(Paths.font('vcr.ttf'), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     timeText.screenCenter(X);
     timeText.borderSize = 2;
-    timeText.zIndex = 852;
+    timeText.zIndex = 853;
     timeText.visible = Preferences.timeBar != 'disabled';
     add(timeText);
 
-    timeBar = new FlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this, 'timePerc', 0, 1);
-    timeBar.createFilledBar(0xFF0F0F0F, 0xFFF1F1F1);
-    timeBar.numDivisions = 2000;
-    timeBar.zIndex = 803;
-    timeBar.visible = Preferences.timeBar != 'disabled';
-    add(timeBar);
-
     // The score text below the health bar.
-    scoreText = new FlxText(0, healthBarBG.y + 30, FlxG.width, '', 20);
+    scoreText = new FlxText(0, healthBar.y + 30, FlxG.width, '', 20);
     scoreText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     scoreText.zIndex = 851;
     add(scoreText);
@@ -1726,16 +1709,14 @@ class PlayState extends MusicBeatSubState
     judgementText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     judgementText.fieldHeight = 92;
     judgementText.y = ((FlxG.height / 2) - judgementText.height) - 25; // Works flawlessly without any problems
-    judgementText.zIndex = 851;
+    judgementText.zIndex = 852;
     judgementText.visible = Preferences.judgementCounter;
     add(judgementText);
 
     // Move the health bar to the HUD camera.
     healthBar.cameras = [camHUD];
-    healthBarBG.cameras = [camHUD];
     timeText.cameras = [camHUD];
     timeBar.cameras = [camHUD];
-    timeBarBG.cameras = [camHUD];
     scoreText.cameras = [camHUD];
     judgementText.cameras = [camHUD];
   }
@@ -2271,8 +2252,7 @@ class PlayState extends MusicBeatSubState
     }
     else
     {
-      scoreText.text = 'Score: ' + songScore + ' • Misses: ' + Highscore.tallies.missed + ' • Rating: ' + jankTypeShi + '% - ${ratingName} (' + songRating
-        + ')';
+      scoreText.text = 'Score: $songScore • Misses: ${Highscore.tallies.missed} • Rating: $jankTypeShi% - $ratingName ($songRating)';
     }
 
     // i dont have a single clue how to get an if in the text so variable it's
@@ -2297,9 +2277,7 @@ class PlayState extends MusicBeatSubState
     }
     else
     {
-      // Cleanup heavily needed... I can use the ${} but I forgot when I first made it
-      judgementText.text = 'Combo: ' + Highscore.tallies.combo + '\nSick: ' + Highscore.tallies.sick + '\nGood: ' + Highscore.tallies.good + '\nBad: '
-        + Highscore.tallies.bad + '\nShit: ' + Highscore.tallies.shit;
+      judgementText.text = 'Combo: ${Highscore.tallies.combo}\nSick: ${Highscore.tallies.sick}\nGood: ${Highscore.tallies.good}\nBad: ${Highscore.tallies.bad}\nShit: ${Highscore.tallies.shit}';
     }
   }
 
@@ -2323,9 +2301,9 @@ class PlayState extends MusicBeatSubState
     switch (Preferences.healthColors)
     {
       case "default":
-        healthBar.createFilledBar(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
+        healthBar.setColors(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
       case "soft":
-        healthBar.createFilledBar(Constants.COLOR_HEALTH_BAR_SOFT_RED, Constants.COLOR_HEALTH_BAR_SOFT_GREEN);
+        healthBar.setColors(Constants.COLOR_HEALTH_BAR_SOFT_RED, Constants.COLOR_HEALTH_BAR_SOFT_GREEN);
       case "iconColored":
         var currentCharacterData:SongCharacterData = currentChart.characters;
         var boyfriend:BaseCharacter = CharacterDataParser.fetchCharacter(currentCharacterData.player);
@@ -2333,41 +2311,9 @@ class PlayState extends MusicBeatSubState
 
         if (boyfriend != null || dad != null)
         {
-          healthBar.createFilledBar(FlxColor.fromString(dad.getHealthColor()), FlxColor.fromString(boyfriend.getHealthColor()));
+          healthBar.setColors(FlxColor.fromString(dad.getHealthColor()), FlxColor.fromString(boyfriend.getHealthColor()));
         }
     }
-  }
-
-  // CoolUtil.hx - Psych Engine 0.7.3
-  function dominantColor(sprite:FunkinSprite):FlxColor
-  {
-    var countByColor:Map<Int, Int> = [];
-    for (col in 0...sprite.frameWidth)
-    {
-      for (row in 0...sprite.frameHeight)
-      {
-        var colorOfThisPixel:Int = sprite.pixels.getPixel32(col, row);
-        if (colorOfThisPixel != 0)
-        {
-          if (countByColor.exists(colorOfThisPixel)) countByColor[colorOfThisPixel] = countByColor[colorOfThisPixel] + 1;
-          else if (countByColor[colorOfThisPixel] != 13520687 - (2 * 13520687)) countByColor[colorOfThisPixel] = 1;
-        }
-      }
-    }
-
-    var maxCount = 0;
-    var maxKey:Int = 0; // after the loop this will store the max color
-    countByColor[FlxColor.BLACK] = 0;
-    for (key in countByColor.keys())
-    {
-      if (countByColor[key] >= maxCount)
-      {
-        maxCount = countByColor[key];
-        maxKey = key;
-      }
-    }
-    countByColor = [];
-    return maxKey;
   }
 
   function updateTimeBar():Void

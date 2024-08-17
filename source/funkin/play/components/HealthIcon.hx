@@ -38,7 +38,7 @@ class HealthIcon extends FunkinSprite
   /**
    * Whether this health icon should automatically update its state based on the character's health.
    * Note that turning this off means you have to manually do the following:
-   * - Boping the icon on the beat.
+   * - Bopping the icon on the beat.
    * - Switching between winning/losing/idle animations.
    * - Repositioning the icon as health changes.
    */
@@ -133,6 +133,7 @@ class HealthIcon extends FunkinSprite
     characterId = value ?? Constants.DEFAULT_HEALTH_ICON;
     return characterId;
   }
+
   function set_isPixel(value:Bool):Bool
   {
     if (value == isPixel) return value;
@@ -237,15 +238,12 @@ class HealthIcon extends FunkinSprite
           // Update the animation based on the current state.
           updateHealthIcon(PlayState.instance.health);
           // Update the position to match the health bar.
-          this.x = PlayState.instance.healthBar.x
-            + (PlayState.instance.healthBar.width * (FlxMath.remapToRange(PlayState.instance.healthBar.value, 0, 2, 100, 0) * 0.01) - POSITION_OFFSET);
+          this.x = PlayState.instance.healthBar.barCenter - POSITION_OFFSET;
         case 1: // Dad
           // Update the animation based on the current state.
           updateHealthIcon(MAXIMUM_HEALTH - PlayState.instance.health);
           // Update the position to match the health bar.
-          this.x = PlayState.instance.healthBar.x
-            + (PlayState.instance.healthBar.width * (FlxMath.remapToRange(PlayState.instance.healthBar.value, 0, 2, 100, 0) * 0.01))
-            - (this.width - POSITION_OFFSET);
+          this.x = PlayState.instance.healthBar.barCenter - this.width + POSITION_OFFSET;
       }
 
       // Keep the icon centered vertically on the health bar.
