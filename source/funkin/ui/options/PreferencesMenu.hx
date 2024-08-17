@@ -94,6 +94,11 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Debug Display', 'Enable to show FPS and other debug stats', function(value:Bool):Void {
       Preferences.debugDisplay = value;
     }, Preferences.debugDisplay);
+    #if !web
+    createPrefItemNumber('FPS Cap', 'The number the FPS is capped at. May be more than shown', function(value:Float) {
+      Preferences.framerate = Std.int(value);
+    }, null, Preferences.framerate, 60, 360, 1, 0);
+    #end
     createPrefItemCheckbox('Auto Pause', 'Automatically pause the game when it loses focus', function(value:Bool):Void {
       Preferences.autoPause = value;
     }, Preferences.autoPause);
