@@ -168,7 +168,7 @@ class MainMenuState extends MusicBeatState
 
     // This has to come AFTER!
     this.leftWatermarkText.text = Constants.VERSION;
-    this.rightWatermarkText.text = "Funkin QoL: v0.3.0";
+    this.rightWatermarkText.text = "Funkin QoL: v0.4.0";
 
     // NG.core.calls.event.logEvent('swag').send();
   }

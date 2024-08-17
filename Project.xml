@@ -95,8 +95,8 @@ xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/
 		If we can exclude the `mods` folder from the manifest, we can re-enable this line.
 		<assets path='example_mods' rename='mods' embed='false' exclude="*.md" />
 	-->
-	<assets path="art/readme.txt" rename="do NOT readme.txt" library="art"/>
-	<assets path="CHANGELOG.md" rename="changelog.txt" library="art"/>
+	<!-- <assets path="art/readme.txt" rename="do NOT readme.txt" library="art"/> -->
+	<assets path="CHANGELOG.md" rename="CHANGELOG.txt" library="art"/>
 	<!-- NOTE FOR FUTURE SELF SINCE FONTS ARE ALWAYS FUCKY
 		TO FIX ONE OF THEM, I CONVERTED IT TO OTF. DUNNO IF YOU NEED TO
 		THEN UHHH I USED THE NAME OF THE FONT WITH SETFORMAT() ON THE TEXT!!!

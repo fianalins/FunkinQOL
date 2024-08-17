@@ -1,33 +1,37 @@
 # Changelog
 All notable changes will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format tries to be based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.?.?] - 8/11/2024 (not final)
+## [0.4.0] - 2024-8-17
 ### Added
 - [Colored Health Bar dependant on Icons.](#info-about-colored-health-bar)
 - [Independent Save File](#info-about-new-save-data)
+- New Bar to make changing colors easier.
+- FPS Cap option. The actual FPS the game runs at will be higher than the cap, and it is disproportionate. At lower values it seems to be about 4 frames higher, however at the max of 360 I get about 480? It doesn't really matter.
 ### Changed
 - Soft Health Bar Colors setting is replaced by Health Bar Color Type (Default, Soft, Icon Colored)
 - All base characters now have new `"color"` value
-- Merch button has dissapeared
+- Bars now use new `BarUtil.hx`
+- [Change UI Controls Order](https://github.com/FunkinCrew/Funkin/pull/3027)
+### Removed
+- Merch button in Main Menu
 ### Fixed
 - ONLY IN FINAL BUILD!! [Visualizer last bar not displaying + memory leak](#how-2-fix-funkinvis)
+- [Fix Camera Tweening When Paused](https://github.com/FunkinCrew/Funkin/pull/3098)
+- [[BUGFIX] Player's left notes being selected when they shouldn't](https://github.com/FunkinCrew/Funkin/pull/3093)
+- [[BUGFIX] Animation Editor not saving the file name](https://github.com/FunkinCrew/Funkin/pull/3090)
+- [[BUGFIX] Ensure the variation used for the next song is valid.](https://github.com/FunkinCrew/Funkin/pull/3037)
+### Enhancement
+- [[ENHANCEMENT] Custom Popups and Countdowns](https://github.com/FunkinCrew/Funkin/pull/3020)
 ### Known Issues
 - Senpai Erect (Erect and Nightmare) loops when reaching the end, probably caused due to either the fixed resync or something with the chart editor. When opening the song in the chart editor, then testing and going back, the end of the song disappears
-- Cannot build on my machine, geting stuck at the Git Commit ID (probably doesn't affect others)
-### Log of Pull Requests
-- [Fix Camera Tweening When Paused](https://github.com/FunkinCrew/Funkin/pull/3098/files)
-- [[BUGFIX]Player's left notes being selected when they shouldn't](https://github.com/FunkinCrew/Funkin/pull/3093)
-- [[BUGFIX] Animation Editor not saving the file name](https://github.com/FunkinCrew/Funkin/pull/3090/files)
-- [[BUGFIX] Ensure the variation used for the next song is valid.](https://github.com/FunkinCrew/Funkin/pull/3037/files)
-- [Change UI Controls Order](https://github.com/FunkinCrew/Funkin/pull/3027/files)
-- [[ENHANCEMENT] Custom Popups and Countdowns](https://github.com/FunkinCrew/Funkin/pull/3020)
+- [Not fully bug tested.](#how-i-bug-test)
 ### Wanted Pull Requests - Reason Not Added
 - [Add Mod Menu](https://github.com/FunkinCrew/Funkin/pull/3060) - Crashes on Quit, no reordering. !!Issue with new haxeui stuff, crashes on Chart Editor as well!!
 - [[ENHANCEMENT] Note Kind Scripts](https://github.com/FunkinCrew/Funkin/pull/2635/files) - Too scared to add
-- [[ENHANCEMENT] Softcode Week 5 Cutscenes](https://github.com/FunkinCrew/Funkin/pull/2880/files) - Too scared because the [Custom Popups and Countdowns](https://github.com/FunkinCrew/Funkin/pull/3020) changes some of the stuff because it was hardcoded
+- [[ENHANCEMENT] Softcode Week 5 Cutscenes](https://github.com/FunkinCrew/Funkin/pull/2880) - Too scared because the [Custom Popups and Countdowns](https://github.com/FunkinCrew/Funkin/pull/3020) changes some of the stuff because it was hardcoded
 - [[ENHANCEMENT + BUGFIX] soft codable visualizers + polymod download fix](https://github.com/FunkinCrew/Funkin/pull/2994) - For some unknown reason it removes the faces and hands to some of the poses in Blazin'??
 ### Info about Colored Health Bar
 For the Colored Health Bar to work, there is a new Data Input called `"color"`. If there is no `"color"` string in the Character data file, it is defaulted to White
@@ -52,6 +56,18 @@ All Save Data is being migrated to its own folder, `FunkinQoL-Dev`.
 To make this work, instead of transferring from Legacy Funkin', the game first checks if you have a Save from the base game, and transfers all data to the new file. If you somehow don't have any Save Data, it then returns to checking Legacy Funkin'.
 
 There is also a new shiny button in Options that lets you transfer any new data from base game. In theory.
+### How I Bug Test
+Pointless random stuff I feel like adding.
+
+My standard testing procedure consists of
+
+1. Seeing if the game builds properly.
+2. Testing the feature I am adding.
+3. Playing on normal difficulties, Erect remixes, pixel stages, non-pixel stages, etc. (depends on what is being added)
+4. If it truly needs it, I'll test with different Preferences enabled or disabled.
+5. Assume it is good to go and push to `experimental`.
+
+6. End of the loop. Happens when I am satisfied with all the new stuff and decide it is time to update the finished product for all zero of you to enjoy.
 
 ## [0.3.0] - 2024-08-1
 ### BIG STUFF
@@ -105,3 +121,28 @@ There is also a new shiny button in Options that lets you transfer any new data 
 - ["Pause Menu and Stickers have same zoom as HUD"](https://github.com/FunkinCrew/Funkin/pull/2567)
 - ["Song with no "Normal" causes Stack Overflow"](https://github.com/FunkinCrew/Funkin/pull/2712)
 - ["Correct step lengths in x/4 time signatures"](https://github.com/FunkinCrew/Funkin/pull/3067)
+
+## [0.2.0] - 2024-6-17
+### Added
+- Score Text Bop, zooms on hit, and reverse zooms(?) on miss/ghost tap
+### Changed
+- Health Bar colors are not softer, with the option to disable
+- Health Bar + Icons are now semi-transparent when using Middlescroll
+### Fixed
+- Messy Code
+
+## [0.1.1] - 2024-6-16
+### Fixed
+- Missing checks for whether Judgement Counter was enabled
+
+## [0.1.0] - 2024-6-15
+### Added
+All of it. Public release.
+
+- Middlescroll option, without opponent strums.
+- Ghost Tapping
+- Judgement Counter on left side
+### Changed
+- Score text now reads similar to that of Psych Engine (or basically any other engine)
+### Fixed
+- Lined up Note Splash effect

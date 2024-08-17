@@ -1,4 +1,4 @@
-# QOL Changes for Funkin'
+# QoL Changes for Funkin'
 
 Friday Night Funkin' is a game. But the base engine has some problems, other than its offset strumline for the player.
 
