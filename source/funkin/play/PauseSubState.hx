@@ -51,8 +51,7 @@ class PauseSubState extends MusicBeatSubState
     {text: 'Restart Song', callback: restartPlayState},
     {text: 'Change Difficulty', callback: switchMode.bind(_, Difficulty)},
     {text: 'Enable Practice Mode', callback: enablePracticeMode, filter: () -> !(PlayState.instance?.isPracticeMode ?? false)},
-    // Can't use botplay just yet because botplay sucks massive ass and so I need to wait for base devs to make it better
-    // {text: 'Enable Botplay', callback: enableBotPlayMode, filter: () -> !(PlayState.instance?.isBotPlayMode ?? false)},
+    {text: 'Enable Botplay', callback: enableBotPlayMode, filter: () -> !(PlayState.instance?.isBotPlayMode ?? false)},
     {text: 'Exit to Menu', callback: quitToMenu},
   ];
 
@@ -63,7 +62,7 @@ class PauseSubState extends MusicBeatSubState
     {text: 'Resume', callback: resume},
     {text: 'Restart Song', callback: restartPlayState},
     {text: 'Enable Practice Mode', callback: enablePracticeMode, filter: () -> !(PlayState.instance?.isPracticeMode ?? false)},
-    // {text: 'Enable Botplay', callback: enableBotPlayMode, filter: () -> !(PlayState.instance?.isBotPlayMode ?? false)},
+    {text: 'Enable Botplay', callback: enableBotPlayMode, filter: () -> !(PlayState.instance?.isBotPlayMode ?? false)},
     {text: 'Return to Chart Editor', callback: quitToChartEditor},
   ];
 
@@ -686,15 +685,16 @@ class PauseSubState extends MusicBeatSubState
   }
 
   /**
-   * Force the game into botplay mode, then update the pause menu.
+   * Force the game into botplay mode, then restart the song.
    * @param state The current PauseSubState.
    */
   static function enableBotPlayMode(state:PauseSubState):Void
   {
     if (PlayState.instance == null) return;
 
+    PlayState.instance.needsReset = true;
     PlayState.instance.isBotPlayMode = true;
-    state.regenerateMenu();
+    state.close();
   }
 
   /**
