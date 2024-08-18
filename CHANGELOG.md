@@ -43,8 +43,6 @@ It does not matter where the line is put, just so long as it is in the file.
 The color is formatted as a Hex Code value, however you can [read the documentation on FlxColor - fromString](https://api.haxeflixel.com/flixel/util/FlxColor.html#fromString) to see other ways you can format the string.
 #### Stuffs I want to add
 In the Character Debug page, there should be a way to add the Color input for the Character, and a preview, like Psych.
-#### What doesn't work
-Not tested, but the way setting the Health Bar color is, I can't change the color on command so switching characters does not change the color. Copying Psych Engine and making a new Bar that can actually change the colors would make this work, but as much as I would like stealing, I won't. Also, there is no character switching in base game, and modding is not my main priority, otherwise I would've made this a script.
 ### How 2 Fix funkin.vis
 I don't know how to do this hmm stuff + these are two seperate Pull Requests that need to be added
 
