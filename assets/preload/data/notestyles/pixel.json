@@ -46,7 +46,9 @@
       "data": {}
     },
     "noteSplash": {
-      "assetPath": "",
+      "assetPath": "week6:weeb/pixelUI/noteSplashes",
+      "scale": 1.0,
+      "isPixel": true,
       "data": {
         "enabled": false
       }
