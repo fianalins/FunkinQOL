@@ -9,7 +9,7 @@ import flixel.graphics.FlxGraphic;
 import flixel.graphics.tile.FlxDrawTrianglesItem;
 import funkin.graphics.shaders.HSVShader;
 import flixel.math.FlxMath;
-import funkin.ui.options.PreferencesMenu;
+import funkin.ui.options.GraphicsMenu;
 import funkin.ui.options.AccessibilityMenu;
 
 /**

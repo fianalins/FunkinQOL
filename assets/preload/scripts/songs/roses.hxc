@@ -9,7 +9,7 @@ import funkin.play.PlayStatePlaylist;
 import funkin.audio.FunkinSound;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import funkin.ui.options.PreferencesMenu;
+import funkin.ui.options.GraphicsMenu;
 
 class RosesSong extends Song {
   var hasPlayedCutscene:Bool;

@@ -93,6 +93,7 @@ class Save
       options:
         {
           // Reasonable defaults.
+          antialiasing: true,
           framerate: 144,
           naughtyness: true,
           downscroll: false,
@@ -1113,7 +1114,15 @@ typedef SaveScoreTallyData =
 typedef SaveDataOptions =
 {
   /**
-   * Cap the FPS at this value
+   * Whether assets are rendered with anti-aliasing. Already disabled for Pixel sprites.
+   * This is not used yet as I need to figure out what to Preference and what not to.
+   * Also Pixel sprites exist and I don't know how to check that without coding it stupidly.
+   * @default `true`
+   */
+  var antialiasing:Bool;
+
+  /**
+   * Cap the framerate at this value
    * @default `144`
    */
   var framerate:Int;

@@ -15,7 +15,7 @@ import funkin.ui.options.items.NumberPreferenceItem;
 import funkin.ui.options.items.EnumPreferenceItem;
 import funkin.save.Save;
 
-class PreferencesMenu extends Page
+class VisualsMenu extends Page
 {
   var items:TextMenuList;
   var preferenceItems:FlxTypedSpriteGroup<FlxSprite>;
@@ -55,27 +55,6 @@ class PreferencesMenu extends Page
    */
   function createPrefItems():Void
   {
-    createPrefItemCheckbox('Naughtyness', 'Toggle displaying raunchy content', function(value:Bool):Void {
-      Preferences.naughtyness = value;
-    }, Preferences.naughtyness);
-    createPrefItemCheckbox('Downscroll', 'Enable to make notes move downwards', function(value:Bool):Void {
-      Preferences.downscroll = value;
-    }, Preferences.downscroll);
-    createPrefItemCheckbox('Middlescroll', 'Enable to make notes in the middle', function(value:Bool):Void {
-      Preferences.middlescroll = value;
-    }, Preferences.middlescroll);
-    createPrefItemCheckbox('Show Opponent Strumline', 'Disable to remove opponent strums (Middlescroll Only)', function(value:Bool):Void {
-      Preferences.oppStrumVis = value;
-    }, Preferences.oppStrumVis);
-    createPrefItemCheckbox('Ghost Tapping', 'Enable for no penalty when there are no notes', function(value:Bool):Void {
-      Preferences.ghosttap = value;
-    }, Preferences.ghosttap);
-    createPrefItemPercentage('Health Bar Alpha', 'Changes the alpha (opacity/transparency) of the Health Bar', function(value:Int):Void {
-      Preferences.uiAlpha = value;
-    }, Preferences.uiAlpha);
-    createPrefItemCheckbox('Judgement Counter', 'Enable to show a list of judgements on the left side', function(value:Bool):Void {
-      Preferences.judgementCounter = value;
-    }, Preferences.judgementCounter);
     createPrefItemEnum('Time Bar', 'Show a bar that displays the selected', [
       TimeBarDisplayType.Disabled => "Disabled",
       TimeBarDisplayType.TimeLeft => "Time Left",
@@ -91,19 +70,12 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Score Zooming on Hit', 'Enable to make Score Text bounce on a note hit', function(value:Bool):Void {
       Preferences.scoreZoom = value;
     }, Preferences.scoreZoom);
+    createPrefItemPercentage('Health Bar Alpha', 'Changes the alpha (opacity/transparency) of the Health Bar', function(value:Int):Void {
+      Preferences.uiAlpha = value;
+    }, Preferences.uiAlpha);
     createPrefItemCheckbox('Debug Display', 'Enable to show FPS and other debug stats', function(value:Bool):Void {
       Preferences.debugDisplay = value;
     }, Preferences.debugDisplay);
-    #if !web
-    createPrefItemNumber('FPS Cap', 'The number the FPS is capped at. May be more than shown', function(value:Float) {
-      Preferences.framerate = Std.int(value);
-    }, null, Preferences.framerate, 60, 360, 1, 0);
-    #end
-    createPrefItemCheckbox('Auto Pause', 'Automatically pause the game when it loses focus', function(value:Bool):Void {
-      Preferences.autoPause = value;
-    }, Preferences.autoPause);
-    // TODO: Make this work
-    // createPrefItemButton('Sync Data with Base Game', 'Automagically transfers save data from Base Game to QoL');
   }
 
   override function update(elapsed:Float):Void
@@ -139,7 +111,7 @@ class PreferencesMenu extends Page
   }
 
   // - Preference item creation methods -
-  // Should be moved into a separate PreferenceItems class but you can't access PreferencesMenu.items and PreferencesMenu.preferenceItems from outside.
+  // Should be moved into a separate PreferenceItems class but you can't access GraphicsMenu.items and GraphicsMenu.preferenceItems from outside.
 
   /**
    * Creates a pref item that works with booleans

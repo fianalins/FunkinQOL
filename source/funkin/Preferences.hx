@@ -7,12 +7,33 @@ import funkin.save.Save;
  */
 class Preferences
 {
-  // ================
+  // ================================
   // Start of the Graphics section
-  // ================
+  // ================================
 
   /**
-   * Cap the FPS at this value
+   * Whether assets are rendered with anti-aliasing. Already disabled for Pixel sprites.
+   * This is not used yet as I need to figure out what to Preference and what not to.
+   * Also Pixel sprites exist and I don't know how to check that without coding it stupidly.
+   * @default `true`
+   */
+  public static var antialiasing(get, set):Bool;
+
+  static function get_antialiasing():Bool
+  {
+    return Save?.instance?.options?.antialiasing;
+  }
+
+  static function set_antialiasing(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.antialiasing = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * Cap the framerate at this value
    * @default `144`
    */
   public static var framerate(get, set):Int;
@@ -39,6 +60,114 @@ class Preferences
     return value;
     #end
   }
+
+  // ================================
+  // Start of the Visuals section
+  // ================================
+
+  /**
+   * If enabled, a timer showing selected option appears.
+   * @default `"disabled"`
+   */
+  public static var timeBar(get, set):String;
+
+  static function get_timeBar():String
+  {
+    return Save?.instance?.options?.timeBar;
+  }
+
+  static function set_timeBar(value:String):String
+  {
+    var save:Save = Save.instance;
+    save.options.timeBar = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If disabled, the camera bump synchronized to the beat.
+   * @default `false`
+   */
+  public static var zoomCamera(get, set):Bool;
+
+  static function get_zoomCamera():Bool
+  {
+    return Save?.instance?.options?.zoomCamera;
+  }
+
+  static function set_zoomCamera(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.zoomCamera = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, score text bops when note hit, and reverse bops(?) when miss.
+   * @default `false`
+   */
+  public static var scoreZoom(get, set):Bool;
+
+  static function get_scoreZoom():Bool
+  {
+    return Save?.instance?.options?.scoreZoom;
+  }
+
+  static function set_scoreZoom(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.scoreZoom = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * When changed, the alpha (transparency/opacity) of the Health Bar follows.
+   * @default `100`
+   */
+  public static var uiAlpha(get, set):Int;
+
+  static function get_uiAlpha():Int
+  {
+    return Save?.instance?.options?.uiAlpha;
+  }
+
+  static function set_uiAlpha(value:Int):Int
+  {
+    var save:Save = Save.instance;
+    save.options.uiAlpha = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
+   * @default `false`
+   */
+  public static var debugDisplay(get, set):Bool;
+
+  static function get_debugDisplay():Bool
+  {
+    return Save?.instance?.options?.debugDisplay;
+  }
+
+  static function set_debugDisplay(value:Bool):Bool
+  {
+    if (value != Save.instance.options.debugDisplay)
+    {
+      toggleDebugDisplay(value);
+    }
+
+    var save = Save.instance;
+    save.options.debugDisplay = value;
+    save.flush();
+    return value;
+  }
+
+  // ================================
+  // Start of the Gameplay section
+  // ================================
 
   /**
    * Whether some particularly fowl language is displayed.
@@ -136,25 +265,6 @@ class Preferences
   }
 
   /**
-   * When changed, the alpha (transparency/opacity) of the Health Bar follows.
-   * @default `100`
-   */
-  public static var uiAlpha(get, set):Int;
-
-  static function get_uiAlpha():Int
-  {
-    return Save?.instance?.options?.uiAlpha;
-  }
-
-  static function set_uiAlpha(value:Int):Int
-  {
-    var save:Save = Save.instance;
-    save.options.uiAlpha = value;
-    save.flush();
-    return value;
-  }
-
-  /**
    * If enabled, a list of all judgements appears on the left half.
    * @default `false`
    */
@@ -174,23 +284,29 @@ class Preferences
   }
 
   /**
-   * If enabled, a timer showing selected option appears.
-   * @default `"disabled"`
+   * If enabled, the game will automatically pause when tabbing out.
+   * @default `true`
    */
-  public static var timeBar(get, set):String;
+  public static var autoPause(get, set):Bool;
 
-  static function get_timeBar():String
+  static function get_autoPause():Bool
   {
-    return Save?.instance?.options?.timeBar;
+    return Save?.instance?.options?.autoPause ?? true;
   }
 
-  static function set_timeBar(value:String):String
+  static function set_autoPause(value:Bool):Bool
   {
+    if (value != Save.instance.options.autoPause) FlxG.autoPause = value;
+
     var save:Save = Save.instance;
-    save.options.timeBar = value;
+    save.options.autoPause = value;
     save.flush();
     return value;
   }
+
+  // ================================
+  // Start of the Accessibility section
+  // ================================
 
   /**
    * If disabled, flashing lights in the main menu and other areas will be less intense.
@@ -226,89 +342,6 @@ class Preferences
   {
     var save:Save = Save.instance;
     save.options.healthColors = value;
-    save.flush();
-    return value;
-  }
-
-  /**
-   * If disabled, the camera bump synchronized to the beat.
-   * @default `false`
-   */
-  public static var zoomCamera(get, set):Bool;
-
-  static function get_zoomCamera():Bool
-  {
-    return Save?.instance?.options?.zoomCamera;
-  }
-
-  static function set_zoomCamera(value:Bool):Bool
-  {
-    var save:Save = Save.instance;
-    save.options.zoomCamera = value;
-    save.flush();
-    return value;
-  }
-
-  /**
-   * If enabled, score text bops when note hit, and reverse bops(?) when miss.
-   * @default `false`
-   */
-  public static var scoreZoom(get, set):Bool;
-
-  static function get_scoreZoom():Bool
-  {
-    return Save?.instance?.options?.scoreZoom;
-  }
-
-  static function set_scoreZoom(value:Bool):Bool
-  {
-    var save:Save = Save.instance;
-    save.options.scoreZoom = value;
-    save.flush();
-    return value;
-  }
-
-  /**
-   * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
-   * @default `false`
-   */
-  public static var debugDisplay(get, set):Bool;
-
-  static function get_debugDisplay():Bool
-  {
-    return Save?.instance?.options?.debugDisplay;
-  }
-
-  static function set_debugDisplay(value:Bool):Bool
-  {
-    if (value != Save.instance.options.debugDisplay)
-    {
-      toggleDebugDisplay(value);
-    }
-
-    var save = Save.instance;
-    save.options.debugDisplay = value;
-    save.flush();
-    return value;
-  }
-
-  /**
-   * If enabled, the game will automatically pause when tabbing out.
-   * @default `true`
-   */
-  public static var autoPause(get, set):Bool;
-
-  static function get_autoPause():Bool
-  {
-    return Save?.instance?.options?.autoPause ?? true;
-  }
-
-  static function set_autoPause(value:Bool):Bool
-  {
-    if (value != Save.instance.options.autoPause) FlxG.autoPause = value;
-
-    var save:Save = Save.instance;
-    save.options.autoPause = value;
     save.flush();
     return value;
   }

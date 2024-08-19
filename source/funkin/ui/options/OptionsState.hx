@@ -41,15 +41,19 @@ class OptionsState extends MusicBeatState
     add(menuBG);
 
     var options = addPage(Options, new OptionsMenu());
-    var preferences = addPage(Preferences, new PreferencesMenu());
-    var accessibility = addPage(Accessibility, new AccessibilityMenu());
     var controls = addPage(Controls, new ControlsMenu());
+    var graphics = addPage(Graphics, new GraphicsMenu());
+    var visuals = addPage(Visuals, new VisualsMenu());
+    var gameplay = addPage(Gameplay, new GameplayMenu());
+    var accessibility = addPage(Accessibility, new AccessibilityMenu());
 
     if (options.hasMultipleOptions())
     {
       options.onExit.add(exitToMainMenu);
       controls.onExit.add(exitControls);
-      preferences.onExit.add(switchPage.bind(Options));
+      graphics.onExit.add(switchPage.bind(Options));
+      visuals.onExit.add(switchPage.bind(Options));
+      gameplay.onExit.add(switchPage.bind(Options));
       accessibility.onExit.add(switchPage.bind(Options));
     }
     else
@@ -184,19 +188,20 @@ class OptionsMenu extends Page
     super();
 
     add(items = new TextMenuList());
-    createItem("PREFERENCES", function() switchPage(Preferences));
-    createItem("ACCESSIBILITY", function() switchPage(Accessibility));
     createItem("CONTROLS", function() switchPage(Controls));
     createItem("INPUT OFFSETS", function() {
       FlxG.state.openSubState(new LatencyState());
     });
+    createItem("GRAPHICS", function() switchPage(Graphics));
+    createItem("VISUALS", function() switchPage(Visuals));
+    createItem("GAMEPLAY", function() switchPage(Gameplay));
+    createItem("ACCESSIBILITY", function() switchPage(Accessibility));
 
     #if newgrounds
     if (NGio.isLoggedIn) createItem("LOGOUT", selectLogout);
     else
       createItem("LOGIN", selectLogin);
     #end
-    createItem("EXIT", exit);
   }
 
   function createItem(name:String, callback:Void->Void, fireInstantly = false)
@@ -268,6 +273,8 @@ enum abstract PageName(String)
   var Controls = "controls";
   var Colors = "colors";
   var Mods = "mods";
-  var Preferences = "preferences";
+  var Graphics = "graphics";
+  var Visuals = "visuals";
+  var Gameplay = "gameplay";
   var Accessibility = "accessibility";
 }

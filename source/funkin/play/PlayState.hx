@@ -56,7 +56,7 @@ import funkin.ui.debug.charting.ChartEditorState;
 import funkin.ui.debug.stage.StageOffsetSubState;
 import funkin.ui.mainmenu.MainMenuState;
 import funkin.ui.MusicBeatSubState;
-import funkin.ui.options.PreferencesMenu;
+import funkin.ui.options.GraphicsMenu;
 import funkin.ui.options.AccessibilityMenu;
 import funkin.ui.story.StoryMenuState;
 import funkin.ui.transition.LoadingState;
