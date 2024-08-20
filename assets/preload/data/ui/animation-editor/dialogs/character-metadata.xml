@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NOTE: This dialog is used in the animation editor when the player is making a new character -->
+<dialog id="metadataDialog" width="325" height="400" title="New Character - Provide Character Metadata">
+	<vbox width="100%" height="100%">
+		<form id="metadataForm" height="100%" width="100%">
+			<grid columns="2" width="100%" height="100%">
+				<label text="Character Name:" verticalAlign="center" horizontalAlign="right" />
+				<textfield id="inputCharName" value="Boyfriend" />
+				<label text="Health Color:" verticalAlign="center" horizontalAlign="right" />
+				<textfield id="inputHealthColor" value="#31B0D1" />
+				<label text="Flip X" verticalAlign="center" horizontalAlign="right" />
+				<checkbox id="inputFlipX" selected="true" />
+				<label text="Pixel" verticalAlign="center" horizontalAlign="right" />
+				<checkbox id="inputPixel" selected="false" />
+			</grid>
+		</form>
+		<hbox width="100%">
+			<button text="Cancel" id="dialogCancel" />
+			<spacer width="100%" />
+			<button text="Continue" id="dialogContinue" horizontalAlign="right" onclick="metadataForm.submit()" />
+		</hbox>
+	</vbox>
+</dialog>

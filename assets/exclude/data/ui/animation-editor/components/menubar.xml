@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menubar id="menubar" width="100%" paddingLeft="172">
+  <style>
+    .menu {
+    // The width of the individual menu items
+    width: 160px;
+    }
+  </style>
+  <menu text="File">
+    <menu-item id="menubarItemNewCharacter" text="New Character" shortcutText="Ctrl+N" />
+    <menu-separator />
+    <menu-item id="menubarItemOpenCharacter" text="Open Character..." shortcutText="Ctrl+O" />
+    <menu id="menubarOpenRecent" text="Open Recent" />
+    <menu-separator />
+    <menu-item id="menubarItemSaveCharacter" text="Save Character" shortcutText="Ctrl+S" />
+    <menu-item id="menubarItemSaveCharacterAs" text="Save Character As..." shortcutText="Ctrl+Shift+S" />
+    <menu-separator />
+    <menu-item id="menubarItemExit" text="Exit" shortcutText="Ctrl+Q" />
+  </menu>
+  <menu text="Edit">
+    <menu-item id="menubarItemPrevAnim" text="Previous Animation" shortcutText="Q/[" />
+    <menu-item id="menubarItemNextAnim" text="Next Animation" shortcutText="E/]" />
+    <menu-seperator />
+    <menu-checkbox id="menubarItemToggleOnionSkin" text="Onion Skin" />
+  </menu>
+  <menu text="View">
+    <menu-checkbox id="menubarItemDownscroll" text="Downscroll" disabled="true" />
+    <menu text="Theme">
+      <menu-option-box id="menuBarItemThemeLight" text="Light" group="menubarItemThemeGroup" selected="true" />
+      <menu-option-box id="menuBarItemThemeDark" text="Dark" group="menubarItemThemeGroup" />
+    </menu>
+  </menu>
+  <menu text="Window">
+    <menu-checkbox id="menubarItemToggleToolboxMetadata" text="Metadata" />
+    <menu-checkbox id="menubarItemToggleToolboxOffsets" text="Offsets" />
+  </menu>
+  <menu text="Help">
+    <menu-item id="menubarItemWelcomeDialog" text="Welcome Dialog" />
+    <menu-item id="menubarItemUserGuide" text="User Guide" shortcutText="F1" />
+    <menu-item id="menubarItemGoToBackupsFolder" text="Go to Backups Folder" />
+    <menu-item id="menubarItemAbout" text="About..." />
+  </menu>
+  <spacer width="100%" />
+  <label text="PROTOTYPE Functionality is subject to change." verticalAlign="center" />
+</menubar>

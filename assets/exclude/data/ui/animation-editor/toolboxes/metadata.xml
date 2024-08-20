@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<collapsible-dialog id="toolboxMetadata" title="Character Metadata" width="345" height="492">
+    <vbox width="100%" height="100%">
+        <frame text="Required" width="100%" height="250" id="frameRequired">
+            <vbox width="100%" height="100%">
+                <grid columns="2" height="100%">
+                    <label text="Character Name:" verticalAlign="center" horizontalAlign="right" />
+                    <textfield id="inputCharName" value="Boyfriend" tooltip="The readable name of the character." />
+                    <label text="Health Color:" verticalAlign="center" horizontalAlign="right" />
+                    <textfield id="inputHealthColor" value="#31B0D1" tooltip="The color of the Health Bar for the character." />
+                    <label text="Flip X" verticalAlign="center" horizontalAlign="right" />
+                    <checkbox id="inputFlipX" selected="true" tooltip="Whether the character is flipped on the X axis. Enabled for BF characters."/>
+                    <label text="Pixel" verticalAlign="center" horizontalAlign="right" />
+                    <checkbox id="inputPixel" selected="false" tooltip="If the character is Pixel. Disables anti-aliasing for obvious reasons."/>
+                </grid>
+            </vbox>
+        </frame>
+        <frame text="Other" width="100%" height="170" id="frameOther">
+            <grid columns="2">
+                <label text="Starting Animation" verticalAlign="center" />
+                <textfield id="inputCharName" value="" tooltip="The starting animation for the character. Used for GF type characters." />
+                <label id="labelSingTime" text="Sing Time" verticalAlign="center" />
+                <number-stepper id="inputSingTime" pos="8.0" step="0.1" min="0" max="32" tooltip="Set the time the character sings for. Usually 8." />
+            </grid>
+        </frame>
+    </vbox>
+</collapsible-dialog>
