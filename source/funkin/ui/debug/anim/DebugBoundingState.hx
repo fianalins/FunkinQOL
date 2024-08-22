@@ -83,7 +83,7 @@ class DebugBoundingState extends FlxState
     return Screen.instance.hasSolidComponentUnderPoint(hudMousePos.x, hudMousePos.y);
   }
 
-  override function create()
+  override function create():Void
   {
     Paths.setCurrentLevel('week1');
 
