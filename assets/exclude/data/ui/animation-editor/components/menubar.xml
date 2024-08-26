@@ -20,7 +20,7 @@
   <menu text="Edit">
     <menu-item id="menubarItemPrevAnim" text="Previous Animation" shortcutText="Q/[" />
     <menu-item id="menubarItemNextAnim" text="Next Animation" shortcutText="E/]" />
-    <menu-seperator />
+    <menu-separator />
     <menu-checkbox id="menubarItemToggleOnionSkin" text="Onion Skin" />
   </menu>
   <menu text="View">
