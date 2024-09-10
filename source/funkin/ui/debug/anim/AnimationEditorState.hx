@@ -1,25 +1,21 @@
 package funkin.ui.debug.anim;
 
 import flixel.addons.display.FlxGridOverlay;
-import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFrame;
 import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
 import funkin.audio.FunkinSound;
 import funkin.input.Cursor;
 import funkin.play.character.BaseCharacter;
 import funkin.play.character.CharacterData;
 import funkin.play.character.CharacterData.CharacterDataParser;
-import funkin.play.character.SparrowCharacter;
 import funkin.ui.mainmenu.MainMenuState;
 import funkin.util.MouseUtil;
 import funkin.util.SerializerUtil;
@@ -27,7 +23,6 @@ import funkin.util.SortUtil;
 import haxe.ui.components.DropDown;
 import haxe.ui.core.Component;
 import haxe.ui.core.Screen;
-import haxe.ui.events.ItemEvent;
 import haxe.ui.events.UIEvent;
 import haxe.ui.RuntimeComponentBuilder;
 import lime.utils.Assets as LimeAssets;
@@ -38,7 +33,6 @@ import openfl.geom.Rectangle;
 import openfl.net.FileReference;
 import openfl.net.URLLoader;
 import openfl.net.URLRequest;
-import openfl.utils.ByteArray;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -49,7 +43,7 @@ import js.html.FileList;
 import sys.io.File;
 #end
 
-class DebugBoundingState extends FlxState
+class AnimationEditorState extends FlxState
 {
   /*
     TODAY'S TO-DO
