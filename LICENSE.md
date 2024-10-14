@@ -1,3 +1,14 @@
+# Friday Night Funkin'
+
+The Friday Night Funkin' source code is licensed under the Apache 2.0 license: (https://www.apache.org/licenses/LICENSE-2.0)
+
+Friday Night Funkin' Copyright 2020-2024 The Funkin' Crew Inc.
+All Rights Reserved. "Friday Night Funkin'" and the "Friday Night Funkin'" logo are trademarks of The Funkin' Crew Inc.
+
+You can view the `funkin-assets` license here: (https://github.com/FunkinCrew/funkin.assets/blob/main/LICENSE.md)
+
+## Apache 2.0 License
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -186,7 +197,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright [yyyy] [name of copyright owner]
+   Copyright 2020-2024 The Funkin' Crew Inc.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
