@@ -61,6 +61,7 @@ import funkin.ui.MusicBeatSubState;
 import funkin.ui.options.PreferencesMenu;
 import funkin.ui.story.StoryMenuState;
 import funkin.ui.transition.LoadingState;
+import funkin.util.BarUtil;
 import funkin.util.SerializerUtil;
 import haxe.Int64;
 import lime.ui.Haptic;
@@ -210,6 +211,30 @@ class PlayState extends MusicBeatSubState
    * TODO: Move this to its own class.
    */
   public var songScore:Int = 0;
+
+  /**
+   * The player's current rating.
+   */
+  public var songRating:String = '';
+
+  /**
+   * The player's current accuracy percentage.
+   */
+  public var songPerc:Float = 0;
+
+  public var ratingName:String = '';
+
+  public var jankTypeShi:Float = 0;
+
+  public static var ratingTable:Array<Dynamic> = [
+    ['Fail', 0.6], // From 0% to 59%
+    ['Good', 0.8], // From 60% to 79%
+    ['Great', 0.9], // From 80% to 89%
+    ['Excellent', 1], // From 90% to 99%
+    ['Perfect!', 1] // The value on this one isn't used actually, since Perfect is always "1"
+  ];
+
+  var strumMidX:Array<Float> = [19, 131, 990, 1102];
 
   /**
    * Start at this point in the song once the countdown is done.
@@ -426,6 +451,11 @@ class PlayState extends MusicBeatSubState
   var startingSong:Bool = false;
 
   /**
+   * Frick
+   */
+  var endingSong:Bool = false;
+
+  /**
    * Track if we currently have the music paused for a Pause substate, so we can unpause it when we return.
    */
   var musicPausedBySubState:Bool = false;
@@ -459,17 +489,21 @@ class PlayState extends MusicBeatSubState
    */
   var scoreText:FlxText;
 
+  /*
+   * Tween the Score Text to Bop like Psych
+   */
+  var scoreTextBop:FlxTween;
+
+  /**
+   * The FlxText which displays the current ratings.
+   */
+  var judgementText:FlxText;
+
   /**
    * The bar which displays the player's health.
    * Dynamically updated based on the value of `healthLerp` (which is based on `health`).
    */
-  public var healthBar:FlxBar;
-
-  /**
-   * The background image used for the health bar.
-   * Emma says the image is slightly skewed so I'm leaving it as an image instead of a `createGraphic`.
-   */
-  public var healthBarBG:FunkinSprite;
+  public var healthBar:BarUtil;
 
   /**
    * The health icon representing the player.
@@ -490,6 +524,12 @@ class PlayState extends MusicBeatSubState
    * The sprite group containing opponent's strumline notes.
    */
   public var opponentStrumline:Strumline;
+
+  public var timeBar:BarUtil;
+
+  public var timeText:FlxText;
+
+  var timePerc:Float = 0;
 
   /**
    * The camera which contains, and controls visibility of, the user interface elements.
@@ -587,6 +627,42 @@ class PlayState extends MusicBeatSubState
   var skipEndingTransition:Bool = false;
 
   static final BACKGROUND_COLOR:FlxColor = FlxColor.BLACK;
+
+  public function scoreTextZoom():Void
+  {
+    // This is here because Where Do I Position?
+    if (!Preferences.scoreZoom) return;
+
+    if (scoreTextBop != null) scoreTextBop.cancel();
+
+    scoreText.scale.x = 1.1;
+    scoreText.scale.y = 1.1;
+
+    scoreTextBop = FlxTween.tween(scoreText.scale, {x: 1, y: 1}, 0.2,
+      {
+        onComplete: function(tween:FlxTween) {
+          scoreTextBop = null;
+        }
+      });
+  }
+
+  public function negativeScoreTextZoom():Void
+  {
+    // This is here because Where Do I Position?
+    if (!Preferences.scoreZoom) return;
+
+    if (scoreTextBop != null) scoreTextBop.cancel();
+
+    scoreText.scale.x = 0.9;
+    scoreText.scale.y = 0.9;
+
+    scoreTextBop = FlxTween.tween(scoreText.scale, {x: 1, y: 1}, 0.2,
+      {
+        onComplete: function(tween:FlxTween) {
+          scoreTextBop = null;
+        }
+      });
+  }
 
   /**
    * Instantiate a new PlayState.
@@ -832,9 +908,79 @@ class PlayState extends MusicBeatSubState
 
     super.update(elapsed);
 
+    // I love Shadow Mario <3
+    songRating = "N/A";
+    if (Highscore.tallies.missed == 0)
+    {
+      if (Highscore.tallies.bad > 0 || Highscore.tallies.shit > 0) songRating = 'FC';
+      else if (Highscore.tallies.good > 0) songRating = 'GFC';
+      else if (Highscore.tallies.sick > 0) songRating = 'PFC';
+    }
+    else
+    {
+      if (Highscore.tallies.missed < 10) songRating = 'SDCB';
+      else
+        songRating = 'Clear';
+    }
+
+    songPerc = 0;
+    if (Highscore.tallies.totalNotesHit > 0)
+    {
+      songPerc = (Highscore.tallies.sick + Highscore.tallies.good) / (Highscore.tallies.totalNotesHit + Highscore.tallies.missed);
+    }
+
+    switch (Preferences.timeBar)
+    {
+      case 'timeLeft':
+        if (startingSong || endingSong)
+        {
+          timeText.text = '-:--'; // Why does it go to 2000 minutes normally?
+        }
+        else
+        {
+          timeText.text = FlxStringUtil.formatTime((currentSongLengthMs - Conductor.instance.songPosition) / 1000, false);
+        }
+      case 'timeElapsed':
+        if (startingSong || endingSong)
+        {
+          timeText.text = '-:--';
+        }
+        else
+        {
+          timeText.text = FlxStringUtil.formatTime(Conductor.instance.songPosition / 1000, false);
+        }
+      case 'combined':
+        if (startingSong || endingSong)
+        {
+          timeText.text = '-:--';
+        }
+        else
+        {
+          timeText.text = FlxStringUtil.formatTime((currentSongLengthMs - Conductor.instance.songPosition) / 1000, false)
+            + '/'
+            + FlxStringUtil.formatTime(currentSongLengthMs / 1000, false);
+        }
+      case 'songName':
+        timeText.text = currentChart.songName;
+    }
+
+    if (Highscore.tallies.totalNotesHit == 0) ratingName = '?';
+    else
+    {
+      ratingName = ratingTable[ratingTable.length - 1][0];
+      if (songPerc < 1) for (i in 0...ratingTable.length - 1)
+        if (songPerc < ratingTable[i][1])
+        {
+          ratingName = ratingTable[i][0];
+          break;
+        }
+    }
+
     var list = FlxG.sound.list;
     updateHealthBar();
     updateScoreText();
+    updatejudgementText();
+    updateTimeBar();
 
     // Handle restarting the song when needed (player death or pressing Retry)
     if (needsReset)
@@ -1126,11 +1272,16 @@ class PlayState extends MusicBeatSubState
 
     songScore = 0;
     updateScoreText();
+    updatejudgementText();
 
     health = Constants.HEALTH_STARTING;
     healthLerp = health;
 
-    healthBar.value = healthLerp;
+    timePerc = 0;
+
+    healthBar.percent = healthLerp;
+
+    timeBar.percent = timePerc;
 
     if (!isMinimalMode)
     {
@@ -1591,30 +1742,52 @@ class PlayState extends MusicBeatSubState
   function initHealthBar():Void
   {
     var healthBarYPos:Float = Preferences.downscroll ? FlxG.height * 0.1 : FlxG.height * 0.9;
-    healthBarBG = FunkinSprite.create(0, healthBarYPos, 'healthBar');
-    healthBarBG.screenCenter(X);
-    healthBarBG.scrollFactor.set(0, 0);
-    healthBarBG.zIndex = 800;
-    add(healthBarBG);
-
-    healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
-      'healthLerp', 0, 2);
-    healthBar.scrollFactor.set();
-    healthBar.createFilledBar(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
-    healthBar.zIndex = 801;
+    healthBar = new BarUtil(0, healthBarYPos, 'healthBar', function() return healthLerp, 0, 2);
+    healthBar.screenCenter(X);
+    healthBar.leftToRight = false;
+    healthBar.alpha = Preferences.uiAlpha / 100;
+    healthBar.zIndex = 800;
+    updateHealthColors();
     add(healthBar);
 
+    var timeBarYPos:Float = Preferences.downscroll ? FlxG.height * 0.95 : FlxG.height * 0.025;
+    timeBar = new BarUtil(0, timeBarYPos, 'timeBar', function() return timePerc, 0, 1);
+    timeBar.screenCenter(X);
+    timeBar.zIndex = 802;
+    timeBar.visible = Preferences.timeBar != 'disabled';
+    timeBar.setColors(0xFFF1F1F1, 0xFF0F0F0F);
+    add(timeBar);
+
+    timeText = new FlxText(0, timeBarYPos - 7, 400, '', 20);
+    timeText.setFormat(Paths.font('vcr.ttf'), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    timeText.screenCenter(X);
+    timeText.borderSize = 2;
+    timeText.zIndex = 853;
+    timeText.visible = Preferences.timeBar != 'disabled';
+    add(timeText);
+
     // The score text below the health bar.
-    scoreText = new FlxText(healthBarBG.x + healthBarBG.width - 190, healthBarBG.y + 30, 0, '', 20);
-    scoreText.setFormat(Paths.font('vcr.ttf'), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-    scoreText.scrollFactor.set();
-    scoreText.zIndex = 802;
+    scoreText = new FlxText(0, healthBar.y + 30, FlxG.width, '', 20);
+    scoreText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    scoreText.zIndex = 851;
     add(scoreText);
+
+    // The judgement text on the left half.
+    // I'm just copying scoreText, which is why it is here :)
+    judgementText = new FlxText(20, 0, 0, '', 20);
+    judgementText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    judgementText.fieldHeight = 92;
+    judgementText.y = ((FlxG.height / 2) - judgementText.height) - 25; // Works flawlessly without any problems
+    judgementText.zIndex = 852;
+    judgementText.visible = Preferences.judgementCounter;
+    add(judgementText);
 
     // Move the health bar to the HUD camera.
     healthBar.cameras = [camHUD];
-    healthBarBG.cameras = [camHUD];
+    timeText.cameras = [camHUD];
+    timeBar.cameras = [camHUD];
     scoreText.cameras = [camHUD];
+    judgementText.cameras = [camHUD];
   }
 
   /**
@@ -1725,6 +1898,7 @@ class PlayState extends MusicBeatSubState
       iconP2 = new HealthIcon('dad', 1);
       iconP2.y = healthBar.y - (iconP2.height / 2);
       dad.initHealthIcon(true); // Apply the character ID here
+      iconP2.alpha = Preferences.uiAlpha / 100;
       iconP2.zIndex = 850;
       add(iconP2);
       iconP2.cameras = [camHUD];
@@ -1748,6 +1922,7 @@ class PlayState extends MusicBeatSubState
       iconP1 = new HealthIcon('bf', 0);
       iconP1.y = healthBar.y - (iconP1.height / 2);
       boyfriend.initHealthIcon(false); // Apply the character ID here
+      iconP1.alpha = Preferences.uiAlpha / 100;
       iconP1.zIndex = 850;
       add(iconP1);
       iconP1.cameras = [camHUD];
@@ -1810,16 +1985,70 @@ class PlayState extends MusicBeatSubState
     add(playerStrumline);
     add(opponentStrumline);
 
-    // Position the player strumline on the right half of the screen
-    playerStrumline.x = FlxG.width / 2 + Constants.STRUMLINE_X_OFFSET; // Classic style
-    // playerStrumline.x = FlxG.width - playerStrumline.width - Constants.STRUMLINE_X_OFFSET; // Centered style
-    playerStrumline.y = Preferences.downscroll ? FlxG.height - playerStrumline.height - Constants.STRUMLINE_Y_OFFSET : Constants.STRUMLINE_Y_OFFSET;
+    // playerStrumline.x = FlxG.width / 2 + Constants.STRUMLINE_X_OFFSET; // Classic style
+
+    if (!Preferences.middlescroll)
+    {
+      // Position the player strumline on the right half of the screen
+      playerStrumline.x = (FlxG.width - playerStrumline.width - Constants.STRUMLINE_X_OFFSET) + 11; // Normal offset style
+      // Changed to add 11px because it is offset for no reason
+      // (also the Constant is 48, however Opponent Strumline is only 46px off from the left of the screen. Zoom or am I dumb?)
+    }
+    else
+    {
+      // Position the player strumline in the middle of the screen
+      playerStrumline.x = (FlxG.width / 2 - playerStrumline.width / 2) + 5.5; // Centered style
+      // Changed to add 5.5px because it is offset for no reason
+    }
+
+    switch (playerStrumline.noteStyle.id)
+    {
+      case 'funkin':
+        playerStrumline.y = Preferences.downscroll ? FlxG.height - playerStrumline.height - Constants.STRUMLINE_Y_OFFSET : Constants.STRUMLINE_Y_OFFSET;
+      case 'pixel':
+        playerStrumline.y = Preferences.downscroll ? FlxG.height - playerStrumline.height - (Constants.STRUMLINE_Y_OFFSET * 2) : Constants.STRUMLINE_Y_OFFSET;
+    }
     playerStrumline.zIndex = 1001;
     playerStrumline.cameras = [camHUD];
 
-    // Position the opponent strumline on the left half of the screen
-    opponentStrumline.x = Constants.STRUMLINE_X_OFFSET;
-    opponentStrumline.y = Preferences.downscroll ? FlxG.height - opponentStrumline.height - Constants.STRUMLINE_Y_OFFSET : Constants.STRUMLINE_Y_OFFSET;
+    if (!Preferences.middlescroll)
+    {
+      // Position the opponent strumline on the left half of the screen
+      opponentStrumline.x = Constants.STRUMLINE_X_OFFSET;
+    }
+    else
+    {
+      for (i in 0...opponentStrumline.strumlineNotes.members.length)
+      {
+        switch (opponentStrumline.noteStyle.id)
+        {
+          case 'funkin':
+            opponentStrumline.strumlineNotes.members[i].x = strumMidX[i];
+          case 'pixel':
+            opponentStrumline.strumlineNotes.members[i].x = strumMidX[i] + 28;
+        }
+      }
+    }
+
+    if (!Preferences.oppStrumVis)
+    {
+      // Blazin
+      if (opponentStrumline != null)
+      {
+        for (arrow in opponentStrumline.members)
+        {
+          arrow.visible = false;
+        }
+      }
+    }
+
+    switch (opponentStrumline.noteStyle.id)
+    {
+      case 'funkin':
+        opponentStrumline.y = Preferences.downscroll ? FlxG.height - opponentStrumline.height - Constants.STRUMLINE_Y_OFFSET : Constants.STRUMLINE_Y_OFFSET;
+      case 'pixel':
+        opponentStrumline.y = Preferences.downscroll ? FlxG.height - opponentStrumline.height - (Constants.STRUMLINE_Y_OFFSET * 2) : Constants.STRUMLINE_Y_OFFSET;
+    }
     opponentStrumline.zIndex = 1000;
     opponentStrumline.cameras = [camHUD];
 
@@ -2155,8 +2384,34 @@ class PlayState extends MusicBeatSubState
     else
     {
       // TODO: Add an option for this maybe?
+      // TODO: No. Why should removing commas ever be an option unless you are a sociopath?
       var commaSeparated:Bool = true;
-      scoreText.text = 'Score: ${FlxStringUtil.formatMoney(songScore, false, commaSeparated)}';
+      scoreText.text = 'Score: ${FlxStringUtil.formatMoney(songScore, false, commaSeparated)} • Misses: ${Highscore.tallies.missed} • Rating: $jankTypeShi% - $ratingName ($songRating)';
+    }
+
+    // i dont have a single clue how to get an if in the text so variable it's
+    if (Highscore.tallies.totalNotesHit == 0)
+    {
+      jankTypeShi = 100;
+    }
+    else
+    {
+      jankTypeShi = Math.floor(songPerc * 100);
+    }
+  }
+
+  /**
+     * Updates the position and contents of the ratings display.
+     */
+  function updatejudgementText():Void
+  {
+    if (isBotPlayMode)
+    {
+      judgementText.text = '';
+    }
+    else
+    {
+      judgementText.text = 'Combo: ${Highscore.tallies.combo}\nSick: ${Highscore.tallies.sick}\nGood: ${Highscore.tallies.good}\nBad: ${Highscore.tallies.bad}\nShit: ${Highscore.tallies.shit}';
     }
   }
 
@@ -2172,6 +2427,52 @@ class PlayState extends MusicBeatSubState
     else
     {
       healthLerp = FlxMath.lerp(healthLerp, health, 0.15);
+    }
+  }
+
+  function updateHealthColors():Void
+  {
+    switch (Preferences.healthColors)
+    {
+      case "default":
+        healthBar.setColors(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
+      case "soft":
+        healthBar.setColors(Constants.COLOR_HEALTH_BAR_SOFT_RED, Constants.COLOR_HEALTH_BAR_SOFT_GREEN);
+      case "iconColored":
+        var currentCharacterData:SongCharacterData = currentChart.characters;
+        var boyfriend:BaseCharacter = CharacterDataParser.fetchCharacter(currentCharacterData.player);
+        var dad:BaseCharacter = CharacterDataParser.fetchCharacter(currentCharacterData.opponent);
+
+        if (boyfriend != null || dad != null)
+        {
+          healthBar.setColors(FlxColor.fromString(dad.getHealthColor()), FlxColor.fromString(boyfriend.getHealthColor()));
+        }
+    }
+  }
+
+  function updateTimeBar():Void
+  {
+    if (Preferences.timeBar == 'timeLeft' || Preferences.timeBar == 'combined' || Preferences.timeBar == 'songName')
+    {
+      if (!endingSong)
+      {
+        timePerc = (Conductor.instance.songPosition / currentSongLengthMs);
+      }
+      else
+      {
+        timePerc = 1; // Because it goes to a negative number, preventing it from ever becoming full
+      }
+    }
+    else if (Preferences.timeBar == 'timeElapsed')
+    {
+      if (!endingSong)
+      {
+        timePerc = 1 - (Conductor.instance.songPosition / currentSongLengthMs); // I am not knowing mathematics
+      }
+      else
+      {
+        timePerc = 0; // Goes to being full, I do not know how to fix
+      }
     }
   }
 
@@ -2243,6 +2544,8 @@ class PlayState extends MusicBeatSubState
         // Command the opponent to hit the note on time.
         // NOTE: This is what handles the strumline and cleaning up the note itself!
         opponentStrumline.hitNote(note);
+
+        opponentStrumline.playNoteSplash(note.noteData.getDirection());
 
         if (note.holdNoteSprite != null)
         {
@@ -2379,6 +2682,9 @@ class PlayState extends MusicBeatSubState
           // NOTE: This is what handles the scoring.
           trace('Missed note! ${note.noteData}');
           onNoteMiss(note, event.playSound, event.healthChange);
+
+          // Reverse Bop the text because it is cool
+          negativeScoreTextZoom();
         }
 
         note.handledMiss = true;
@@ -2489,11 +2795,16 @@ class PlayState extends MusicBeatSubState
       {
         // Pressed a wrong key with no notes nearby.
         // Perform a ghost miss (anti-spam).
-        ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
+        if (!Preferences.ghostTap)
+        {
+          ghostNoteMiss(input.noteDirection, notesInRange.length > 0);
+          trace('PENALTY Score: ${songScore}');
+          // Reverse Bop the text because it is cool
+          negativeScoreTextZoom();
+        }
 
         // Play the strumline animation.
         playerStrumline.playPress(input.noteDirection);
-        trace('PENALTY Score: ${songScore}');
       }
     else if (notesInDirection.length == 0)
     {
@@ -2519,6 +2830,8 @@ class PlayState extends MusicBeatSubState
 
       // Play the strumline animation.
       playerStrumline.playConfirm(input.noteDirection);
+
+      scoreTextZoom();
     }
     }
 
@@ -2923,6 +3236,14 @@ class PlayState extends MusicBeatSubState
     if (FlxG.sound.music != null) FlxG.sound.music.volume = 0;
     vocals.volume = 0;
     mayPauseGame = false;
+
+    /* for time percent, because manually changing it here doesn't work.
+       *
+       * Changing the time happens every frame or sum shit whatever the update function thingy does
+       * So if I change it here, it'll just change back to the stupid negative
+       * But if I do variable and have it change in the function that gets updated then it work :)
+       */
+    endingSong = true;
 
     // Check if any events want to prevent the song from ending.
     var event = new ScriptEvent(SONG_END, true);

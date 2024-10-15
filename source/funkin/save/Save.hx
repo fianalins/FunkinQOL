@@ -14,6 +14,7 @@ import funkin.ui.debug.stageeditor.StageEditorState.StageEditorTheme;
 import funkin.util.SerializerUtil;
 import thx.semver.Version;
 import thx.semver.Version;
+import funkin.ui.options.MenuItemEnums;
 
 @:nullSafety
 class Save
@@ -22,11 +23,13 @@ class Save
   public static final SAVE_DATA_VERSION_RULE:thx.semver.VersionRule = "2.0.x";
 
   // We load this version's saves from a new save path, to maintain SOME level of backwards compatibility.
-  static final SAVE_PATH:String = 'FunkinCrew';
-  static final SAVE_NAME:String = 'Funkin';
-
+  // static final SAVE_PATH:String = 'FunkinQoL Dev';
+  // static final SAVE_NAME:String = 'FunkinQoL';
   static final SAVE_PATH_LEGACY:String = 'ninjamuffin99';
   static final SAVE_NAME_LEGACY:String = 'funkin';
+
+  static final SAVE_PATH:String = 'FunkinCrew';
+  static final SAVE_NAME:String = 'Funkin';
 
   public static var instance(get, never):Save;
   static var _instance:Null<Save> = null;
@@ -95,8 +98,16 @@ class Save
           framerate: 60,
           naughtyness: true,
           downscroll: false,
+          middlescroll: false,
+          oppStrumVis: true,
+          ghostTap: false,
+          judgementCounter: false,
+          uiAlpha: 100,
+          timeBar: TimeBarDisplayType.Disabled,
           flashingLights: true,
+          healthColors: HealthBarColorType.Soft,
           zoomCamera: true,
+          scoreZoom: false,
           debugDisplay: false,
           autoPause: true,
           inputOffset: 0,
@@ -1288,16 +1299,64 @@ typedef SaveDataOptions =
   var downscroll:Bool;
 
   /**
+   * If enabled, the strumline is in the middle of the screen rather than the right.
+   * @default `false`
+   */
+  var middlescroll:Bool;
+
+  /**
+   * If disabled, the opponent's strumline is removed/moved out of frame. (mod compat if changing alpha conflicts).
+   * @default `true`
+   */
+  var oppStrumVis:Bool;
+
+  /**
+   * If enabled, ghost tapping won't have any consequences.
+   * @default `false`
+   */
+  var ghostTap:Bool;
+
+  /**
+   * When changed, the alpha (transparency/opacity) of the Health Bar follows.
+   * @default `100`
+   */
+  var uiAlpha:Int;
+
+  /**
+   * If enabled, a list of all judgements appears on the left half.
+   * @default `false`
+   */
+  var judgementCounter:Bool;
+
+  /**
+   * If enabled, a timer showing selected option appears.
+   * @default `"disabled"`
+   */
+  var timeBar:String;
+
+  /**
    * If disabled, flashing lights in the main menu and other areas will be less intense.
    * @default `true`
    */
   var flashingLights:Bool;
 
   /**
+   * When changed, the health bar colors will follow the selected.
+   * @default `true`
+   */
+  var healthColors:String;
+
+  /**
    * If disabled, the camera bump synchronized to the beat.
    * @default `false`
    */
   var zoomCamera:Bool;
+
+  /**
+   * If enabled, score text bops when note hit, and reverse bops(?) when miss.
+   * @default `false`
+   */
+  var scoreZoom:Bool;
 
   /**
    * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.

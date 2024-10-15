@@ -433,6 +433,7 @@ class CharacterDataParser
   public static final DEFAULT_NAME:String = 'Untitled Character';
   public static final DEFAULT_OFFSETS:Array<Float> = [0, 0];
   public static final DEFAULT_HEALTHICON_OFFSETS:Array<Int> = [0, 25];
+  static final DEFAULT_COLOR:String = "#FFFFFF";
   public static final DEFAULT_RENDERTYPE:CharacterRenderType = CharacterRenderType.Sparrow;
   public static final DEFAULT_SCALE:Float = 1;
   public static final DEFAULT_SCROLL:Array<Float> = [0, 0];
@@ -522,6 +523,12 @@ class CharacterDataParser
     if (input.healthIcon.offsets == null)
     {
       input.healthIcon.offsets = DEFAULT_OFFSETS;
+    }
+
+    if (input.color == null)
+    {
+      trace('WARN: Character data for "$id" missing health color');
+      input.color = DEFAULT_COLOR;
     }
 
     if (input.startingAnimation == null)
@@ -679,6 +686,11 @@ typedef CharacterData =
    * Optional data about the health icon for the character.
    */
   var healthIcon:Null<HealthIconData>;
+
+  /**
+   * The color of the characters health (A string, formatted as hex color/#FF00AA).
+   */
+  var color:String;
 
   var death:Null<DeathData>;
 

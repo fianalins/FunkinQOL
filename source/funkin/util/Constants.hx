@@ -19,13 +19,20 @@ class Constants
    * The title of the game, for debug printing purposes.
    * Change this if you're making an engine.
    */
-  public static final TITLE:String = "Friday Night Funkin'";
+  public static final TITLE:String = "Friday Night Funkin' QoL";
 
   /**
    * The current version number of the game.
-   * Modify this in the `project.xml` file.
+   * Modify this in the `project.hxp` file.
    */
   public static var VERSION(get, never):String;
+
+  /**
+   * The engine's version number, as a Semantic Versioning string with no prefix.
+   * This has to be here and can't be in the `project.hxp` file.
+   * The Lime MetaData does not have any apparent way as to how to add a custom value.
+   */
+  public static final ENGINE_VERSION:String = "0.5.0 prerelease";
 
   /**
    * The generatedBy string embedded in the chart files made by this application.
@@ -43,6 +50,11 @@ class Constants
    */
   public static final VERSION_SUFFIX:String = #if FEATURE_DEBUG_FUNCTIONS ' PROTOTYPE' #else '' #end;
 
+  /**
+   * Honestly, don't know enough about this stuff to know what to do with it.
+   * I don't use FEATURE_DEBUG_FUNCTIONS, so this isn't a big concern to me,
+   * but I feel like it should be changed to add all of this Git stuff to the Engine version.
+   */
   #if FEATURE_DEBUG_FUNCTIONS
   static function get_VERSION():String
   {
@@ -126,6 +138,16 @@ class Constants
    * The color used by the player health bar.
    */
   public static final COLOR_HEALTH_BAR_GREEN:FlxColor = 0xFF66FF33;
+
+  /**
+   * The color used by the enemy health bar when set to Soft Colors.
+   */
+  public static final COLOR_HEALTH_BAR_SOFT_RED:FlxColor = 0xFFF77B7D;
+
+  /**
+   * The color used by the player health bar when set to Soft Colors.
+   */
+  public static final COLOR_HEALTH_BAR_SOFT_GREEN:FlxColor = 0xFF6FC276;
 
   /**
    * The base colors used by notes.

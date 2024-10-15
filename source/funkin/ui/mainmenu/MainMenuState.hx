@@ -173,7 +173,7 @@ class MainMenuState extends MusicBeatState
 
     // This has to come AFTER!
     this.leftWatermarkText.text = Constants.VERSION;
-    // this.rightWatermarkText.text = "blablabla test";
+    this.rightWatermarkText.text = 'v${Constants.ENGINE_VERSION}'; // You know it baby
 
     // NG.core.calls.event.logEvent('swag').send();
   }

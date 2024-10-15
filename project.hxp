@@ -30,13 +30,13 @@ class Project extends HXProject {
 	/**
 	 * The game's name. Used as the default window title.
 	 */
-	static final TITLE:String = "Friday Night Funkin'";
+	static final TITLE:String = "Friday Night Funkin' QoL";
 
 	/**
 	 * The name of the generated executable file.
 	 * For example, `"Funkin"` will create a file called `Funkin.exe`.
 	 */
-	static final EXECUTABLE_NAME:String = "Funkin";
+	static final EXECUTABLE_NAME:String = "FunkinQoL";
 
 	/**
 	 * The relative location of the source code.
@@ -64,7 +64,7 @@ class Project extends HXProject {
 	 * The company name for the game.
 	 * This appears in metadata in places I think.
 	 */
-	static final COMPANY:String = "The Funkin' Crew";
+	static final COMPANY:String = "The Funkin' Crew, fianalins";
 
   /**
    * Path to the Haxe script run before building the game.
@@ -243,6 +243,9 @@ class Project extends HXProject {
 	 * `-DFEATURE_GHOST_TAPPING`
 	 * If this flag is enabled, misses will not be counted when it is not the player's turn.
 	 * Misses are still counted when the player has notes to hit.
+	 *
+	 * This is false information.
+	 * This changes from My Way to the experimental version.
 	 */
 	static final FEATURE_GHOST_TAPPING:FeatureFlag = "FEATURE_GHOST_TAPPING";
 

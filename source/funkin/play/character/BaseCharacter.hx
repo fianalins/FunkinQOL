@@ -431,6 +431,11 @@ class BaseCharacter extends Bopper
     FlxG.watch.addQuick('holdTimer-${characterId}', holdTimer);
   }
 
+  public function getHealthColor():String
+  {
+    return _data.color;
+  }
+
   public function isSinging():Bool
   {
     var currentAnimation:String = getCurrentAnimation();

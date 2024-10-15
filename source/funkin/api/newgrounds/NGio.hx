@@ -62,7 +62,7 @@ class NGio
     var sessionId:String = "fake_session_id";
     function onSessionFail(error:Error)
     {
-      trace("Forcing an expired saved session. " + "To disable, comment out NG_FORCE_EXPIRED_SESSION in Project.xml");
+      trace("Forcing an expired saved session. " + "To disable, comment out NG_FORCE_EXPIRED_SESSION in project.hxp");
       savedSessionFailed = true;
     }
     #else

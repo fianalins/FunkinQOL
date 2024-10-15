@@ -8,7 +8,7 @@ import funkin.save.Save;
 class Preferences
 {
   /**
-   * FPS
+   * Cap the FPS at this value.
    * @default `60`
    */
   public static var framerate(get, set):Int;
@@ -75,6 +75,120 @@ class Preferences
   }
 
   /**
+   * If enabled, the strumline is in the middle of the screen rather than the right.
+   * @default `false`
+   */
+  public static var middlescroll(get, set):Bool;
+
+  static function get_middlescroll():Bool
+  {
+    return Save?.instance?.options?.middlescroll;
+  }
+
+  static function set_middlescroll(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.middlescroll = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If disabled, the opponent's strumline is invisible.
+   * @default `true`
+   */
+  public static var oppStrumVis(get, set):Bool;
+
+  static function get_oppStrumVis():Bool
+  {
+    return Save?.instance?.options?.oppStrumVis;
+  }
+
+  static function set_oppStrumVis(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.oppStrumVis = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, ghost tapping won't have any consequences.
+   * @default `false`
+   */
+  public static var ghostTap(get, set):Bool;
+
+  static function get_ghostTap():Bool
+  {
+    return Save?.instance?.options?.ghostTap;
+  }
+
+  static function set_ghostTap(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.ghostTap = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * When changed, the alpha (transparency/opacity) of the Health Bar follows.
+   * @default `100`
+   */
+  public static var uiAlpha(get, set):Int;
+
+  static function get_uiAlpha():Int
+  {
+    return Save?.instance?.options?.uiAlpha;
+  }
+
+  static function set_uiAlpha(value:Int):Int
+  {
+    var save:Save = Save.instance;
+    save.options.uiAlpha = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, a list of all judgements appears on the left half.
+   * @default `false`
+   */
+  public static var judgementCounter(get, set):Bool;
+
+  static function get_judgementCounter():Bool
+  {
+    return Save?.instance?.options?.judgementCounter;
+  }
+
+  static function set_judgementCounter(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.judgementCounter = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, a timer showing selected option appears.
+   * @default `"disabled"`
+   */
+  public static var timeBar(get, set):String;
+
+  static function get_timeBar():String
+  {
+    return Save?.instance?.options?.timeBar;
+  }
+
+  static function set_timeBar(value:String):String
+  {
+    var save:Save = Save.instance;
+    save.options.timeBar = value;
+    save.flush();
+    return value;
+  }
+
+  /**
    * If disabled, flashing lights in the main menu and other areas will be less intense.
    * @default `true`
    */
@@ -94,6 +208,25 @@ class Preferences
   }
 
   /**
+   * When changed, the health bar colors will follow the selected.
+   * @default `"soft"`
+   */
+  public static var healthColors(get, set):String;
+
+  static function get_healthColors():String
+  {
+    return Save?.instance?.options?.healthColors;
+  }
+
+  static function set_healthColors(value:String):String
+  {
+    var save:Save = Save.instance;
+    save.options.healthColors = value;
+    save.flush();
+    return value;
+  }
+
+  /**
    * If disabled, the camera bump synchronized to the beat.
    * @default `false`
    */
@@ -108,6 +241,25 @@ class Preferences
   {
     var save:Save = Save.instance;
     save.options.zoomCamera = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If enabled, score text bops when note hit, and reverse bops(?) when miss.
+   * @default `false`
+   */
+  public static var scoreZoom(get, set):Bool;
+
+  static function get_scoreZoom():Bool
+  {
+    return Save?.instance?.options?.scoreZoom;
+  }
+
+  static function set_scoreZoom(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.scoreZoom = value;
     save.flush();
     return value;
   }

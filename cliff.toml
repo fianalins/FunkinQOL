@@ -2,8 +2,8 @@
 # https://git-cliff.org/docs/configuration
 
 [remote.github]
-owner = "FunkinCrew"
-repo = "Funkin"
+owner = "fianalins"
+repo = "FunkinQOL"
 
 # To bypass "you have reached your rate limit!", you can input a github token either as an environment variable
 # or alongside the `git cliff` command like so `git cliff --github-token TOKEN_HERE`

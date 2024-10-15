@@ -60,12 +60,46 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Downscroll', 'Enable to make notes move downwards', function(value:Bool):Void {
       Preferences.downscroll = value;
     }, Preferences.downscroll);
+    createPrefItemCheckbox('Middlescroll', 'Enable to make notes in the middle', function(value:Bool):Void {
+      Preferences.middlescroll = value;
+    }, Preferences.middlescroll);
+    createPrefItemCheckbox('Show Opponent Strumline', 'Disable to remove opponent strums (Middlescroll Only)', function(value:Bool):Void {
+      Preferences.oppStrumVis = value;
+    }, Preferences.oppStrumVis);
+    createPrefItemCheckbox('Ghost Tapping', 'Enable for no penalty when there are no notes', function(value:Bool):Void {
+      Preferences.ghostTap = value;
+    }, Preferences.ghostTap);
+    createPrefItemPercentage('Health Bar Alpha', 'Changes the alpha (opacity/transparency) of the Health Bar', function(value:Int):Void {
+      Preferences.uiAlpha = value;
+    }, Preferences.uiAlpha);
+    createPrefItemCheckbox('Judgement Counter', 'Enable to show a list of judgements on the left side', function(value:Bool):Void {
+      Preferences.judgementCounter = value;
+    }, Preferences.judgementCounter);
+    createPrefItemEnum('Time Bar', 'Show a bar that displays the selected', [
+      TimeBarDisplayType.Disabled => "Disabled",
+      TimeBarDisplayType.TimeLeft => "Time Left",
+      TimeBarDisplayType.TimeElapsed => "Time Elapsed",
+      TimeBarDisplayType.TimeCombined => "Combined",
+      TimeBarDisplayType.SongName => "Song Name"
+    ], function(value:String):Void {
+      Preferences.timeBar = value;
+    }, Preferences.timeBar);
     createPrefItemCheckbox('Flashing Lights', 'Disable to dampen flashing effects', function(value:Bool):Void {
       Preferences.flashingLights = value;
     }, Preferences.flashingLights);
+    createPrefItemEnum('Health Bar Colors', 'Changes the health bar colors to the selected', [
+      HealthBarColorType.Default => "Default",
+      HealthBarColorType.Soft => "Soft",
+      HealthBarColorType.IconColored => "Icon Colored"
+    ], function(value:String):Void {
+      Preferences.healthColors = value;
+    }, Preferences.healthColors);
     createPrefItemCheckbox('Camera Zooming on Beat', 'Disable to stop the camera bouncing to the song', function(value:Bool):Void {
       Preferences.zoomCamera = value;
     }, Preferences.zoomCamera);
+    createPrefItemCheckbox('Score Zooming on Hit', 'Enable to make Score Text bounce on a note hit', function(value:Bool):Void {
+      Preferences.scoreZoom = value;
+    }, Preferences.scoreZoom);
     createPrefItemCheckbox('Debug Display', 'Enable to show FPS and other debug stats', function(value:Bool):Void {
       Preferences.debugDisplay = value;
     }, Preferences.debugDisplay);
@@ -78,7 +112,7 @@ class PreferencesMenu extends Page
       Preferences.unlockedFramerate = value;
     }, Preferences.unlockedFramerate);
     #else
-    createPrefItemNumber('FPS', 'The maximum framerate that the game targets', function(value:Float) {
+    createPrefItemNumber('FPS Cap', 'The maximum framerate that the game targets', function(value:Float) {
       Preferences.framerate = Std.int(value);
     }, null, Preferences.framerate, 30, 300, 5, 0);
     #end
