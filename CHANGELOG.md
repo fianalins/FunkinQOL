@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.0] - Prerelease - 2024-10-14
 Most features work, others are broken. This is an experimental branch for this specific update, don't expect this to come out any time soon.
 
+Assets is not in working order...
+
 ### Everything
 - Updated game to have the Pico Update. This required redoing/going into the file and retyping most things, some things able to be copied and pasted!
 ### Changed
