@@ -39,7 +39,7 @@ class BarUtil extends FlxSpriteGroup
     leftSide = new FlxSprite().makeGraphic(Std.int(backBar.width), Std.int(backBar.height), FlxColor.WHITE);
     leftSide.antialiasing = true;
 
-    rightSide = new FlxSprite().makeGraphic(Std.int(backBar.width), Std.int(backBar.height), FlxColor.WHITE);
+    rightSide = new FlxSprite().makeGraphic(Std.int(backBar.width), Std.int(backBar.height), FlxColor.BLACK);
     rightSide.antialiasing = true;
 
     add(leftSide);
