@@ -55,6 +55,12 @@ class Strumline extends FlxSpriteGroup
   public var isPlayer:Bool;
 
   /**
+   * Whether this strumline is meant to be on the sides or not.
+   * True means middlescroll is on and notes are set to predetermined locations.
+   */
+  public var isOnSides:Bool;
+
+  /**
    * Usually you want to keep this as is, but if you are using a Strumline and
    * playing a sound that has it's own conductor, set this (LatencyState for example)
    */
@@ -115,11 +121,12 @@ class Strumline extends FlxSpriteGroup
 
   var heldKeys:Array<Bool> = [];
 
-  public function new(noteStyle:NoteStyle, isPlayer:Bool)
+  public function new(noteStyle:NoteStyle, isPlayer:Bool, isOnSides:Bool)
   {
     super();
 
     this.isPlayer = isPlayer;
+    this.isOnSides = isOnSides;
     this.noteStyle = noteStyle;
 
     this.strumlineNotes = new FlxTypedSpriteGroup<StrumlineNote>();
@@ -410,7 +417,7 @@ class Strumline extends FlxSpriteGroup
         }
       }
 
-      if (Preferences.middlescroll && !isPlayer) holdNote.alpha = 0.4;
+      if (Preferences.middlescroll && isOnSides) holdNote.alpha = 0.4;
 
       var renderWindowEnd = holdNote.strumTime + holdNote.fullSustainLength + Constants.HIT_WINDOW_MS + RENDER_DISTANCE_MS / 8;
 
@@ -727,7 +734,7 @@ class Strumline extends FlxSpriteGroup
     {
       splash.play(direction);
 
-      splash.x = Preferences.middlescroll && !isPlayer ? noteMidX[direction] : this.x;
+      splash.x = Preferences.middlescroll && isOnSides ? noteMidX[direction] : this.x;
       splash.x += getXPos(direction);
       splash.x += INITIAL_OFFSET;
       splash.y = this.y;
@@ -752,7 +759,7 @@ class Strumline extends FlxSpriteGroup
 
       cover.playStart();
 
-      cover.x = Preferences.middlescroll && !isPlayer ? noteMidX[holdNote.noteDirection] : this.x;
+      cover.x = Preferences.middlescroll && isOnSides ? noteMidX[holdNote.noteDirection] : this.x;
       cover.x += getXPos(holdNote.noteDirection);
       cover.x += STRUMLINE_SIZE / 2;
       cover.x -= cover.width / 2;
@@ -764,7 +771,7 @@ class Strumline extends FlxSpriteGroup
       cover.y += -96; // Manual tweaking because fuck.
     }
 
-    if (Preferences.middlescroll && !isPlayer) cover.alpha = 0.4;
+    if (Preferences.middlescroll && isOnSides) cover.alpha = 0.4;
   }
 
   public function buildNoteSprite(note:SongNoteData):NoteSprite
@@ -779,7 +786,7 @@ class Strumline extends FlxSpriteGroup
       noteSprite.direction = note.getDirection();
       noteSprite.noteData = note;
 
-      noteSprite.x = Preferences.middlescroll && !isPlayer ? noteMidX[note.getDirection()] : this.x;
+      noteSprite.x = Preferences.middlescroll && isOnSides ? noteMidX[note.getDirection()] : this.x;
       noteSprite.x += getXPos(DIRECTIONS[note.getDirection() % KEY_COUNT]);
       noteSprite.x -= (noteSprite.width - Strumline.STRUMLINE_SIZE) / 2; // Center it
       noteSprite.x -= NUDGE;
@@ -810,14 +817,14 @@ class Strumline extends FlxSpriteGroup
       holdNoteSprite.visible = true;
       holdNoteSprite.alpha = 1.0;
 
-      holdNoteSprite.x = Preferences.middlescroll && !isPlayer ? noteMidX[note.getDirection()] : this.x;
+      holdNoteSprite.x = Preferences.middlescroll && isOnSides ? noteMidX[note.getDirection()] : this.x;
       holdNoteSprite.x += getXPos(DIRECTIONS[note.getDirection() % KEY_COUNT]);
       holdNoteSprite.x += STRUMLINE_SIZE / 2;
       holdNoteSprite.x -= holdNoteSprite.width / 2;
       holdNoteSprite.y = -9999;
     }
 
-    if (Preferences.middlescroll && !isPlayer) holdNoteSprite.alpha = 0.4;
+    if (Preferences.middlescroll && isOnSides) holdNoteSprite.alpha = 0.4;
 
     return holdNoteSprite;
   }
@@ -853,7 +860,7 @@ class Strumline extends FlxSpriteGroup
       }
     }
 
-    if (Preferences.middlescroll && !isPlayer) noteSplashes.alpha = 0.4;
+    if (Preferences.middlescroll && isOnSides) noteSplashes.alpha = 0.4;
 
     return result;
   }
@@ -889,7 +896,7 @@ class Strumline extends FlxSpriteGroup
       }
     }
 
-    if (Preferences.middlescroll && !isPlayer) noteHoldCovers.alpha = 0.4;
+    if (Preferences.middlescroll && isOnSides) noteHoldCovers.alpha = 0.4;
 
     return result;
   }
@@ -917,7 +924,7 @@ class Strumline extends FlxSpriteGroup
       this.notes.add(result);
     }
 
-    if (Preferences.middlescroll && !isPlayer) notes.alpha = 0.4;
+    if (Preferences.middlescroll && isOnSides) notes.alpha = 0.4;
 
     return result;
   }
@@ -974,7 +981,7 @@ class Strumline extends FlxSpriteGroup
     arrow.alpha = 0.0;
 
     // make the alpha var not if statement??
-    if (Preferences.middlescroll && !isPlayer)
+    if (Preferences.middlescroll && isOnSides)
     {
       FlxTween.tween(arrow, {y: arrow.y + 10, alpha: 0.4}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * index)});
     }

@@ -1978,9 +1978,9 @@ class PlayState extends MusicBeatSubState
     var noteStyle:NoteStyle = NoteStyleRegistry.instance.fetchEntry(noteStyleId);
     if (noteStyle == null) noteStyle = NoteStyleRegistry.instance.fetchDefault();
 
-    playerStrumline = new Strumline(noteStyle, !isBotPlayMode);
+    playerStrumline = new Strumline(noteStyle, !isBotPlayMode, false);
     playerStrumline.onNoteIncoming.add(onStrumlineNoteIncoming);
-    opponentStrumline = new Strumline(noteStyle, false);
+    opponentStrumline = new Strumline(noteStyle, false, Preferences.middlescroll);
     opponentStrumline.onNoteIncoming.add(onStrumlineNoteIncoming);
     add(playerStrumline);
     add(opponentStrumline);

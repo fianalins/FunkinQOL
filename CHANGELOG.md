@@ -5,22 +5,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.5.0] - Prerelease - 2024-10-14
-Most features work, others are broken. This is an experimental branch for this specific update, don't expect this to come out any time soon.
-
-Assets is not in working order...
+Most features work. This is an experimental branch (seperated from `experimental` as a lot of stuff that is complicated has changed)
 
 ### Everything
-- Updated game to have the Pico Update. This required redoing/going into the file and retyping most things, some things able to be copied and pasted!
+- Updated game to have the Pico Update. This required redoing/going into the file and retyping most things, some things able to be copied and pasted thankfully!
 ### Changed
-- Experimental Flag for base game Ghost Tapping switches completely over to the experimental version.
-
+- Experimental Flag for base game Ghost Tapping switches completely over to the experimental version. (in theory)
+### Added
+- A better way of determining whether or not to place the strums on the sides of the screen.
+  - In greater detail, a `isOnSides` variable has been added to `Strumline.hx`. Not very complicated
+  - This small change removes Bot Play making Player strums act in a not so desired way
+- New submodule for assets, rather than uploading every asset file directly to the repo.
+  - This will not be in place for any other branch until properly updated to this current version
+  - You can find the fork of `funkin.assets` [here](https://github.com/fianalins/funkin.qol.assets)
+- ~~GameJolt API~~
+  - ~~Functionality for Trophies and Scoreboards added~~
+  - ~~A web only feature, due to lack of a proper way of checking if a score is cheated or not.~~
+    - ~~Ideas for checking are: No mods enabled, checking hash (or whatever its called) to see if file is original or not, something else IDK.~~
 ### Known Issues
-- Using Colored bar makes the `dark` variation characters throw an error. I have no clue why.
+- ~~Using Colored bar makes the `dark` variation characters throw an error. I have no clue why.~~ Colored Icons is not working in general. This is due to the `assets` submodule not having the `"color"` value in any of the character files, yet.
 - Probably a lot more
 
 ### Extra
 - This uses base game save data!! If you choose to build this you are risking everything!
   - A bug with the base game itself causes older versions of the game to delete all save data!! Back everything up!
+  - This will be fixed (when 0.5.3 releases)!
+  - The final product will use the FunkinQoL save location!
 
 Unless you want to be like me and lose all my gold P ranks...
 
