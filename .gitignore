@@ -9,6 +9,9 @@ shitAudio/
 .build_time
 .swp
 
+# Very specific
+/source/funkin/data/api
+
 # Exclude JS stuff
 node_modules/
 package.json

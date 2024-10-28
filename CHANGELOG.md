@@ -15,8 +15,7 @@ Assets is not in working order...
 - Experimental Flag for base game Ghost Tapping switches completely over to the experimental version.
 
 ### Known Issues
-- Health Bar does not work.
-  - Using Colored bar makes the `dark` variation characters throw an error. I have no clue why.
+- Using Colored bar makes the `dark` variation characters throw an error. I have no clue why.
 - Probably a lot more
 
 ### Extra

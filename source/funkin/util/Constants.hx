@@ -190,6 +190,16 @@ class Constants
   public static final COLOR_PRELOADER_LOCK_LINK:FlxColor = 0xEEB211;
 
   /**
+   * Color used for the Time Bar background
+   */
+  public static final COLOR_TIME_BAR_BLACK:FlxColor = 0xFF0F0F0F;
+
+  /**
+   * Color used for the Time Bar foreground/fill
+   */
+  public static final COLOR_TIME_BAR_WHITE:FlxColor = 0xFFF1F1F1;
+
+  /**
    * LANGUAGE
    */
   // ==============================

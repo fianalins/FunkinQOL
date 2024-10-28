@@ -9,48 +9,90 @@ import flixel.FlxSprite;
 
 class BarUtil extends FlxSpriteGroup
 {
-  public var leftSide:FlxSprite;
-  public var rightSide:FlxSprite;
+  /*
+   * The left side of the bar
+   */
+  public var leftSideBar:FlxSprite;
+
+  /*
+   * The right side of the bar
+   */
+  public var rightSideBar:FlxSprite;
+
+  /*
+   * The back of the bar, as an image defined by what you pass in
+   */
   public var backBar:FlxSprite;
 
+  /*
+   * An optional function for the value of the bar
+   */
   public var valueFunc:Void->Float = null;
+
+  /*
+   * The percent value of the bar
+   */
   public var percent(default, set):Float = 0;
+
+  /*
+   * The bounds of the bar
+   */
   public var boundingPos:Dynamic = {min: 0, max: 1};
 
+  /*
+   * Whether or not the bar changes from left to right or not
+   */
   public var leftToRight(default, set):Bool = true;
+
+  /*
+   * The center of the bar
+   */
   public var barCenter(default, null):Float = 0;
 
+  /*
+   * The width of the bar
+   */
   public var barWidth(default, set):Int = 1;
+
+  /*
+   * The height of the bar
+   */
   public var barHeight(default, set):Int = 1;
+
+  /*
+   * The offset of the bar to the back bar image
+   */
   public var barOffset:FlxPoint = new FlxPoint(4, 4);
 
-  public function new(x:Float, y:Float, img:String, ?valueFunc:Void->Float, boundingX:Float = 0, boundingY:Float = 1)
+  /*
+   * Whether or not the bar is enabled or not...
+   */
+  public var enabled:Bool = true;
+
+  public function new(x:Float, y:Float, image:String = 'healthBar', ?valueFunc:Void->Float, boundingX:Float = 0, boundingY:Float = 1)
   {
     super(x, y);
 
     this.valueFunc = valueFunc;
     setBounds(boundingX, boundingY);
 
-    backBar = new FlxSprite().loadGraphic(Paths.image(img));
-    backBar.antialiasing = true;
-    barWidth = Std.int(backBar.width - 8);
-    barHeight = Std.int(backBar.height - 8);
+    backBar = new FlxSprite().loadGraphic(Paths.image(image));
+    barWidth = Std.int(backBar.width - 6);
+    barHeight = Std.int(backBar.height - 6);
 
-    leftSide = new FlxSprite().makeGraphic(Std.int(backBar.width), Std.int(backBar.height), FlxColor.WHITE);
-    leftSide.antialiasing = true;
+    leftSideBar = new FlxSprite().makeGraphic(Std.int(backBar.width), Std.int(backBar.height), FlxColor.WHITE);
+    // leftSideBar.color = FlxColor.WHITE;
 
-    rightSide = new FlxSprite().makeGraphic(Std.int(backBar.width), Std.int(backBar.height), FlxColor.BLACK);
-    rightSide.antialiasing = true;
+    rightSideBar = new FlxSprite().makeGraphic(Std.int(backBar.width), Std.int(backBar.height), FlxColor.WHITE);
+    rightSideBar.color = FlxColor.BLACK;
 
-    add(leftSide);
-    add(rightSide);
+    add(leftSideBar);
+    add(rightSideBar);
     add(backBar);
     reloadClips();
   }
 
-  public var enabled:Bool = true;
-
-  override function update(elapsed:Float)
+  override function update(elapsed:Float):Void
   {
     if (!enabled)
     {
@@ -64,10 +106,7 @@ class BarUtil extends FlxSpriteGroup
       percent = (value != null ? value : 0);
     }
     else
-    {
       percent = 0;
-    }
-
     super.update(elapsed);
   }
 
@@ -79,51 +118,51 @@ class BarUtil extends FlxSpriteGroup
 
   public function setColors(left:FlxColor = null, right:FlxColor = null)
   {
-    if (left != null) leftSide.color = left;
-    if (right != null) rightSide.color = right;
+    if (left != null) leftSideBar.color = left;
+    if (right != null) rightSideBar.color = right;
   }
 
   public function updateBar()
   {
-    if (leftSide == null || rightSide == null) return;
+    if (leftSideBar == null || rightSideBar == null) return;
 
-    leftSide.setPosition(backBar.x, backBar.y);
-    rightSide.setPosition(backBar.x, backBar.y);
+    leftSideBar.setPosition(backBar.x, backBar.y);
+    rightSideBar.setPosition(backBar.x, backBar.y);
 
     var leftSize:Float = 0;
     if (leftToRight) leftSize = FlxMath.lerp(0, barWidth, percent / 100);
     else
       leftSize = FlxMath.lerp(0, barWidth, 1 - percent / 100);
 
-    leftSide.clipRect.width = leftSize;
-    leftSide.clipRect.height = barHeight;
-    leftSide.clipRect.x = barOffset.x;
-    leftSide.clipRect.y = barOffset.y;
+    leftSideBar.clipRect.width = leftSize;
+    leftSideBar.clipRect.height = barHeight;
+    leftSideBar.clipRect.x = barOffset.x;
+    leftSideBar.clipRect.y = barOffset.y;
 
-    rightSide.clipRect.width = barWidth - leftSize;
-    rightSide.clipRect.height = barHeight;
-    rightSide.clipRect.x = barOffset.x + leftSize;
-    rightSide.clipRect.y = barOffset.y;
+    rightSideBar.clipRect.width = barWidth - leftSize;
+    rightSideBar.clipRect.height = barHeight;
+    rightSideBar.clipRect.x = barOffset.x + leftSize;
+    rightSideBar.clipRect.y = barOffset.y;
 
-    barCenter = leftSide.x + leftSize + barOffset.x;
+    barCenter = leftSideBar.x + leftSize + barOffset.x;
 
-    leftSide.clipRect = leftSide.clipRect;
-    rightSide.clipRect = rightSide.clipRect;
+    leftSideBar.clipRect = leftSideBar.clipRect;
+    rightSideBar.clipRect = rightSideBar.clipRect;
   }
 
   public function reloadClips()
   {
-    if (leftSide != null)
+    if (leftSideBar != null)
     {
-      leftSide.setGraphicSize(Std.int(backBar.width), Std.int(backBar.height));
-      leftSide.updateHitbox();
-      leftSide.clipRect = new FlxRect(0, 0, Std.int(backBar.width), Std.int(backBar.height));
+      leftSideBar.setGraphicSize(Std.int(backBar.width), Std.int(backBar.height));
+      leftSideBar.updateHitbox();
+      leftSideBar.clipRect = new FlxRect(0, 0, Std.int(backBar.width), Std.int(backBar.height));
     }
-    if (rightSide != null)
+    if (rightSideBar != null)
     {
-      rightSide.setGraphicSize(Std.int(backBar.width), Std.int(backBar.height));
-      rightSide.updateHitbox();
-      rightSide.clipRect = new FlxRect(0, 0, Std.int(backBar.width), Std.int(backBar.height));
+      rightSideBar.setGraphicSize(Std.int(backBar.width), Std.int(backBar.height));
+      rightSideBar.updateHitbox();
+      rightSideBar.clipRect = new FlxRect(0, 0, Std.int(backBar.width), Std.int(backBar.height));
     }
     updateBar();
   }

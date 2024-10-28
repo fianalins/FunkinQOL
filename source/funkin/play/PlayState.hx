@@ -1755,7 +1755,7 @@ class PlayState extends MusicBeatSubState
     timeBar.screenCenter(X);
     timeBar.zIndex = 802;
     timeBar.visible = Preferences.timeBar != 'disabled';
-    timeBar.setColors(0xFFF1F1F1, 0xFF0F0F0F);
+    timeBar.setColors(Constants.COLOR_TIME_BAR_WHITE, Constants.COLOR_TIME_BAR_BLACK);
     add(timeBar);
 
     timeText = new FlxText(0, timeBarYPos - 7, 400, '', 20);
