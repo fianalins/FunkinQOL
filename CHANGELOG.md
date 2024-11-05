@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.5.0] - Prerelease - 2024-10-14
-Most features work. This is an experimental branch (seperated from `experimental` as a lot of stuff that is complicated has changed)
+This is possibly the biggest update I will ever release... because I'm lazy
+On the surface it looks like just a version jump, but it has took me so long to get this stupid GameJolt API stuff working, it deserves this..
 
 ### Everything
-- Updated game to have the Pico Update. This required redoing/going into the file and retyping most things, some things able to be copied and pasted thankfully!
+- Updated game to 0.5.2 (Pico Update).
 ### Changed
 - Experimental Flag for base game Ghost Tapping switches completely over to the experimental version. (in theory)
+- Moved one line of code to a different spot and fixed an error!!!
 ### Added
 - A better way of determining whether or not to place the strums on the sides of the screen.
   - In greater detail, a `isOnSides` variable has been added to `Strumline.hx`. Not very complicated
@@ -18,13 +20,13 @@ Most features work. This is an experimental branch (seperated from `experimental
 - New submodule for assets, rather than uploading every asset file directly to the repo.
   - This will not be in place for any other branch until properly updated to this current version
   - You can find the fork of `funkin.assets` [here](https://github.com/fianalins/funkin.qol.assets)
-- ~~GameJolt API~~
-  - ~~Functionality for Trophies and Scoreboards added~~
-  - ~~A web only feature, due to lack of a proper way of checking if a score is cheated or not.~~
-    - ~~Ideas for checking are: No mods enabled, checking hash (or whatever its called) to see if file is original or not, something else IDK.~~
+- New field for songs and weeks for a `Table ID` (the thing that is used for scoreboards)
+  - For new songs and weeks, this is required to show up. Hopefully later this can be fixed.
+  - You can change the Table ID for songs in the Chart Editor, Weeks have to be done manually.
+- ~~A login page for GameJolt~~ Not yet.
+- [Extra GameJolt API Info](#gamejolt-api)
 ### Known Issues
-- ~~Using Colored bar makes the `dark` variation characters throw an error. I have no clue why.~~ Colored Icons is not working in general. This is due to the `assets` submodule not having the `"color"` value in any of the character files, yet.
-- Probably a lot more
+- None as of now
 
 ### Extra
 - This uses base game save data!! If you choose to build this you are risking everything!
@@ -33,6 +35,24 @@ Most features work. This is an experimental branch (seperated from `experimental
   - The final product will use the FunkinQoL save location!
 
 Unless you want to be like me and lose all my gold P ranks...
+
+### GameJolt API
+This is the feature I have spent most of my time working on. There is practically nothing new in this update besides this ***Web Only Feature!***
+
+- Scoreboards and Trophies
+  - There are no plans to make an interface to view trophies and scoreboards in-game as of now.
+    - This is because this is a web-only feature, you already get notifications and can check on the game page for scoreboards.
+
+- How scores are saved
+  - Scores are saved as
+    - The score, with commas seperating.
+    - The rank (PERFECT, EXCELLENT, etc.)
+    - Percent (100%, 99%, 69%, etc.)
+    - Difficulty (NIGHTMARE, HARD, EASY, etc.)
+      - This is because I don't feel like making a scoreboard for every difficulty,
+
+- Why do this
+  - Because I want to do something. This is something. And time-consuming.
 
 ## [0.4.0] - 2024-8-17
 ### Added

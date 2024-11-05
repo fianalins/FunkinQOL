@@ -11,6 +11,7 @@ shitAudio/
 
 # Very specific
 /source/funkin/data/api
+helplist.md
 
 # Exclude JS stuff
 node_modules/
