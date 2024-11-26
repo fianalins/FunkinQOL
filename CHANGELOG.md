@@ -9,10 +9,12 @@ This is possibly the biggest update I will ever release... because I'm lazy.
 On the surface it looks like just a version jump, but it has took me so long to get this stupid GameJolt API stuff working, it deserves this..
 
 ### Everything
-- Updated game to 0.5.2 (Pico Update).
+- Updated game to 0.5.3 (Pico Update).
 ### Changed
 - Experimental Flag for base game Ghost Tapping switches completely over to the experimental version. (in theory)
-- Moved one line of code to a different spot and fixed an error!!!
+- Most/all previous bugfixes from Pull Requests are not here. Because the issues they fix are already fixed, or I don't want to break something adding it.
+- Moved the `updateHealthColors` logic for grabbing the Health Icon to the `initCharacters` function, to be with the other Health Icon code stuff.
+  - This fixes a new bug that came with reimplementing this, where Dark variation characters throw an error, and the Spirit's trail creates a static version of itself above the actual character.
 ### Added
 - A better way of determining whether or not to place the strums on the sides of the screen.
   - In greater detail, a `isOnSides` variable has been added to `Strumline.hx`. Not very complicated
@@ -20,21 +22,21 @@ On the surface it looks like just a version jump, but it has took me so long to 
 - New submodule for assets, rather than uploading every asset file directly to the repo.
   - This will not be in place for any other branch until properly updated to this current version
   - You can find the fork of `funkin.assets` [here](https://github.com/fianalins/funkin.qol.assets)
+- Variable for invalidating score submission. This is set to true when using Practice Mode, Bot Play, and when in Charting Mode (although Charting Mode doesn't go to results screen)
+  - You can also force enable this using a new option in Preferences
 - New field for songs and weeks for a `Table ID` (the thing that is used for scoreboards)
   - For new songs and weeks, this is required to show up. Hopefully later this can be fixed.
   - You can change the Table ID for songs in the Chart Editor, Weeks have to be done manually.
-- ~~A login page for GameJolt~~ Not yet.
+- A login page for GameJolt. This can be found in the Options menu.
+  - To sign out, you can't. I don't know how. Hopefully I will add this to the full release.
 - [Extra GameJolt API Info](#gamejolt-api)
+### Fixed
+- [Fix Audio/Visual Offset causing skips on song start](https://github.com/FunkinCrew/Funkin/pull/3732/)
+- [Improvements to the save data system to prevent overwriting when resolution fails.](https://github.com/FunkinCrew/Funkin/pull/3728/)
+  - This is technically 0.5.3, but it is not in the actual GitHub, just this pull request and the downloads.
+  - This also changes save data to a different location, specifically for this project. Like versions before this.
 ### Known Issues
-- None as of now
-
-### Extra
-- This uses base game save data!! If you choose to build this you are risking everything!
-  - A bug with the base game itself causes older versions of the game to delete all save data!! Back everything up!
-  - This will be fixed (when 0.5.3 releases)!
-  - The final product will use the FunkinQoL save location!
-
-Unless you want to be like me and lose all my gold P ranks...
+- GameJolt API `addScore` function sends the score twice on web only. This kind of sucks, because the feature is only on web...
 
 ### GameJolt API
 This is the feature I have spent most of my time working on. There is practically nothing new in this update besides this ***Web Only Feature!***
@@ -49,7 +51,7 @@ This is the feature I have spent most of my time working on. There is practicall
     - The rank (PERFECT, EXCELLENT, etc.)
     - Percent (100%, 99%, 69%, etc.)
     - Difficulty (NIGHTMARE, HARD, EASY, etc.)
-      - This is because I don't feel like making a scoreboard for every difficulty,
+      - This is because I don't feel like making a scoreboard for every difficulty.
 
 - Why do this
   - Because I want to do something. This is something. And time-consuming.
