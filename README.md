@@ -42,6 +42,15 @@ Feel free to start learning how to mod the game by reading the Funkin' Crew's [d
   - Several trophies to collect
   - A lot of internal things that people won't care about.
 
+**Desktop Version Only**
+I only upload this project for Windows. If I were able to make Linux/MacOS builds I would.
+- Replays
+  - Replay Manager, found in the Debug Menu.
+    - Ability to search and sort songs, delete, and play replays
+  - Saving replays themselves. Stored in the `replays` folder relative to the game folder.
+    - Stored with two seperate files, the replay itself and a metadata file.
+  - You can disable saving replays in the Menubar.
+
 ## Credits
 
 Full credits can be found in-game, or in the `credits.json` file which is located [here](https://github.com/fianalins/funkin.qol.assets/blob/main/exclude/data/credits.json).
