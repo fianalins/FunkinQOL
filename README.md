@@ -20,7 +20,7 @@ Feel free to start learning how to mod the game by reading the Funkin' Crew's [d
 ## Features
 
 - Fixed positioning of Note Splashes
-- Fixed default postion of the Player's strumlime
+- Fixed default position of the Player's strumlime
 - Added Middlescroll
 - Added ability to hide the Opponent's strumline
 - Added Ghost Tapping
@@ -38,12 +38,11 @@ Feel free to start learning how to mod the game by reading the Funkin' Crew's [d
   - Simple log in interface in the options menu
     - Logging in, logging out, changing users (typing in new credentials)
   - Ability to send scores to be viewed on the GameJolt page
-    - Option to disable score submission is available in settings
   - Several trophies to collect
-  - A lot of internal things that people won't care about.
+  - Option to disable score/trophy submission is available in settings
 
 **Desktop Version Only**
-I only upload this project for Windows. If I were able to make Linux/MacOS builds I would.
+I only upload this project for Windows. If I knew how/were able to make Linux/MacOS builds, I would.
 - Replays
   - Replay Manager, found in the Debug Menu.
     - Ability to search and sort songs, delete, and play replays
