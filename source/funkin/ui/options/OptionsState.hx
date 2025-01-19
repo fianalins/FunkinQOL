@@ -2,6 +2,7 @@ package funkin.ui.options;
 
 import funkin.ui.transition.LoadingState;
 import funkin.ui.debug.latency.LatencyState;
+import funkin.ui.login.LogInState;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
@@ -192,6 +193,16 @@ class OptionsMenu extends Page
       FlxG.state.openSubState(new LatencyState());
       #end
     });
+
+    #if FEATURE_GAMEJOLT
+    createItem("LOGIN", function() {
+      #if web
+      LoadingState.transitionToState(() -> new LogInState());
+      #else
+      FlxG.switchState(new LogInState());
+      #end
+    });
+    #end
 
     #if newgrounds
     if (NGio.isLoggedIn) createItem("LOGOUT", selectLogout);

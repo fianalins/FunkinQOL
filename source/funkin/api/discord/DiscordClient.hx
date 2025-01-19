@@ -7,7 +7,7 @@ import sys.thread.Thread;
 
 class DiscordClient
 {
-  static final CLIENT_ID:String = "816168432860790794";
+  static final CLIENT_ID:String = "1307804608814645378";
 
   public static var instance(get, never):DiscordClient;
   static var _instance:Null<DiscordClient> = null;
@@ -85,27 +85,22 @@ class DiscordClient
     // Presence should always be playing the game.
     presence.type = DiscordActivityType_Playing;
 
-    // Text when hovering over the large image. We just leave this as the game name.
-    presence.largeImageText = "Friday Night Funkin'";
-
-    // State should be generally what the person is doing, like "In the Menus" or "Pico (Pico Mix) [Freeplay Hard]"
+    // State should be generally what the person is doing, like "In the Menus" or "Freeplay"
     presence.state = cast(params.state, Null<String>);
-    // Details should be what the person is specifically doing, including stuff like timestamps (maybe something like "03:24 elapsed").
+    // Details should be what the person is specifically doing, including stuff like "Pico (Pico Mix) [Hard]".
     presence.details = cast(params.details, Null<String>);
 
+    // Text when hovering over the large image. We just leave this as the game name.
+    presence.largeImageText = "Funkin' QoL";
+
     // The large image displaying what the user is doing.
-    // This should probably be album art.
-    // IMPORTANT NOTE: This can be an asset key uploaded to Discord's developer panel OR any URL you like.
-    presence.largeImageKey = cast(params.largeImageKey, Null<String>) ?? "album-volume1";
-
-    trace('[DISCORD] largeImageKey: ${presence.largeImageKey}');
-
-    // TODO: Make this use the song's album art.
-    // presence.largeImageKey = "icon";
-    // presence.largeImageKey = "https://f4.bcbits.com/img/a0746694746_16.jpg";
+    // This can be album art.
+    // If not, it defaults to the image specified, or if not found, the cover image of the Discord app.
+    // IMPORTANT NOTE: This can be an asset key uploaded to Discord's Developer Portal OR any URL you like.
+    presence.largeImageKey = cast(params.largeImageKey, Null<String>) ?? "default-ovs";
 
     // The small inset image for what the user is doing.
-    // This can be the opponent's health icon?
+    // This can be the opponent's health icon.
     // NOTE: Like largeImageKey, this can be a URL, or an asset key.
     presence.smallImageKey = cast(params.smallImageKey, Null<String>);
 
@@ -114,13 +109,13 @@ class DiscordClient
     // presence.endTimestamp = time + 30;
 
     final button1:DiscordButton = DiscordButton.create();
-    button1.label = "Play on Web";
-    button1.url = Constants.URL_NEWGROUNDS;
+    button1.label = "View Source Code";
+    button1.url = Constants.URL_GITHUB;
     presence.buttons[0] = button1;
 
     final button2:DiscordButton = DiscordButton.create();
-    button2.label = "Download";
-    button2.url = Constants.URL_ITCH;
+    button2.label = "Download/Play Web";
+    button2.url = Constants.URL_GAMEJOLT;
     presence.buttons[1] = button2;
 
     return presence;
@@ -135,6 +130,7 @@ class DiscordClient
     final globalName:String = request[0].username;
     final discriminator:Int = Std.parseInt(request[0].discriminator);
 
+    // This should hopefully be zero, if not, please update your account.
     if (discriminator != 0)
     {
       trace('[DISCORD] User: ${username}#${discriminator} (${globalName})');

@@ -210,8 +210,8 @@ class LoadingState extends MusicBeatSubState
    * Starts the transition to a new `PlayState` to start a new song.
    * First switches to the `LoadingState` if assets need to be loaded.
    * @param params The parameters for the next `PlayState`.
-   * @param asSubState Whether to open as a substate rather than switching to the `PlayState`.
    * @param shouldStopMusic Whether to stop the current music while loading.
+   * @param asSubState Whether to open as a substate rather than switching to the `PlayState`.
    */
   public static function loadPlayState(params:PlayStateParams, shouldStopMusic = false, asSubState = false, ?onConstruct:PlayState->Void):Void
   {

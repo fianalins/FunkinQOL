@@ -28,12 +28,17 @@ import flixel.addons.display.FlxBackdrop;
 import funkin.audio.FunkinSound;
 import flixel.util.FlxGradient;
 import flixel.util.FlxTimer;
+import flixel.util.FlxStringUtil;
 import funkin.save.Save;
 import funkin.play.scoring.Scoring;
 import funkin.save.Save.SaveScoreData;
 import funkin.graphics.shaders.LeftMaskShader;
 import funkin.play.components.TallyCounter;
 import funkin.play.components.ClearPercentCounter;
+#if FEATURE_GAMEJOLT
+import funkin.api.gamejolt.GameJoltHelper;
+#end
+import funkin.ui.TrophyPopup;
 
 /**
  * The state for the results screen after a song or week is finished.
@@ -442,6 +447,41 @@ class ResultState extends MusicBeatSubState
 
     rankBg.alpha = 0;
 
+    #if FEATURE_GAMEJOLT
+    // Check if we have the right criteria for a trophy.
+    if (!PlayState.invalidateScoreSub && Preferences.scoreSub) trophyCheckGJ();
+
+    var percentGJ:Float = params.scoreData.tallies.totalNotes == 0 ? 0.0 : (params.scoreData.tallies.sick +
+      params.scoreData.tallies.good) / params.scoreData.tallies.totalNotes * 100;
+
+    var percentRoundGJ:Int = Math.floor(percentGJ);
+    var diffGJ:Null<String> = params.difficultyId;
+    var diffFormatGJ:String = (diffGJ != null) ? diffGJ.toUpperCase() : "";
+    var scoreFormatGJ:String = FlxStringUtil.formatMoney(params.scoreData.score, false, true);
+
+    var rankGJ:String = 'N/A'; // Just in case something goes wrong.
+
+    switch (rank)
+    {
+      case SHIT:
+        rankGJ = 'SHIT';
+      case GOOD:
+        rankGJ = 'GOOD';
+      case GREAT:
+        rankGJ = 'GREAT';
+      case EXCELLENT:
+        rankGJ = 'EXCELLENT';
+      case PERFECT:
+        rankGJ = 'PERFECT';
+      case PERFECT_GOLD:
+        rankGJ = 'GOLD PERFECT';
+    }
+
+    var tableIDfinal:Int = params.tableID;
+
+    sendScoreGJ(scoreFormatGJ, rankGJ, percentRoundGJ, diffFormatGJ, params.scoreData.score, tableIDfinal);
+    #end
+
     refresh();
 
     super.create();
@@ -720,29 +760,68 @@ class ResultState extends MusicBeatSubState
         timerThenSongName();
       }
     }
-
-    if (FlxG.keys.justPressed.RIGHT) speedOfTween.x += 0.1;
-
+    #if FEATURE_DEBUG_FUNCTIONS
+    if (FlxG.keys.justPressed.RIGHT)
+    {
+      speedOfTween.x += 0.1;
+    }
     if (FlxG.keys.justPressed.LEFT)
     {
       speedOfTween.x -= 0.1;
     }
+    if (FlxG.keys.justPressed.DOWN)
+    {
+      speedOfTween.y += 0.1;
+    }
+    if (FlxG.keys.justPressed.UP)
+    {
+      speedOfTween.y -= 0.1;
+    }
 
+    if (FlxG.keys.justPressed.C)
+    {
+      var trophyPopupDebug = new TrophyPopup();
+      add(trophyPopupDebug);
+
+      trace('[ACH] Attempting to show multiple trophies...');
+      trophyPopupDebug.queueTrophy('Test Trophy', 'trophies/duedAch');
+      trophyPopupDebug.queueTrophy('Test Trophy 2', 'trophies/ibAch');
+      trophyPopupDebug.queueTrophy('This is the last trophy. What is up gang?', 'trophies/getFreaky');
+    }
+    if (FlxG.keys.justPressed.V)
+    {
+      var trophyPopupDebug = new TrophyPopup();
+      add(trophyPopupDebug);
+
+      trace('[ACH] Attempting to show test trophy popup...');
+      trophyPopupDebug.queueTrophy('Test Trophy', 'trophies/duedAch');
+    }
+    if (FlxG.keys.justPressed.B)
+    {
+      var trophyPopupDebug = new TrophyPopup();
+      add(trophyPopupDebug);
+
+      trace('[ACH] Attempting to show test trophy popup with blank icon...');
+      trophyPopupDebug.queueTrophy('No Icon. Long text. Test trophy. Hello world. Trophy name.');
+    }
+    #end
     if (controls.PAUSE)
     {
-      if (introMusicAudio != null) {
+      if (introMusicAudio != null)
+      {
         @:nullSafety(Off)
         introMusicAudio.onComplete = null;
-
-        FlxTween.tween(introMusicAudio, {volume: 0}, 0.8, {
-          onComplete: _ -> {
-            if (introMusicAudio != null) {
-              introMusicAudio.stop();
-              introMusicAudio.destroy();
-              introMusicAudio = null;
+        FlxTween.tween(introMusicAudio, {volume: 0}, 0.8,
+          {
+            onComplete: _ -> {
+              if (introMusicAudio != null)
+              {
+                introMusicAudio.stop();
+                introMusicAudio.destroy();
+                introMusicAudio = null;
+              }
             }
-          }
-        });
+          });
         FlxTween.tween(introMusicAudio, {pitch: 3}, 0.1,
           {
             onComplete: _ -> {
@@ -752,12 +831,13 @@ class ResultState extends MusicBeatSubState
       }
       else if (FlxG.sound.music != null)
       {
-        FlxTween.tween(FlxG.sound.music, {volume: 0}, 0.8, {
-          onComplete: _ -> {
-            FlxG.sound.music.stop();
-            FlxG.sound.music.destroy();
-          }
-        });
+        FlxTween.tween(FlxG.sound.music, {volume: 0}, 0.8,
+          {
+            onComplete: _ -> {
+              FlxG.sound.music.stop();
+              FlxG.sound.music.destroy();
+            }
+          });
         FlxTween.tween(FlxG.sound.music, {pitch: 3}, 0.1,
           {
             onComplete: _ -> {
@@ -772,6 +852,8 @@ class ResultState extends MusicBeatSubState
       var shouldTween = false;
       var shouldUseSubstate = false;
 
+      // Add an option for exiting to Replay Manager when in Replay Mode?
+      // Maybe an option for skipping Results Screen as well?
       if (params.storyMode)
       {
         if (PlayerRegistry.instance.hasNewCharacter())
@@ -855,9 +937,120 @@ class ResultState extends MusicBeatSubState
         }
       }
     }
-
     super.update(elapsed);
   }
+
+  // Put this in an if so it doesn't create errors. No shit.
+  #if FEATURE_GAMEJOLT
+  function sendScoreGJ(scoreText:String, rankText:String, percentText:Int, difficultyText:String, scoreSort:Int, tableID:Int):Void
+  {
+    trace("[GJ] sendScoreGJ happened");
+    if (!PlayState.invalidateScoreSub && Preferences.scoreSub)
+    {
+      trace("[GJ] addScore happened");
+      GameJoltHelper.getInstance().addScore('$scoreText ($rankText - $percentText% - $difficultyText)', scoreSort, tableID);
+
+      // Extra information that could probably be useful for debugging.
+      trace("[GJ] Sending to GameJolt:");
+
+      // Format the string differently to make it more readable.
+      // This is the same information
+      trace('[GJ] String - $scoreText ($rankText - $percentText% - $difficultyText)');
+      trace('[GJ] Sorting - $scoreSort');
+      trace('[GJ] Table ID - $tableID');
+    }
+    else
+    {
+      trace("[GJ] We aren't sending anything around these parts.");
+      trace('[GJ] Are we invalidated? ${PlayState.invalidateScoreSub}. Did we enable score submission? ${Preferences.scoreSub}');
+      trace('[GJ] If the following answers were no and yes, something is wrong.');
+    }
+  }
+
+  function trophyCheckGJ():Void
+  {
+    // These could be variables for the whole file...
+    // Instead of copying the same thing just for different functions.
+    var percentT = params.scoreData.tallies.totalNotes == 0 ? 0.0 : (params.scoreData.tallies.sick +
+      params.scoreData.tallies.good) / params.scoreData.tallies.totalNotes * 100;
+    var percentRoundT = Math.floor(percentT);
+
+    // TODO: See if there is a better way to do this. This is a mess
+    // This seems to be overly complicated. Because I suck.
+    // Also I don't really know a better way to do the trophy popup, because I just don't know
+    // Maybe in the future I could add a menu to look at trophies, but that's a lot of work.
+    // Also Also why do I so inconsistently call these trophies and achievements
+
+    // I don't like the icons for these, but what am I supposed to do
+    if (params.storyMode && params.difficultyId == "hard" && params.scoreData.tallies.missed == 0)
+    {
+      switch (params.title)
+      {
+        case "DADDY DEAREST":
+          if (Save.instance.daddy) return;
+          sendTrophy(248754, 'Daddy Dearest', 'daddydAch');
+
+          // Yeah
+          Save.instance.daddy = true;
+        case "SPOOKY MONTH":
+          if (Save.instance.spooky) return;
+          sendTrophy(249023, 'Spooky Month', 'smAch');
+          Save.instance.spooky = true;
+        case "PICO":
+          if (Save.instance.pico) return;
+          sendTrophy(249095, 'Pico', 'pcAch');
+          Save.instance.pico = true;
+        case "MOMMY MUST MURDER":
+          if (Save.instance.mommy) return;
+          sendTrophy(249096, 'Mommy Must Murder', 'mmmAch');
+          Save.instance.mommy = true;
+        case "RED SNOW":
+          if (Save.instance.redsnow) return;
+          sendTrophy(249097, 'Red Snow', 'rsAch');
+          Save.instance.redsnow = true;
+        case "HATING SIMULATOR FT. MOAWLING":
+          if (Save.instance.hatingsim) return;
+          sendTrophy(249098, 'Hating Simulator FT. Moawling', 'hsAch');
+          Save.instance.hatingsim = true;
+        case "TANKMAN FT. JOHNNYUTAH":
+          if (Save.instance.tankman) return;
+          sendTrophy(249099, 'Tankman FT. Johnnyutah', 'tmAch');
+          Save.instance.tankman = true;
+        case "DUE DEBTS":
+          if (Save.instance.duedebts) return;
+          sendTrophy(249100, 'Due Debts', 'duedAch');
+          Save.instance.duedebts = true;
+      }
+    }
+    else if (percentRoundT <= 15)
+    {
+      // These used to be only Freeplay, but why lock it behind that?
+      if (Save.instance.poorlyperfect) return;
+      sendTrophy(249105, 'Perfectly Poor', 'ppAch'); // pp
+      Save.instance.poorlyperfect = true;
+    }
+    else if (percentRoundT <= 35 && percentRoundT > 15)
+    {
+      if (Save.instance.inherentlyballs) return;
+      sendTrophy(249128, 'Inherently Bad', 'ibAch'); // balls
+      Save.instance.inherentlyballs = true;
+    }
+  }
+
+  function sendTrophy(trophyID:Int, achName:String, achImage:String):Void
+  {
+    GameJoltHelper.getInstance().addTrophy(trophyID, success -> {
+      if (success)
+      {
+        var trophyPopup = new TrophyPopup();
+        add(trophyPopup);
+
+        trace('[ACH] Attempting to show trophy popup...');
+        trophyPopup.queueTrophy(achName, 'trophies/$achImage');
+      }
+    });
+  }
+  #end
 }
 
 typedef ResultsStateParams =
@@ -877,6 +1070,11 @@ typedef ResultsStateParams =
    * The internal song ID for the song we just played.
    */
   var songId:String;
+
+  /**
+   * The Table ID for the song we just played.
+   */
+  var tableID:Int;
 
   /**
    * The character ID for the song we just played.

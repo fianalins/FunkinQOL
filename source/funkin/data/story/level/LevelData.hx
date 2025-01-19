@@ -22,6 +22,13 @@ typedef LevelData =
   var name:String;
 
   /**
+   * The Table ID of the level, to pass to GameJolt.
+   */
+  @:default(947501)
+  @:optional
+  var tableID:Int;
+
+  /**
    * The graphic for the level, as seen in the scrolling list.
    */
   @:jcustomparse(funkin.data.DataParse.stringNotEmpty)

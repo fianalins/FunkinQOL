@@ -31,6 +31,10 @@ class SongMetadata implements ICloneable<SongMetadata>
   public var artist:String;
 
   @:optional
+  @:default(947501)
+  public var tableID:Int = 947501;
+
+  @:optional
   public var charter:Null<String> = null;
 
   @:optional
@@ -73,6 +77,7 @@ class SongMetadata implements ICloneable<SongMetadata>
     this.version = SongRegistry.SONG_METADATA_VERSION;
     this.songName = songName;
     this.artist = artist;
+    this.tableID = 947501;
     this.timeFormat = 'ms';
     this.divisions = null;
     this.offsets = new SongOffsets();

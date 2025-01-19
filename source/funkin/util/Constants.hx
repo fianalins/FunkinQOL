@@ -28,11 +28,17 @@ class Constants
   public static var VERSION(get, never):String;
 
   /**
+   * The current version number of the engine.
+   * This is the one that gets changed by all the Git stuff.
+   */
+  public static var ENGINE_VERSION(get, never):String;
+
+  /**
    * The engine's version number, as a Semantic Versioning string with no prefix.
    * This has to be here and can't be in the `project.hxp` file.
    * The Lime MetaData does not have any apparent way as to how to add a custom value.
    */
-  public static final ENGINE_VERSION:String = "0.5.0 prerelease";
+  public static final ENGINE_VERSION_SEMANTIC:String = "0.5.0";
 
   /**
    * The generatedBy string embedded in the chart files made by this application.
@@ -41,7 +47,7 @@ class Constants
 
   static function get_GENERATED_BY():String
   {
-    return '${Constants.TITLE} - ${Constants.VERSION}';
+    return '${Constants.TITLE} - ${Constants.ENGINE_VERSION}';
   }
 
   /**
@@ -51,19 +57,25 @@ class Constants
   public static final VERSION_SUFFIX:String = #if FEATURE_DEBUG_FUNCTIONS ' PROTOTYPE' #else '' #end;
 
   /**
-   * Honestly, don't know enough about this stuff to know what to do with it.
-   * I don't use FEATURE_DEBUG_FUNCTIONS, so this isn't a big concern to me,
-   * but I feel like it should be changed to add all of this Git stuff to the Engine version.
+   * The version stuff for Base Game
+   */
+  static function get_VERSION():String
+  {
+    return 'v${Application.current.meta.get('version')}';
+  }
+
+  /**
+   * The version stuff for the engine
    */
   #if FEATURE_DEBUG_FUNCTIONS
-  static function get_VERSION():String
+  static function get_ENGINE_VERSION():String
   {
-    return 'v${Application.current.meta.get('version')} (${GIT_BRANCH} : ${GIT_HASH}${GIT_HAS_LOCAL_CHANGES ? ' : MODIFIED' : ''})' + VERSION_SUFFIX;
+    return 'v$ENGINE_VERSION_SEMANTIC (${GIT_BRANCH} : ${GIT_HASH}${GIT_HAS_LOCAL_CHANGES ? ' : MODIFIED' : ''})' + VERSION_SUFFIX;
   }
   #else
-  static function get_VERSION():String
+  static function get_ENGINE_VERSION():String
   {
-    return 'v${Application.current.meta.get('version')}' + VERSION_SUFFIX;
+    return 'v$ENGINE_VERSION_SEMANTIC' + VERSION_SUFFIX;
   }
   #end
 
@@ -88,12 +100,12 @@ class Constants
   ];
 
   /**
-   * Link to download the game on Itch.io.
+   * Link to download the base game on Itch.io.
    */
   public static final URL_ITCH:String = 'https://ninja-muffin24.itch.io/funkin';
 
   /**
-   * Link to play the game on Newgrounds.
+   * Link to play the base game on Newgrounds.
    */
   public static final URL_NEWGROUNDS:String = 'https://www.newgrounds.com/portal/view/770371';
 
@@ -101,6 +113,23 @@ class Constants
    * Link to the game's page on Kickstarter.
    */
   public static final URL_KICKSTARTER:String = 'https://www.kickstarter.com/projects/funkin/friday-night-funkin-the-full-ass-game/';
+
+  /**
+   * Link to the game's source code on GitHub.
+   */
+  public static final URL_GITHUB:String = 'https://github.com/fianalins/FunkinQOL';
+
+  /**
+   * Link to the game's page on GameBanana.
+   * This will be replaced by GameJolt, if not already. GameBanana doesn't host web builds.
+   */
+  public static final URL_GAMEBANANA:String = 'https://gamebanana.com/mods/522085';
+
+  /**
+   * Link to the game's page on GameJolt.
+   * This is also where you can find the Web build and have access to GameJolt features.
+   */
+  public static final URL_GAMEJOLT:String = 'https://gamejolt.com/games/funkinqol/919698';
 
   /**
    * REPOSITORY DATA
@@ -294,6 +323,12 @@ class Constants
    * The default charter for songs.
    */
   public static final DEFAULT_CHARTER:String = 'Unknown';
+
+  /**
+   * The default Table ID for songs.
+   * Default ID's will make the scores be sent to the 'Empty' Leaderboard.
+   */
+  public static final DEFAULT_TABLEID:Int = 947501;
 
   /**
    * The default note style for songs.

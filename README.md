@@ -5,43 +5,45 @@ Funkin' QoL adds features that I personally think should be in the base game. As
 - [Play the base game online](https://www.newgrounds.com/portal/view/770371)
 - [Download base game builds for Windows, Mac, and Linux on itch.io](https://ninja-muffin24.itch.io/funkin)
 - [Check out the GameBanana page for the latest release](https://gamebanana.com/mods/522085)
-  or just stay here and have access to all releases...
+- [Check out the GameJolt page for the latest release. You can also play the web build and have access to Leaderboards and Trophies](https://gamejolt.com/games/funkinqol/919698)
 
-## Features
-
-- Lined up the Note Splash effect
-- Fixed default offset of player strums
-- Middlescroll
-- Ghost Tapping
-- Judgement Counter
-- Changed Score Text to be similar to that of Psych Engine
-- Changed Health Bar colors to be softer
-- Option to enable Score Text Zoom
-- Ability to change transparency of Health Bar and Icons
-- Time Bar with four different modes
-- This text not being up-to-date, or showing all features
-
-## Credits
-
-Full credits can be found in-game, or wherever the credits.json file is.
-
-- [@fianalins](https://www.youtube.com/fianalins) - Features
-
-## Base Game Specific
-
-Stuff found in the README.md of the Base Game
-
-### Getting Started
+## Compiling from Source
 
 **PLEASE USE THE LINKS ABOVE IF YOU JUST WANT TO PLAY THE GAME**
 
-To learn how to install the necessary dependencies and compile the game from source, please check out our [building the game](/docs/COMPILING.md) guide.
+To learn how to install the necessary dependencies and compile the game from source, please check out the [building the game/compilation](/docs/COMPILING.md) guide.
 
-### Contributing
+## Modding
 
-Please check out our [Contributor's guide](./CONTRIBUTORS.md) on how you can actively participate in the development of Friday Night Funkin'.
-(file doesn't exist..?)
+Feel free to start learning how to mod the game by reading the Funkin' Crew's [documentation](https://funkincrew.github.io/funkin-modding-docs/) and guide to modding.
 
-### Modding
+## Features
 
-Feel free to start learning to mod the game by reading our [documentation](https://funkincrew.github.io/funkin-modding-docs/) and guide to modding.
+- Fixed positioning of Note Splashes
+- Fixed default postion of the Player's strumlime
+- Added Middlescroll
+- Added ability to hide the Opponent's strumline
+- Added Ghost Tapping
+- Added Judgement Counter
+- Changed Score Text to be similar to that of Psych Engine
+- Changed Health Bar to have three different modes
+  - Default, Soft, Icon Colored
+- Added Score Text Zoom, that bumps on note hit, and the opposite for missing
+- Added ability to change transparency of Health Bar and Icons
+- Added Time Bar with four different modes (other than disabled)
+  - Time Left, Time Elapsed, Combined, Song Name
+
+**Web Version Only**
+- GameJolt API
+  - Simple log in interface in the options menu
+    - Logging in, logging out, changing users (typing in new credentials)
+  - Ability to send scores to be viewed on the GameJolt page
+    - Option to disable score submission is available in settings
+  - Several trophies to collect
+  - A lot of internal things that people won't care about.
+
+## Credits
+
+Full credits can be found in-game, or in the `credits.json` file which is located [here](https://github.com/fianalins/funkin.qol.assets/blob/main/exclude/data/credits.json).
+
+- [@fianalins](https://www.youtube.com/fianalins) - Features

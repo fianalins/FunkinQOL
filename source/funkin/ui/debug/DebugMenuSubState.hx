@@ -7,7 +7,7 @@ import funkin.ui.MusicBeatSubState;
 import funkin.audio.FunkinSound;
 import funkin.ui.TextMenuList;
 import funkin.ui.debug.charting.ChartEditorState;
-import funkin.ui.MusicBeatSubState;
+import funkin.ui.replay.ReplayManagerState;
 import funkin.util.logging.CrashHandler;
 import flixel.addons.transition.FlxTransitionableState;
 import funkin.util.FileUtil;
@@ -53,18 +53,24 @@ class DebugMenuSubState extends MusicBeatSubState
     FlxTransitionableState.skipNextTransIn = true;
 
     // Create each menu item.
-    // Call onMenuChange when the first item is created to move the camera .
+    // Call onMenuChange when the first item is created to move the camera.
     #if FEATURE_CHART_EDITOR
-    onMenuChange(createItem("CHART EDITOR", openChartEditor));
+    createItem("CHART EDITOR", openChartEditor);
+    #end
+    createItem("ANIMATION EDITOR", openAnimationEditor);
+    #if FEATURE_STAGE_EDITOR
+    createItem("STAGE EDITOR", openStageEditor);
+    #end
+    #if sys
+    createItem("REPLAY MANAGER", openReplayManager);
     #end
     // createItem("Input Offset Testing", openInputOffsetTesting);
-    createItem("CHARACTER SELECT", openCharSelect, true);
-    createItem("ANIMATION EDITOR", openAnimationEditor);
-    createItem("STAGE EDITOR", openStageEditor);
+    // createItem("CHARACTER SELECT", openCharSelect, true);
     // createItem("TEST STICKERS", testStickers);
     #if sys
     createItem("OPEN CRASH LOG FOLDER", openLogFolder);
     #end
+    onMenuChange(items.members[0]);
     FlxG.camera.focusOn(new FlxPoint(camFocusPoint.x, camFocusPoint.y + 500));
   }
 
@@ -129,6 +135,13 @@ class DebugMenuSubState extends MusicBeatSubState
   }
 
   #if sys
+  function openReplayManager()
+  {
+    FlxTransitionableState.skipNextTransIn = true;
+
+    FlxG.switchState(() -> new ReplayManagerState());
+  }
+
   function openLogFolder()
   {
     FileUtil.openFolder(CrashHandler.LOG_FOLDER);

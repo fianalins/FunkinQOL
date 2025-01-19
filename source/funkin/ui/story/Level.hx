@@ -60,6 +60,25 @@ class Level implements IRegistryEntry<LevelData>
   }
 
   /**
+   * Retrieve the Table ID of the level to pass to GameJolt.
+   * @return Table ID of the level as an Int
+   */
+  public function getTableID():Int
+  {
+    // Maybe this will help fix songs not appearing without table IDs?
+    // Otherwise, mods won't work without adding a table ID, even without GameJolt.
+    // NOTE: It did
+    if (_data.tableID != null)
+    {
+      return _data.tableID;
+    }
+    else
+    {
+      return Constants.DEFAULT_TABLEID;
+    }
+  }
+
+  /**
    * Construct the title graphic for the level.
    * @return The constructed graphic as a sprite.
    */

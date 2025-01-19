@@ -1,5 +1,6 @@
 package funkin.ui.mainmenu;
 
+import funkin.save.Save;
 import funkin.graphics.FunkinSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import funkin.ui.debug.DebugMenuSubState;
@@ -33,6 +34,9 @@ import funkin.api.discord.DiscordClient;
 #if newgrounds
 import funkin.ui.NgPrompt;
 import io.newgrounds.NG;
+#end
+#if FEATURE_GAMEJOLT
+import funkin.api.gamejolt.GameJoltHelper;
 #end
 
 class MainMenuState extends MusicBeatState
@@ -172,8 +176,38 @@ class MainMenuState extends MusicBeatState
     super.create();
 
     // This has to come AFTER!
-    this.leftWatermarkText.text = Constants.VERSION;
-    this.rightWatermarkText.text = 'v${Constants.ENGINE_VERSION}'; // You know it baby
+    this.leftWatermarkText.text = 'Funkin Version: ${Constants.VERSION}';
+    this.rightWatermarkText.text = 'QoL Version: ${Constants.ENGINE_VERSION}'; // You know it baby
+
+    #if FEATURE_GAMEJOLT
+    // Don't show this if GameJolt is disabled...
+    var authenticatedText:FlxText = new FlxText(25, 25, 500, '', 20);
+    authenticatedText.setFormat(Paths.font('vcr.ttf'), 20, 0xFFFFFFFF, LEFT, FlxTextBorderStyle.OUTLINE, 0xFF000000);
+    authenticatedText.scrollFactor.set(0, 0);
+    add(authenticatedText);
+
+    authenticatedText.text = GameJoltHelper.getInstance().currentUser != null ? 'Signed in as ${GameJoltHelper.getInstance().currentUser}' : 'Not signed in';
+
+    // This shouldn't popup if we aren't signed in right?
+    var getDate = Date.now();
+    if (getDate.getDay() == 5 && getDate.getHours() >= 18)
+    {
+      if (Save.instance.getfreaky) return;
+
+      GameJoltHelper.getInstance().addTrophy(248899, success -> {
+        if (success)
+        {
+          // Trophies shouldn't be shown if we don't have GameJolt API. Yet.
+          var trophyPopup = new TrophyPopup();
+          add(trophyPopup);
+
+          trace('[ACH] Attempting to show trophy popup...');
+          trophyPopup.queueTrophy('Get Freaky...', 'trophies/getFreaky'); // Longest trophy is 29 characters, `Hating Simulator FT. Moawling`
+          Save.instance.getfreaky = true;
+        }
+      });
+    }
+    #end
 
     // NG.core.calls.event.logEvent('swag').send();
   }

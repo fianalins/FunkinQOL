@@ -4,10 +4,7 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.0] - Prerelease - 2024-10-14
-This is possibly the biggest update I will ever release... because I'm lazy.
-On the surface it looks like just a version jump, but it has took me so long to get this stupid GameJolt API stuff working, it deserves this..
-
+## [0.5.0] - 2024-10-14 to 2025-01-18
 ### Everything
 - Updated game to 0.5.3 (Pico Update).
 ### Changed
@@ -15,6 +12,7 @@ On the surface it looks like just a version jump, but it has took me so long to 
 - Most/all previous bugfixes from Pull Requests are not here. Because the issues they fix are already fixed, or I don't want to break something adding it.
 - Moved the `updateHealthColors` logic for grabbing the Health Icon to the `initCharacters` function, to be with the other Health Icon code stuff.
   - This fixes a new bug that came with reimplementing this, where Dark variation characters throw an error, and the Spirit's trail creates a static version of itself above the actual character.
+- Changed the Dicord API to display This Game, not the base game.
 ### Added
 - A better way of determining whether or not to place the strums on the sides of the screen.
   - In greater detail, a `isOnSides` variable has been added to `Strumline.hx`. Not very complicated
@@ -25,25 +23,34 @@ On the surface it looks like just a version jump, but it has took me so long to 
 - Variable for invalidating score submission. This is set to true when using Practice Mode, Bot Play, and when in Charting Mode (although Charting Mode doesn't go to results screen)
   - You can also force enable this using a new option in Preferences
 - New field for songs and weeks for a `Table ID` (the thing that is used for scoreboards)
-  - For new songs and weeks, this is required to show up. Hopefully later this can be fixed.
   - You can change the Table ID for songs in the Chart Editor, Weeks have to be done manually.
 - A login page for GameJolt. This can be found in the Options menu.
-  - To sign out, you can't. I don't know how. Hopefully I will add this to the full release.
+  - You can log in, log out, and change to a different account (typing in different credentials)
+- Added the [hxgamejolt](https://github.com/MAJigsaw77/hxgamejolt-api) haxelib for using GameJolt API.
+  - There is also a helper class made for using the API easier. Mainly because Web doesn't work quite correctly, but it does fix scores sending twice.
 - [Extra GameJolt API Info](#gamejolt-api)
+- An entire Replay Sytem. [Read more here.](#new-replay-system)
 ### Fixed
 - [Fix Audio/Visual Offset causing skips on song start](https://github.com/FunkinCrew/Funkin/pull/3732/)
 - [Improvements to the save data system to prevent overwriting when resolution fails.](https://github.com/FunkinCrew/Funkin/pull/3728/)
   - This is technically 0.5.3, but it is not in the actual GitHub, just this pull request and the downloads.
   - This also changes save data to a different location, specifically for this project. Like versions before this.
-### Known Issues
-- GameJolt API `addScore` function sends the score twice on web only. This kind of sucks, because the feature is only on web...
+- Fixed the Chart Editor button saying "Skip Back" when it clearly skips forward
+- Fixed problems with several charts in the game.
+  - Fixed off-beat notes on Pico's side in Spookeez (Pico Mix)
+  - Fixed missing notes on Spookeez's side in Spookeez (Pico Mix)
+  - Removed Focus Event at beginning of Roses (non-erect)
+  - Fixed off-beat notes on Boyfriend's side in Cocoa Erect. Same as the last one below. I just don't feel like finding the exact note and changing the timing. I opened up the chart file directly from assets, so it should be exactly the same, just with the fixes.
+  - [Remove extra notes from Darnell (BF Mix)](https://github.com/FunkinCrew/funkin.assets/pull/106)
+  - [Fix Eggnog Erect ending notes + small adjustments](https://github.com/FunkinCrew/funkin.assets/pull/104/)
+  - Added missing note on Boyfriend's side in Stress. It shows a massive diff, but it's because of formatting changes. Should functionally be the same.
 
 ### GameJolt API
-This is the feature I have spent most of my time working on. There is practically nothing new in this update besides this ***Web Only Feature!***
+This is a ***Web Only Feature!***
 
 - Scoreboards and Trophies
   - There are no plans to make an interface to view trophies and scoreboards in-game as of now.
-    - This is because this is a web-only feature, you already get notifications and can check on the game page for scoreboards.
+  - There is a popup that will appear when you get a trophy however.
 
 - How scores are saved
   - Scores are saved as
@@ -52,9 +59,40 @@ This is the feature I have spent most of my time working on. There is practicall
     - Percent (100%, 99%, 69%, etc.)
     - Difficulty (NIGHTMARE, HARD, EASY, etc.)
       - This is because I don't feel like making a scoreboard for every difficulty.
+      - There are scoreboards for the different variations, like Erect, Pico Mix, and BF Mix.
 
 - Why do this
-  - Because I want to do something. This is something. And time-consuming.
+  - Because I want to do something. This is something.
+
+### New Replay System
+This is **NOT** on ***Web Platforms!***
+
+Please do not steal this. This is open-source, but please.
+Credit me.
+
+#### How does it work?
+I record each press and release, along with the note direction and position (from the song's position), and send it to a list. At the end of the song, the list will be converted into a file and saved to the `replays` folder relative to the game folder. I also save a metadata file with everything I'd need to access, like the song name, date recorded, tallies, etc.
+
+In the Replay Manager (found in the Debug Menu for now), it finds every replay and populates the list on the left. When you select a replay, you can view all information from the metadata file on the right. At the bottom you can Play or Delete the replay. If you manually add a replay to the folder (for whatever reason) you can reload the replay list through the menubar at the top (or using the shortcut!). You can also search for a replay by song name, or sort by name or date.
+
+When in Replay Mode, you cannot press any keybinds, and all preferences from when the replay was recorded will be applied. Your original preferences will be restored after the replay ends. When the replay ends, you will also be taken to the Results Screen, where you can view the accurate information from when the replay was recorded.
+
+#### Notes
+From the "User Guide":
+There is no guarantee that the Replay will be 100% accurate to real performance from the player.
+Accurate information can be found in the metadata, or shown in the Manager and Results Screen.
+
+Other notes:
+When in Replay Mode, you (very likely) ***will*** encounter the score being ever so slightly off.
+Through my testing, I have found that most of the problem comes from the way Hold Notes are scored.
+[There is a PR for Funkin' trying to make Hold Notes score consistently](https://github.com/FunkinCrew/Funkin/pull/3832)
+It is not in my interest to add this though.
+
+Depending on the performance of your computer, the tallies can be off as well.
+
+#### Why?
+Because I finished making the GameJolt API stuff and got bored. It has also been like 3 months since I started working on this update
+
 
 ## [0.4.0] - 2024-8-17
 ### Added

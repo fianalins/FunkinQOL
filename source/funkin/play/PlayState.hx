@@ -61,6 +61,10 @@ import funkin.ui.MusicBeatSubState;
 import funkin.ui.options.PreferencesMenu;
 import funkin.ui.story.StoryMenuState;
 import funkin.ui.transition.LoadingState;
+#if sys
+import funkin.util.replay.Replay;
+#end
+import funkin.util.DateUtil;
 import funkin.util.BarUtil;
 import funkin.util.SerializerUtil;
 import haxe.Int64;
@@ -99,6 +103,16 @@ typedef PlayStateParams =
    */
   ?targetInstrumental:String,
   /**
+   * The replay file to load.
+   * @default `null`
+   */
+  ?targetReplay:String,
+  /**
+   * The metadata file to load.
+   * @default `null`
+   */
+  ?targetReplayMetadata:String,
+  /**
    * Whether the song should start in Practice Mode.
    * @default `false`
    */
@@ -108,6 +122,11 @@ typedef PlayStateParams =
    * @default `false`
    */
   ?botPlayMode:Bool,
+  /**
+   * Whether the game is currently in replay mode, and should be playing a replay.
+   * @default `false`
+   */
+  ?replayMode:Bool,
   /**
    * Whether the song should be in minimal mode.
    * @default `false`
@@ -222,10 +241,16 @@ class PlayState extends MusicBeatSubState
    */
   public var songPerc:Float = 0;
 
+  /**
+   * The player's current rating name, based on percentage.
+   */
   public var ratingName:String = '';
 
   public var jankTypeShi:Float = 0;
 
+  /**
+   * The list of rating names and their corresponding percentage value.
+   */
   public static var ratingTable:Array<Dynamic> = [
     ['Fail', 0.6], // From 0% to 59%
     ['Good', 0.8], // From 60% to 79%
@@ -235,6 +260,55 @@ class PlayState extends MusicBeatSubState
   ];
 
   var strumMidX:Array<Float> = [19, 131, 990, 1102];
+
+  /*
+   * Whether the score submission for this song should be invalidated.
+   * Used solely for the purpose of GameJolt API.
+   * This is set to true when practice mode, bot play, or charting mode is enabled.
+   */
+  public static var invalidateScoreSub:Bool = false;
+
+  /**
+   * The color of the dad's health bar side.
+   */
+  public var dadHealthColor:String = '0xFFFF9292';
+
+  /**
+   * The color of the player's health bar side.
+   */
+  public var bfHealthColor:String = '0xFF9292FF';
+
+  /**
+   * If the game should record inputs for replays.
+   */
+  public var doesRecordInput:Bool = false;
+
+  /**
+   * Whether the game is currently in replay mode, and should be playing a replay.
+   */
+  public var isReplayMode:Bool = false;
+
+  /**
+   * What replay file we should be loading.
+   * Nothing if we just want to play the song.
+   */
+  public var replayToLoad:String = null;
+
+  /**
+   * What metadata file we should be loading.
+   * Nothing if we just want to play the song.
+   */
+  public var replayMetadataToLoad:String = null;
+
+  #if sys
+  /**
+   * The replay metadata that loads upon creation!!!
+   * Will be null if no replay is loaded. Sorry.
+   */
+  public var replayMetadata:ReplayMetadata = null;
+  #end
+
+  var originalPreferences = null;
 
   /**
    * Start at this point in the song once the countdown is done.
@@ -693,8 +767,11 @@ class PlayState extends MusicBeatSubState
     if (params.targetDifficulty != null) currentDifficulty = params.targetDifficulty;
     if (params.targetVariation != null) currentVariation = params.targetVariation;
     if (params.targetInstrumental != null) currentInstrumental = params.targetInstrumental;
+    if (params.targetReplay != null) replayToLoad = params.targetReplay;
+    if (params.targetReplayMetadata != null) replayMetadataToLoad = params.targetReplayMetadata;
     isPracticeMode = params.practiceMode ?? false;
     isBotPlayMode = params.botPlayMode ?? false;
+    isReplayMode = params.replayMode ?? false;
     isMinimalMode = params.minimalMode ?? false;
     startTimestamp = params.startTimestamp ?? 0.0;
     playbackRate = params.playbackRate ?? 1.0;
@@ -752,6 +829,44 @@ class PlayState extends MusicBeatSubState
       currentChart.cacheVocals();
     }
 
+    // This seems like a good spot for replay stuff
+    #if sys
+    if (isReplayMode)
+    {
+      // Save original preferences for restoring later.
+      originalPreferences =
+        {
+          ogDownscroll: Preferences.downscroll,
+          ogMiddlescroll: Preferences.middlescroll,
+          ogOppStrum: Preferences.oppStrumVis,
+          ogGhostTap: Preferences.ghostTap,
+          ogJudgeCounter: Preferences.judgementCounter,
+          ogZoomCamera: Preferences.zoomCamera,
+          ogScoreZoom: Preferences.scoreZoom,
+          ogUIAlpha: Preferences.uiAlpha,
+          ogTimeBar: Preferences.timeBar,
+          ogHealthColors: Preferences.healthColors,
+          ogInputOffset: Conductor.instance.inputOffset,
+          ogAudioVisualOffset: Conductor.instance.audioVisualOffset
+        }
+      replayMetadata = Replay.loadMetadata(replayMetadataToLoad); // Should already have the `replays/` prefix
+      var replayPreferences = replayMetadata.playerPreferences;
+
+      Preferences.downscroll = replayPreferences.isDownscroll;
+      Preferences.middlescroll = replayPreferences.isMiddlescroll;
+      Preferences.oppStrumVis = replayPreferences.showOppStrums;
+      Preferences.ghostTap = replayPreferences.isGhostTap;
+      Preferences.judgementCounter = replayPreferences.isJudgeCounter;
+      Preferences.zoomCamera = replayPreferences.isZoomCamera;
+      Preferences.scoreZoom = replayPreferences.isScoreZoom;
+      Preferences.uiAlpha = replayPreferences.whatUIAlpha;
+      Preferences.timeBar = replayPreferences.whatTimeBar;
+      Preferences.healthColors = replayPreferences.whatHealthColors;
+      Conductor.instance.inputOffset = replayPreferences.whatInputOffset;
+      Conductor.instance.audioVisualOffset = replayPreferences.whatAudioVisualOffset;
+    }
+    #end
+
     // Prepare the Conductor.
     Conductor.instance.forceBPM(null);
 
@@ -761,7 +876,7 @@ class PlayState extends MusicBeatSubState
     }
 
     Conductor.instance.mapTimeChanges(currentChart.timeChanges);
-    var pre:Float = (Conductor.instance.beatLengthMs * -5) + startTimestamp;
+    var pre:Float = (Conductor.instance.beatLengthMs * -5) + startTimestamp + Conductor.instance.combinedOffset;
 
     trace('Attempting to start at ' + pre);
 
@@ -774,6 +889,7 @@ class PlayState extends MusicBeatSubState
     {
       initStage();
       initCharacters();
+      updateHealthColors();
     }
     else
     {
@@ -824,7 +940,7 @@ class PlayState extends MusicBeatSubState
     // Initialize some debug stuff.
     #if FEATURE_DEBUG_FUNCTIONS
     // Display the version number (and git commit hash) in the bottom right corner.
-    this.rightWatermarkText.text = Constants.VERSION;
+    this.rightWatermarkText.text = Constants.ENGINE_VERSION;
 
     FlxG.console.registerObject('playState', this);
     #end
@@ -968,13 +1084,25 @@ class PlayState extends MusicBeatSubState
     else
     {
       ratingName = ratingTable[ratingTable.length - 1][0];
-      if (songPerc < 1) for (i in 0...ratingTable.length - 1)
-        if (songPerc < ratingTable[i][1])
+      if (songPerc < 1)
+      {
+        for (i in 0...ratingTable.length - 1)
         {
-          ratingName = ratingTable[i][0];
-          break;
+          if (songPerc < ratingTable[i][1])
+          {
+            ratingName = ratingTable[i][0];
+            break;
+          }
         }
+      }
     }
+
+    // Add a modifiers tab to freeplay? I added this so it makes my life easier trying to get Perfect Gold ratings.
+    // Btw, I spent too long trying to figure out why this wasn't working. I was using && instead of ||...
+    #if FEATURE_GAMEPLAY_MODIFIERS
+    // -DFEATURE_GAMEPLAY_MODIFIERS
+    if (Preferences.onlySick && (Highscore.tallies.sick != Highscore.tallies.combo || Highscore.tallies.missed > 0)) needsReset = true;
+    #end
 
     var list = FlxG.sound.list;
     updateHealthBar();
@@ -1006,9 +1134,9 @@ class PlayState extends MusicBeatSubState
       // Reset music properly.
       if (FlxG.sound.music != null)
       {
-        FlxG.sound.music.time = startTimestamp - Conductor.instance.combinedOffset;
-        FlxG.sound.music.pitch = playbackRate;
         FlxG.sound.music.pause();
+        FlxG.sound.music.time = startTimestamp - Conductor.instance.instrumentalOffset;
+        FlxG.sound.music.pitch = playbackRate;
       }
 
       if (!overrideMusic)
@@ -1023,7 +1151,7 @@ class PlayState extends MusicBeatSubState
         }
       }
       vocals.pause();
-      vocals.time = 0 - Conductor.instance.combinedOffset;
+      vocals.time = -Conductor.instance.instrumentalOffset;
 
       if (FlxG.sound.music != null) FlxG.sound.music.volume = 1;
       vocals.volume = 1;
@@ -1128,7 +1256,12 @@ class PlayState extends MusicBeatSubState
             boyfriendPos = currentStage.getBoyfriend().getScreenPosition();
           }
 
-          var pauseSubState:FlxSubState = new PauseSubState({mode: isChartingMode ? Charting : Standard});
+          // This is dumb
+          var whatMode:PauseSubState.PauseMode = PauseSubState.PauseMode.Standard;
+          if (isChartingMode) whatMode = PauseSubState.PauseMode.Charting;
+          else if (isReplayMode) whatMode = PauseSubState.PauseMode.Replay;
+
+          var pauseSubState:FlxSubState = new PauseSubState({mode: whatMode});
 
           FlxTransitionableState.skipNextTransIn = true;
           FlxTransitionableState.skipNextTransOut = true;
@@ -1250,6 +1383,36 @@ class PlayState extends MusicBeatSubState
         // Wait up.
       }
     }
+
+    // Idk, put this here?
+    // Where should I put this?
+    #if sys
+    if (isReplayMode)
+    {
+      var currentTimestamp:Int64 = PreciseInputManager.getCurrentTimestamp();
+      var nextInput = Replay.getNextInput(Conductor.instance.songPosition);
+
+      if (nextInput != null)
+      {
+        // Create a single queue entry for this input
+        var queueEntry =
+          {
+            timestamp: currentTimestamp,
+            noteDirection: nextInput.noteDirection
+          };
+
+        // Add to appropriate queue
+        if (nextInput.isPress)
+        {
+          inputPressQueue.push(queueEntry);
+        }
+        else
+        {
+          inputReleaseQueue.push(queueEntry);
+        }
+      }
+    }
+    #end
 
     processSongEvents();
 
@@ -1633,11 +1796,11 @@ class PlayState extends MusicBeatSubState
         trace("VOCALS NEED RESYNC");
         if (vocals != null)
         {
-          trace(playerVoicesError);
-          trace(opponentVoicesError);
+          trace('Players voice offset: ' + playerVoicesError);
+          trace('Opponents voice offset: ' + opponentVoicesError);
         }
-        trace(FlxG.sound.music.time);
-        trace(correctSync);
+        trace('FlxG Music Time: ' + FlxG.sound.music.time);
+        trace('Correct Sync: ' + correctSync);
         resyncVocals();
       }
     }
@@ -1747,7 +1910,6 @@ class PlayState extends MusicBeatSubState
     healthBar.leftToRight = false;
     healthBar.alpha = Preferences.uiAlpha / 100;
     healthBar.zIndex = 800;
-    updateHealthColors();
     add(healthBar);
 
     var timeBarYPos:Float = Preferences.downscroll ? FlxG.height * 0.95 : FlxG.height * 0.025;
@@ -1903,6 +2065,9 @@ class PlayState extends MusicBeatSubState
       add(iconP2);
       iconP2.cameras = [camHUD];
 
+      // Set the health bar color for this character.
+      dadHealthColor = dad.getHealthColor();
+
       #if FEATURE_DISCORD_RPC
       discordRPCAlbum = 'album-${currentChart.album}';
       discordRPCIcon = 'icon-${currentCharacterData.opponent}';
@@ -1926,6 +2091,9 @@ class PlayState extends MusicBeatSubState
       iconP1.zIndex = 850;
       add(iconP1);
       iconP1.cameras = [camHUD];
+
+      // Set the health bar color for this character.
+      bfHealthColor = boyfriend.getHealthColor();
     }
 
     //
@@ -2122,6 +2290,10 @@ class PlayState extends MusicBeatSubState
       {
         return 'Freeplay [Bot Play]';
       }
+      else if (isReplayMode)
+      {
+        return 'Watching a Replay';
+      }
       else
       {
         return 'Freeplay';
@@ -2308,10 +2480,11 @@ class PlayState extends MusicBeatSubState
     FlxG.sound.music.onComplete = function() {
       endSong(skipEndingTransition);
     };
-    // A negative instrumental offset means the song skips the first few milliseconds of the track.
-    // This just gets added into the startTimestamp behavior so we don't need to do anything extra.
-    FlxG.sound.music.play(true, Math.max(0, startTimestamp - Conductor.instance.combinedOffset));
+    // A negative instrumental offset means the song would skip the first few milliseconds of the track.
+    // We want to start at the beginning of the song, instead.
     FlxG.sound.music.pitch = playbackRate;
+    FlxG.sound.music.pause();
+    FlxG.sound.music.time = Math.max(0, startTimestamp - Conductor.instance.instrumentalOffset);
 
     // Prevent the volume from being wrong.
     FlxG.sound.music.volume = 1.0;
@@ -2319,13 +2492,12 @@ class PlayState extends MusicBeatSubState
 
     trace('Playing vocals...');
     add(vocals);
-    vocals.play();
     vocals.volume = 1.0;
     vocals.pitch = playbackRate;
     vocals.time = FlxG.sound.music.time;
-    // trace('${FlxG.sound.music.time}');
-    // trace('${vocals.time}');
-    resyncVocals();
+
+    FlxG.sound.music.play();
+    vocals.play();
 
     #if FEATURE_DISCORD_RPC
     // Updating Discord Rich Presence (with Time Left)
@@ -2346,6 +2518,31 @@ class PlayState extends MusicBeatSubState
       handleSkippedNotes();
     }
 
+    // This resets the list of sent notes AND the list of recorded inputs
+    // If we don't reset them, the list of recorded notes for one song will be saved for every single replay
+    // And the list of sent notes won't allow you to play the same replay more than once
+    #if sys
+    Replay.reset();
+
+    // Might remove some of the problems
+    if (!isReplayMode && Save.instance.replayManagerSaveReplays)
+    {
+      doesRecordInput = true;
+    }
+    else if (isReplayMode) // This should be just replay mode, saveReplays doesn't matter here
+    {
+      doesRecordInput = false; // Double check this is false
+      // Load the targeted replay file
+      trace('[REPLAY] Attempting to load replay...');
+      Replay.loadReplay('${Replay.REPLAY_FOLDER}/$replayToLoad');
+    }
+    else if (!Save.instance.replayManagerSaveReplays)
+    {
+      // This should just be false by itself. We aren't loading a replay
+      doesRecordInput = false;
+    }
+    #end
+
     dispatchEvent(new ScriptEvent(SONG_START));
   }
 
@@ -2359,7 +2556,8 @@ class PlayState extends MusicBeatSubState
     // Skip this if the music is paused (GameOver, Pause menu, start-of-song offset, etc.)
     if (!(FlxG.sound.music?.playing ?? false)) return;
 
-    var timeToPlayAt:Float = Math.min(FlxG.sound.music.length, Math.max(0, Conductor.instance.songPosition - Conductor.instance.combinedOffset));
+    var timeToPlayAt:Float = Math.min(FlxG.sound.music.length,
+      Math.max(Math.min(Conductor.instance.combinedOffset, 0), Conductor.instance.songPosition - Conductor.instance.combinedOffset));
     trace('Resyncing vocals to ${timeToPlayAt}');
     FlxG.sound.music.pause();
     vocals.pause();
@@ -2430,26 +2628,6 @@ class PlayState extends MusicBeatSubState
     }
   }
 
-  function updateHealthColors():Void
-  {
-    switch (Preferences.healthColors)
-    {
-      case "default":
-        healthBar.setColors(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
-      case "soft":
-        healthBar.setColors(Constants.COLOR_HEALTH_BAR_SOFT_RED, Constants.COLOR_HEALTH_BAR_SOFT_GREEN);
-      case "iconColored":
-        var currentCharacterData:SongCharacterData = currentChart.characters;
-        var boyfriend:BaseCharacter = CharacterDataParser.fetchCharacter(currentCharacterData.player);
-        var dad:BaseCharacter = CharacterDataParser.fetchCharacter(currentCharacterData.opponent);
-
-        if (boyfriend != null || dad != null)
-        {
-          healthBar.setColors(FlxColor.fromString(dad.getHealthColor()), FlxColor.fromString(boyfriend.getHealthColor()));
-        }
-    }
-  }
-
   function updateTimeBar():Void
   {
     if (Preferences.timeBar == 'timeLeft' || Preferences.timeBar == 'combined' || Preferences.timeBar == 'songName')
@@ -2476,12 +2654,29 @@ class PlayState extends MusicBeatSubState
     }
   }
 
+  function updateHealthColors():Void
+  {
+    switch (Preferences.healthColors)
+    {
+      case "default":
+        healthBar.setColors(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
+      case "soft":
+        healthBar.setColors(Constants.COLOR_HEALTH_BAR_SOFT_RED, Constants.COLOR_HEALTH_BAR_SOFT_GREEN);
+      case "iconColored":
+        healthBar.setColors(FlxColor.fromString(dadHealthColor), FlxColor.fromString(bfHealthColor));
+    }
+  }
+
   /**
      * Callback executed when one of the note keys is pressed.
      */
   function onKeyPress(event:PreciseInputEvent):Void
   {
     if (isGamePaused) return;
+
+    // disableKeys doesn't keep functionality of the queue's working
+    // So just don't do anything if key press
+    if (isReplayMode) return;
 
     // Do the minimal possible work here.
     inputPressQueue.push(event);
@@ -2493,6 +2688,9 @@ class PlayState extends MusicBeatSubState
   function onKeyRelease(event:PreciseInputEvent):Void
   {
     if (isGamePaused) return;
+
+    // disableKeys doesn't keep functionality of the queue's working
+    if (isReplayMode) return;
 
     // Do the minimal possible work here.
     inputReleaseQueue.push(event);
@@ -2643,6 +2841,8 @@ class PlayState extends MusicBeatSubState
         // NOTE: This is what handles the strumline and cleaning up the note itself!
         playerStrumline.hitNote(note);
 
+        playerStrumline.playNoteSplash(note.noteData.getDirection());
+
         if (note.holdNoteSprite != null)
         {
           playerStrumline.playNoteHoldCover(note.holdNoteSprite);
@@ -2778,12 +2978,18 @@ class PlayState extends MusicBeatSubState
 
     while (inputPressQueue.length > 0)
     {
+      if (isBotPlayMode) continue;
+
       var input:PreciseInputEvent = inputPressQueue.shift();
+
+      #if sys
+      if (doesRecordInput) Replay.recordInput(Conductor.instance.songPosition, input.noteDirection, true); // For press
+      #end
 
       playerStrumline.pressKey(input.noteDirection);
 
       // Don't credit or penalize inputs in Bot Play.
-      if (isBotPlayMode) continue;
+      // if (isBotPlayMode) continue;
 
       var notesInDirection:Array<NoteSprite> = notesByDirection[input.noteDirection];
 
@@ -2839,6 +3045,10 @@ class PlayState extends MusicBeatSubState
     {
       var input:PreciseInputEvent = inputReleaseQueue.shift();
 
+      #if sys
+      if (doesRecordInput) Replay.recordInput(Conductor.instance.songPosition, input.noteDirection, false); // For release
+      #end
+
       // Play the strumline animation.
       playerStrumline.playStatic(input.noteDirection);
 
@@ -2861,8 +3071,8 @@ class PlayState extends MusicBeatSubState
     var score = Scoring.scoreNote(noteDiff, PBOT1);
     var daRating = Scoring.judgeNote(noteDiff, PBOT1);
 
-    var healthChange = 0.0;
-    var isComboBreak = false;
+    var healthChange:Float = 0.0;
+    var isComboBreak:Bool = false;
     switch (daRating)
     {
       case 'sick':
@@ -3017,18 +3227,21 @@ class PlayState extends MusicBeatSubState
   {
     #if FEATURE_STAGE_EDITOR
     // Open the stage editor overlaying the current state.
-    if (controls.DEBUG_STAGE)
-    {
-      // hack for HaxeUI generation, doesn't work unless persistentUpdate is false at state creation!!
-      disableKeys = true;
-      persistentUpdate = false;
-      openSubState(new StageOffsetSubState());
-    }
+    /*
+        if (controls.DEBUG_STAGE)
+        {
+          // hack for HaxeUI generation, doesn't work unless persistentUpdate is false at state creation!!
+          disableKeys = true;
+          persistentUpdate = false;
+          openSubState(new StageOffsetSubState());
+        }
+       */
     #end
 
     #if FEATURE_CHART_EDITOR
     // Redirect to the chart editor playing the current song.
-    if (controls.DEBUG_CHART)
+    // But now we check if we are in replay mode. Shouldn't cause any issues, but I just don't want it.
+    if (controls.DEBUG_CHART && !isReplayMode)
     {
       disableKeys = true;
       persistentUpdate = false;
@@ -3081,7 +3294,7 @@ class PlayState extends MusicBeatSubState
   /**
      * Handles applying health, score, and ratings.
      */
-  function applyScore(score:Int, daRating:String, healthChange:Float, isComboBreak:Bool)
+  function applyScore(score:Int, daRating:String, healthChange:Float, isComboBreak:Bool):Void
   {
     switch (daRating)
     {
@@ -3308,6 +3521,162 @@ class PlayState extends MusicBeatSubState
       }
     }
 
+    /**
+       * If we're using Practice Mode, Bot Play, or Charting Mode, invalidate the score submission.
+       * Charting Mode should not go to results screen, but just in case.
+       * We can also override this and disable it with a setting. But not here.
+       *
+       * This is also where we save replays, so that I don't have to write if statement again.
+       */
+    if (isPracticeMode || isBotPlayMode || isChartingMode || isReplayMode)
+    {
+      invalidateScoreSub = true;
+    }
+    #if sys
+    else
+    {
+      // Save the replay stuff for replaying the replay.
+      var replayDifficulty = PlayState.instance.currentDifficulty.replace('-', ' ').toTitleCase();
+      var replayVariation = PlayState.instance.currentVariation.replace('-', ' ').toTitleCase();
+
+      var now:Date = Date.now();
+
+      var fullYear:Int = now.getFullYear();
+      var month:String = padZero(now.getMonth() + 1);
+      var date:String = padZero(now.getDate());
+      var hours:String = padZero(now.getHours());
+      var minutes:String = padZero(now.getMinutes());
+      var seconds:String = padZero(now.getSeconds());
+
+      var replayDate:String = '$fullYear-$month-$date $hours:$minutes:$seconds';
+      var replayName:String = '${currentSong.id}-$suffixedDifficulty'; // Because I use it twice.
+
+      var replayRank:String = 'N/A'; // Just in case something goes wrong.
+
+      switch (ratingName)
+      {
+        case 'Fail':
+          replayRank = 'Fail'; // Or should we use 'Shit'? Or 'Loss' in Freeplay?
+        case 'Good':
+          replayRank = 'Good';
+        case 'Great':
+          replayRank = 'Great';
+        case 'Excellent':
+          replayRank = 'Excellent';
+        case 'Perfect!':
+          if (Highscore.tallies.good > 0)
+          {
+            // You can only get Perfect with Goods and Sicks, so just check for goods to see if we got Golden Perfect or regular Perfect
+            replayRank = 'Perfect!';
+          }
+          else
+          {
+            replayRank = 'Golden Perfect!';
+          }
+      }
+
+      var metadata =
+        {
+          prettySongName: currentChart.songName,
+          prettyDifficulty: replayDifficulty,
+          prettyVariation: replayVariation,
+          prettyDate: replayDate,
+          targetSongID: currentSong.id,
+          targetDifficulty: currentDifficulty,
+          targetVariation: currentVariation,
+          targetInstrumental: currentInstrumental,
+          targetLevelId: PlayStatePlaylist.campaignId,
+          targetFile: 'replay-$replayName-${DateUtil.generateTimestamp()}.json',
+          playerPreferences:
+            {
+              isDownscroll: Preferences.downscroll,
+              isMiddlescroll: Preferences.middlescroll,
+              showOppStrums: Preferences.oppStrumVis,
+              isGhostTap: Preferences.ghostTap,
+              isJudgeCounter: Preferences.judgementCounter,
+              isZoomCamera: Preferences.zoomCamera,
+              isScoreZoom: Preferences.scoreZoom,
+              whatUIAlpha: Preferences.uiAlpha,
+              whatTimeBar: Preferences.timeBar,
+              whatHealthColors: Preferences.healthColors,
+              whatInputOffset: Conductor.instance.inputOffset,
+              whatAudioVisualOffset: Conductor.instance.audioVisualOffset
+            },
+          targetData:
+            {
+              finalScore: songScore,
+              finalRank: replayRank, // We converted ratingName into the rank, shown in Results
+              finalAccuracy: jankTypeShi,
+              finalTallies:
+                {
+                  finalSick: Highscore.tallies.sick,
+                  finalGood: Highscore.tallies.good,
+                  finalBad: Highscore.tallies.bad,
+                  finalShit: Highscore.tallies.shit,
+                  finalMissed: Highscore.tallies.missed,
+                  finalCombo: Highscore.tallies.combo,
+                  finalMaxCombo: Highscore.tallies.maxCombo,
+                  finalTotalNotes: Highscore.tallies.totalNotes,
+                  finalTotalNotesHit: Highscore.tallies.totalNotesHit
+                }
+            },
+          generatedBy: '${Constants.TITLE} - ${Constants.ENGINE_VERSION}'
+        };
+
+      if (Save.instance.replayManagerSaveReplays)
+      {
+        Replay.saveReplay(replayName);
+        Replay.saveReplayMetadata('${currentSong.id}-$suffixedDifficulty', metadata);
+      }
+    }
+    #end
+
+    // If we are in replay mode, check if we met our target variables.
+    // Doesn't actually do anything, just to debug if the replay is working properly.
+    // When we go to ResultsState we just give the recorded values anyways.
+    // 50% sure the issue is with hold notes. The way I record inputs is not precise enough probably.
+    // other 50% is lag and stutters. With my PC, it only happens when I have trace on.
+    // On my laptop from ~2016-17, it just stutters no matter what and is not good.
+    // Make the replay super long and store every scoring variable with each press and release? No.
+    // The way the game handles hold notes is also stupid because (iirc) you can press the note way earlier to "hold it longer"
+    // and you get more points from it. Theres also some other things, and a PR making it consistent but idrc for right now.
+    // Making this stupid replay system was a dumb decision, although I don't think it took as long as GameJolt API?
+    // Maybe I'm misremembering because I took a 2 month break from working on it, but anyways. Here it is. The Replay System.
+    #if sys
+    if (isReplayMode)
+    {
+      var targetData = replayMetadata.targetData;
+      var targetTallies = targetData.finalTallies;
+
+      if (songScore != targetData.finalScore || ratingName != targetData.finalRank || jankTypeShi != targetData.finalAccuracy)
+      {
+        trace('[REPLAY] Did not meet score, rating, and/or accuracy target.');
+        // The rating name will be wrong, `Perfect!` will show for both Perfect and Golden Perfect.
+        trace('[REPLAY] $songScore to target ${targetData.finalScore}, $ratingName to target ${targetData.finalRank}, $jankTypeShi% to target ${targetData.finalAccuracy}%');
+      }
+      else
+      {
+        trace('[REPLAY] Met score, rating, and accuracy target.');
+      }
+      if (targetTallies.finalSick != Highscore.tallies.sick
+        || targetTallies.finalGood != Highscore.tallies.good
+        || targetTallies.finalBad != Highscore.tallies.bad
+        || targetTallies.finalShit != Highscore.tallies.shit
+        || targetTallies.finalMissed != Highscore.tallies.missed
+        || targetTallies.finalCombo != Highscore.tallies.combo
+        || targetTallies.finalMaxCombo != Highscore.tallies.maxCombo
+        || targetTallies.finalTotalNotes != Highscore.tallies.totalNotes
+        || targetTallies.finalTotalNotesHit != Highscore.tallies.totalNotesHit)
+      {
+        trace('[REPLAY] Did not meet tallies target.');
+      }
+      else
+      {
+        trace('[REPLAY] Met tallies target.');
+      }
+    }
+    #end
+
     if (PlayStatePlaylist.isStoryMode)
     {
       isNewHighscore = false;
@@ -3509,6 +3878,22 @@ class PlayState extends MusicBeatSubState
     PauseSubState.reset();
     Countdown.reset();
 
+    if (isReplayMode && originalPreferences != null)
+    {
+      Preferences.downscroll = originalPreferences.ogDownscroll;
+      Preferences.middlescroll = originalPreferences.ogMiddlescroll;
+      Preferences.oppStrumVis = originalPreferences.ogOppStrum;
+      Preferences.ghostTap = originalPreferences.ogGhostTap;
+      Preferences.judgementCounter = originalPreferences.ogJudgeCounter;
+      Preferences.zoomCamera = originalPreferences.ogZoomCamera;
+      Preferences.scoreZoom = originalPreferences.ogScoreZoom;
+      Preferences.uiAlpha = originalPreferences.ogUIAlpha;
+      Preferences.timeBar = originalPreferences.ogTimeBar;
+      Preferences.healthColors = originalPreferences.ogHealthColors;
+      Conductor.instance.inputOffset = originalPreferences.ogInputOffset;
+      Conductor.instance.audioVisualOffset = originalPreferences.ogAudioVisualOffset;
+    }
+
     // Clear the static reference to this state.
     instance = null;
   }
@@ -3596,7 +3981,29 @@ class PlayState extends MusicBeatSubState
     vocals.stop();
     camHUD.alpha = 1;
 
+    // DONOTTODO: Figure out why it doesn't store the tableID for PlayStatePlaylist.campaignTableID.
+    var currentLevel:funkin.ui.story.Level = funkin.data.story.level.LevelRegistry.instance.fetchEntry(PlayStatePlaylist.campaignId);
+
+    var scoreToUse:Int = 0;
     var talliesToUse:Tallies = PlayStatePlaylist.isStoryMode ? Highscore.talliesLevel : Highscore.tallies;
+
+    // Stuff for if we are in replay mode. If the replay bot fucked up, we want to show the recorded values anyways
+    var targetData = null;
+    var targetTallies = null;
+
+    if (isReplayMode)
+    {
+      #if sys
+      targetData = replayMetadata.targetData;
+      targetTallies = targetData.finalTallies;
+
+      scoreToUse = targetData.finalScore;
+      #end
+    }
+    else
+    {
+      scoreToUse = PlayStatePlaylist.isStoryMode ? PlayStatePlaylist.campaignScore : songScore;
+    }
 
     var res:ResultState = new ResultState(
       {
@@ -3605,24 +4012,25 @@ class PlayState extends MusicBeatSubState
         difficultyId: currentDifficulty,
         characterId: currentChart.characters.player,
         title: PlayStatePlaylist.isStoryMode ? ('${PlayStatePlaylist.campaignTitle}') : ('${currentChart.songName} by ${currentChart.songArtist}'),
+        tableID: PlayStatePlaylist.isStoryMode ? currentLevel.getTableID() : currentChart.tableID,
         prevScoreData: prevScoreData,
         scoreData:
           {
-            score: PlayStatePlaylist.isStoryMode ? PlayStatePlaylist.campaignScore : songScore,
+            score: scoreToUse,
             tallies:
               {
-                sick: talliesToUse.sick,
-                good: talliesToUse.good,
-                bad: talliesToUse.bad,
-                shit: talliesToUse.shit,
-                missed: talliesToUse.missed,
-                combo: talliesToUse.combo,
-                maxCombo: talliesToUse.maxCombo,
-                totalNotesHit: talliesToUse.totalNotesHit,
-                totalNotes: talliesToUse.totalNotes,
+                sick: isReplayMode ? targetTallies.finalSick : talliesToUse.sick,
+                good: isReplayMode ? targetTallies.finalGood : talliesToUse.good,
+                bad: isReplayMode ? targetTallies.finalBad : talliesToUse.bad,
+                shit: isReplayMode ? targetTallies.finalShit : talliesToUse.shit,
+                missed: isReplayMode ? targetTallies.finalMissed : talliesToUse.missed,
+                combo: isReplayMode ? targetTallies.finalCombo : talliesToUse.combo,
+                maxCombo: isReplayMode ? targetTallies.finalMaxCombo : talliesToUse.maxCombo,
+                totalNotesHit: isReplayMode ? targetTallies.finalTotalNotesHit : talliesToUse.totalNotesHit,
+                totalNotes: isReplayMode ? targetTallies.finalTotalNotes : talliesToUse.totalNotes,
               },
           },
-        isNewHighscore: isNewHighscore
+        isNewHighscore: isReplayMode ? false : isNewHighscore // If we get a higher score somehow in Replay Mode, no
       });
     this.persistentDraw = false;
     openSubState(res);
@@ -3832,4 +4240,15 @@ class PlayState extends MusicBeatSubState
     resyncVocals();
   }
   #end
+
+  /**
+     * Stupid function to add the zero to the date stuff that aint put the zero
+     * Maybe find a built in function?
+     * @param value The number to add zero
+     * @return String
+     */
+  function padZero(value:Int):String
+  {
+    return (value < 10 ? '0' : '') + value;
+  }
 }

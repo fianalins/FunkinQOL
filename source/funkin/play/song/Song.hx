@@ -41,6 +41,11 @@ class Song implements IPlayStateScriptedClass implements IRegistryEntry<SongMeta
   public static final DEFAULT_ARTIST:String = 'Unknown';
 
   /**
+   * The default value for the song's Table ID
+   */
+  public static final DEFAULT_TABLEID:Int = 947501;
+
+  /**
    * The default value for the song's time format
    */
   public static final DEFAULT_TIMEFORMAT:SongTimeFormat = SongTimeFormat.MILLISECONDS;
@@ -130,6 +135,18 @@ class Song implements IPlayStateScriptedClass implements IRegistryEntry<SongMeta
     if (_data != null) return _data?.artist ?? DEFAULT_ARTIST;
     if (_metadata.size() > 0) return _metadata.get(Constants.DEFAULT_VARIATION)?.artist ?? DEFAULT_ARTIST;
     return DEFAULT_ARTIST;
+  }
+
+  /**
+   * The Table ID of a song that records scores to GameJolt.
+   */
+  public var tableID(get, never):Int;
+
+  function get_tableID():Int
+  {
+    if (_data != null) return _data?.tableID ?? DEFAULT_TABLEID;
+    if (_metadata.size() > 0) return _metadata.get(Constants.DEFAULT_VARIATION)?.tableID ?? DEFAULT_TABLEID;
+    return DEFAULT_TABLEID;
   }
 
   /**
@@ -321,6 +338,7 @@ class Song implements IPlayStateScriptedClass implements IRegistryEntry<SongMeta
 
         difficulty.songName = metadata.songName;
         difficulty.songArtist = metadata.artist;
+        difficulty.tableID = metadata.tableID ?? Constants.DEFAULT_TABLEID;
         difficulty.charter = metadata.charter ?? Constants.DEFAULT_CHARTER;
         difficulty.timeFormat = metadata.timeFormat;
         difficulty.divisions = metadata.divisions;
@@ -388,6 +406,7 @@ class Song implements IPlayStateScriptedClass implements IRegistryEntry<SongMeta
         {
           difficulty.songName = metadata.songName;
           difficulty.songArtist = metadata.artist;
+          difficulty.tableID = metadata.tableID ?? Constants.DEFAULT_TABLEID;
           difficulty.charter = metadata.charter ?? Constants.DEFAULT_CHARTER;
           difficulty.timeFormat = metadata.timeFormat;
           difficulty.divisions = metadata.divisions;
@@ -733,6 +752,7 @@ class SongDifficulty
 
   public var songName:String = Constants.DEFAULT_SONGNAME;
   public var songArtist:String = Constants.DEFAULT_ARTIST;
+  public var tableID:Int = Constants.DEFAULT_TABLEID;
   public var charter:String = Constants.DEFAULT_CHARTER;
   public var timeFormat:SongTimeFormat = Constants.DEFAULT_TIMEFORMAT;
   public var divisions:Null<Int> = null;

@@ -22,6 +22,7 @@ import funkin.ui.AtlasText;
 import funkin.ui.debug.latency.LatencyState;
 import funkin.ui.MusicBeatSubState;
 import funkin.ui.transition.StickerSubState;
+import funkin.ui.replay.ReplayManagerState;
 
 /**
  * Parameters for initializing the PauseSubState.
@@ -89,6 +90,17 @@ class PauseSubState extends MusicBeatSubState
     {text: 'Restart Dialogue', callback: restartConversation},
     {text: 'Skip Dialogue', callback: skipConversation},
     {text: 'Exit to Menu', callback: quitToMenu},
+  ];
+
+  /**
+   * Pause menu entries for when the game is paused during a song.
+   */
+  static final PAUSE_MENU_ENTRIES_REPLAY:Array<PauseMenuEntry> = [
+    {text: 'Resume', callback: resume},
+    {text: 'Restart Replay', callback: restartPlayState}, // Literally just Restart Song
+    #if sys
+    {text: 'Exit to Replay Manager', callback: quitToReplayManager},
+    #end
   ];
 
   /**
@@ -538,6 +550,8 @@ class PauseSubState extends MusicBeatSubState
         currentMenuEntries = PAUSE_MENU_ENTRIES_CONVERSATION.clone();
       case PauseMode.Cutscene:
         currentMenuEntries = PAUSE_MENU_ENTRIES_VIDEO_CUTSCENE.clone();
+      case PauseMode.Replay:
+        currentMenuEntries = PAUSE_MENU_ENTRIES_REPLAY.clone();
     }
   }
 
@@ -606,6 +620,8 @@ class PauseSubState extends MusicBeatSubState
         metadataDeaths.text = 'Dialogue Paused';
       case Cutscene:
         metadataDeaths.text = 'Video Paused';
+      case Replay:
+        metadataDeaths.text = 'Replay Paused';
     }
   }
 
@@ -748,6 +764,26 @@ class PauseSubState extends MusicBeatSubState
     }
   }
 
+  #if sys
+  /**
+   * Quit the game and return to the Replay Manager.
+   * @param state The current PauseSubState.
+   */
+  static function quitToReplayManager(state:PauseSubState):Void
+  {
+    state.allowInput = false;
+
+    PlayState.instance.deathCounter = 0;
+
+    // IDK what I'm doing. quitToMenu code but no stickers?
+
+    // There is no transition.
+    // Sometimes theres no transition in&out, sometimes theres only the transition out, sometimes theres both, but only when I put it in a slightly different format
+    // What am I doing with my life?
+    FlxG.switchState(() -> new ReplayManagerState());
+  }
+  #end
+
   /**
    * Quit the game and return to the chart editor.
    * @param state The current PauseSubState.
@@ -789,6 +825,11 @@ enum PauseMode
    * The menu displayed when the player pauses the game during a video cutscene.
    */
   Cutscene;
+
+  /**
+   * The menu displayed when the player pauses the game during a replay.
+   */
+  Replay;
 }
 
 /**

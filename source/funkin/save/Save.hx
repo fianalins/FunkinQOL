@@ -1,35 +1,35 @@
 package funkin.save;
 
 import flixel.util.FlxSave;
-import funkin.util.FileUtil;
 import funkin.input.Controls.Device;
 import funkin.play.scoring.Scoring;
 import funkin.play.scoring.Scoring.ScoringRank;
 import funkin.save.migrator.RawSaveData_v1_0_0;
 import funkin.save.migrator.SaveDataMigrator;
-import funkin.save.migrator.SaveDataMigrator;
 import funkin.ui.debug.charting.ChartEditorState.ChartEditorLiveInputStyle;
 import funkin.ui.debug.charting.ChartEditorState.ChartEditorTheme;
 import funkin.ui.debug.stageeditor.StageEditorState.StageEditorTheme;
+import funkin.util.FileUtil;
 import funkin.util.SerializerUtil;
-import thx.semver.Version;
 import thx.semver.Version;
 import funkin.ui.options.MenuItemEnums;
 
 @:nullSafety
 class Save
 {
-  public static final SAVE_DATA_VERSION:thx.semver.Version = "2.0.4";
-  public static final SAVE_DATA_VERSION_RULE:thx.semver.VersionRule = "2.0.x";
+  public static final SAVE_DATA_VERSION:thx.semver.Version = "2.1.0";
+  public static final SAVE_DATA_VERSION_RULE:thx.semver.VersionRule = ">=2.1.0 <2.2.0";
 
-  // We load this version's saves from a new save path, to maintain SOME level of backwards compatibility.
-  // static final SAVE_PATH:String = 'FunkinQoL Dev';
-  // static final SAVE_NAME:String = 'FunkinQoL';
   static final SAVE_PATH_LEGACY:String = 'ninjamuffin99';
   static final SAVE_NAME_LEGACY:String = 'funkin';
 
-  static final SAVE_PATH:String = 'FunkinCrew';
-  static final SAVE_NAME:String = 'Funkin';
+  static final SAVE_PATH_BASE:String = 'FunkinCrew';
+  static final SAVE_NAME_BASE:String = 'Funkin';
+
+  // We load this mod/project/engine's save data from a seperate path.
+  // This is so we don't mess up the base game's save data.
+  static final SAVE_PATH:String = 'FunkinQoL-Dev';
+  static final SAVE_NAME:String = 'FunkinQoL';
 
   public static var instance(get, never):Save;
   static var _instance:Null<Save> = null;
@@ -110,9 +110,13 @@ class Save
           scoreZoom: false,
           debugDisplay: false,
           autoPause: true,
+          scoreSub: true,
           inputOffset: 0,
           audioVisualOffset: 0,
           unlockedFramerate: false,
+
+          savedUser: '',
+          savedToken: '',
 
           controls:
             {
@@ -141,7 +145,23 @@ class Save
         {
           // Default to having seen the default character.
           charactersSeen: ["bf"],
-          oldChar: false
+          oldChar: false,
+
+          // ig put these here? It unlocks
+          achievements:
+            {
+              daddy: false,
+              spooky: false,
+              pico: false,
+              mommy: false,
+              redsnow: false,
+              hatingsim: false,
+              tankman: false,
+              duedebts: false,
+              inherentlyballs: false,
+              poorlyperfect: false,
+              getfreaky: false,
+            }
         },
 
       optionsChartEditor:
@@ -165,6 +185,18 @@ class Save
           moveStep: "1px",
           angleStep: 5,
           theme: StageEditorTheme.Light
+        },
+
+      optionsReplayManager:
+        {
+          // There will probably be more options here in the future.
+          saveReplays: true
+        },
+
+      gameplayModifiers:
+        {
+          // No modifiers enabled.
+          onlySick: false
         }
     };
   }
@@ -448,6 +480,210 @@ class Save
     return data.unlocks.oldChar;
   }
 
+  /**
+   * `Daddy Dearest` achievement
+   */
+  public var daddy(get, set):Bool;
+
+  function get_daddy():Bool
+  {
+    return data.unlocks.achievements.daddy;
+  }
+
+  function set_daddy(value:Bool):Bool
+  {
+    data.unlocks.achievements.daddy = value;
+    flush();
+    return data.unlocks.achievements.daddy;
+  }
+
+  /**
+   * `Spooky Month` achievement
+   */
+  public var spooky(get, set):Bool;
+
+  function get_spooky():Bool
+  {
+    return data.unlocks.achievements.spooky;
+  }
+
+  function set_spooky(value:Bool):Bool
+  {
+    data.unlocks.achievements.spooky = value;
+    flush();
+    return data.unlocks.achievements.spooky;
+  }
+
+  /**
+   * `Pico` achievement
+   */
+  public var pico(get, set):Bool;
+
+  function get_pico():Bool
+  {
+    return data.unlocks.achievements.pico;
+  }
+
+  function set_pico(value:Bool):Bool
+  {
+    data.unlocks.achievements.pico = value;
+    flush();
+    return data.unlocks.achievements.pico;
+  }
+
+  /**
+   * `Mommy Must Murder` achievement
+   */
+  public var mommy(get, set):Bool;
+
+  function get_mommy():Bool
+  {
+    return data.unlocks.achievements.mommy;
+  }
+
+  function set_mommy(value:Bool):Bool
+  {
+    data.unlocks.achievements.mommy = value;
+    flush();
+    return data.unlocks.achievements.mommy;
+  }
+
+  /**
+   * `Red Snow` achievement
+   */
+  public var redsnow(get, set):Bool;
+
+  function get_redsnow():Bool
+  {
+    return data.unlocks.achievements.redsnow;
+  }
+
+  function set_redsnow(value:Bool):Bool
+  {
+    data.unlocks.achievements.redsnow = value;
+    flush();
+    return data.unlocks.achievements.redsnow;
+  }
+
+  /**
+   * `Hating Simulator FT. Moawling` achievement
+   */
+  public var hatingsim(get, set):Bool;
+
+  function get_hatingsim():Bool
+  {
+    return data.unlocks.achievements.hatingsim;
+  }
+
+  function set_hatingsim(value:Bool):Bool
+  {
+    data.unlocks.achievements.hatingsim = value;
+    flush();
+    return data.unlocks.achievements.hatingsim;
+  }
+
+  /**
+   * `Tankman FT. JohnnyUtah` achievement
+   */
+  public var tankman(get, set):Bool;
+
+  function get_tankman():Bool
+  {
+    return data.unlocks.achievements.tankman;
+  }
+
+  function set_tankman(value:Bool):Bool
+  {
+    data.unlocks.achievements.tankman = value;
+    flush();
+    return data.unlocks.achievements.tankman;
+  }
+
+  /**
+   * `Due Debts` achievement
+   */
+  public var duedebts(get, set):Bool;
+
+  function get_duedebts():Bool
+  {
+    return data.unlocks.achievements.duedebts;
+  }
+
+  function set_duedebts(value:Bool):Bool
+  {
+    data.unlocks.achievements.duedebts = value;
+    flush();
+    return data.unlocks.achievements.duedebts;
+  }
+
+  /**
+   * `Get Freaky...` achievement
+   */
+  public var getfreaky(get, set):Bool;
+
+  function get_getfreaky():Bool
+  {
+    return data.unlocks.achievements.getfreaky;
+  }
+
+  function set_getfreaky(value:Bool):Bool
+  {
+    data.unlocks.achievements.getfreaky = value;
+    flush();
+    return data.unlocks.achievements.getfreaky;
+  }
+
+  /**
+   * `Inherently Bad` achievement
+   */
+  public var inherentlyballs(get, set):Bool;
+
+  function get_inherentlyballs():Bool
+  {
+    return data.unlocks.achievements.inherentlyballs;
+  }
+
+  function set_inherentlyballs(value:Bool):Bool
+  {
+    data.unlocks.achievements.inherentlyballs = value;
+    flush();
+    return data.unlocks.achievements.inherentlyballs;
+  }
+
+  /**
+   * `Perfectly Poor` achievement
+   */
+  public var poorlyperfect(get, set):Bool;
+
+  function get_poorlyperfect():Bool
+  {
+    return data.unlocks.achievements.poorlyperfect;
+  }
+
+  function set_poorlyperfect(value:Bool):Bool
+  {
+    data.unlocks.achievements.poorlyperfect = value;
+    flush();
+    return data.unlocks.achievements.poorlyperfect;
+  }
+
+  public var replayManagerSaveReplays(get, set):Bool;
+
+  function get_replayManagerSaveReplays():Bool
+  {
+    if (data.optionsReplayManager.saveReplays == null) data.optionsReplayManager.saveReplays = true;
+
+    return data.optionsReplayManager.saveReplays;
+  }
+
+  function set_replayManagerSaveReplays(value:Bool):Bool
+  {
+    // Set and apply.
+    data.optionsReplayManager.saveReplays = value;
+    flush();
+    return data.optionsReplayManager.saveReplays;
+  }
+
   public var stageEditorPreviousFiles(get, set):Array<String>;
 
   function get_stageEditorPreviousFiles():Array<String>
@@ -531,6 +767,13 @@ class Save
     data.optionsStageEditor.theme = value;
     flush();
     return data.optionsStageEditor.theme;
+  }
+
+  public var gameplayModifiers(get, never):SaveDataGameplayModifiers;
+
+  function get_gameplayModifiers():SaveDataGameplayModifiers
+  {
+    return data.gameplayModifiers;
   }
 
   /**
@@ -972,39 +1215,80 @@ class Save
    */
   static function loadFromSlot(slot:Int):Save
   {
-    trace("[SAVE] Loading save from slot " + slot + "...");
-
-    // Prevent crashes if the save data is corrupted.
-    SerializerUtil.initSerializer();
+    trace('[SAVE] Loading save from slot $slot...');
 
     FlxG.save.bind('$SAVE_NAME${slot}', SAVE_PATH);
 
-    if (FlxG.save.isEmpty())
+    switch (FlxG.save.status)
     {
-      trace('[SAVE] Save data is empty, checking for legacy save data...');
-      var legacySaveData = fetchLegacySaveData();
-      if (legacySaveData != null)
-      {
-        trace('[SAVE] Found legacy save data, converting...');
-        var gameSave = SaveDataMigrator.migrateFromLegacy(legacySaveData);
+      case EMPTY:
+        trace('[SAVE] Save data in slot ${slot} is empty, checking for base save data...');
+        var baseSaveData = fetchBaseSaveData();
+        var legacySaveData = fetchLegacySaveData();
+        // Is this the best way to do this?
+        // If there is no save data in the slot, check for base save data.
+        if (baseSaveData != null)
+        {
+          // First checks for base save data. If found it converts. Return.
+          trace('[SAVE] Found base save data, converting...');
+          var gameSave = SaveDataMigrator.migrate(baseSaveData);
+          FlxG.save.mergeData(gameSave.data, true);
+          return gameSave;
+        }
+        else
+        {
+          // If no base save data, check for legacy save data.
+          trace('[SAVE] No base save data found, checking for legacy save data...');
+          if (legacySaveData != null)
+          {
+            // If legacy save data is found, convert it. Return.
+            trace('[SAVE] Found legacy save data, converting...');
+            var gameSave = SaveDataMigrator.migrateFromLegacy(legacySaveData);
+            FlxG.save.mergeData(gameSave.data, true);
+            return gameSave;
+          }
+          else
+          {
+            // If no base save or legacy save data is found, create a new save. Return.
+            trace('[SAVE] No legacy save data found.');
+            var gameSave = new Save();
+            FlxG.save.mergeData(gameSave.data, true);
+            return gameSave;
+          }
+        }
+      case ERROR(_):
+        return handleSaveDataError(slot);
+      case BOUND(_, _):
+        // If there is save data in the slot, load it.
+        trace('[SAVE] Loaded existing save data in slot ${slot}.');
+        var gameSave = SaveDataMigrator.migrate(FlxG.save.data);
         FlxG.save.mergeData(gameSave.data, true);
+
         return gameSave;
-      }
-      else
-      {
-        trace('[SAVE] No legacy save data found.');
-        var gameSave = new Save();
-        FlxG.save.mergeData(gameSave.data, true);
-        return gameSave;
-      }
+    }
+  }
+
+  /**
+   * Call this when there is an error loading the save data in slot X.
+   */
+  static function handleSaveDataError(slot:Int):Save
+  {
+    var msg = 'There was an error loading your save data in slot ${slot}.';
+    msg += '\nPlease report this issue to the developer(s).';
+    lime.app.Application.current.window.alert(msg, "Save Data Failure");
+
+    // Don't touch that slot anymore.
+    // Instead, load the next available slot.
+
+    var nextSlot = slot + 1;
+
+    if (nextSlot < 1000)
+    {
+      return loadFromSlot(nextSlot);
     }
     else
     {
-      trace('[SAVE] Found existing save data.');
-      var gameSave = SaveDataMigrator.migrate(FlxG.save.data);
-      FlxG.save.mergeData(gameSave.data, true);
-
-      return gameSave;
+      throw "End of save data slots. Can't load any more.";
     }
   }
 
@@ -1069,7 +1353,15 @@ class Save
   {
     var targetSaveData = new FlxSave();
     targetSaveData.bind('$SAVE_NAME${slot}', SAVE_PATH);
-    return !targetSaveData.isEmpty();
+    switch (targetSaveData.status)
+    {
+      case EMPTY:
+        return false;
+      case ERROR(_):
+        return false;
+      case BOUND(_, _):
+        return true;
+    }
   }
 
   /**
@@ -1105,6 +1397,24 @@ class Save
       trace("[SAVE] Legacy save data found.");
       trace(legacySave.data);
       return cast legacySave.data;
+    }
+  }
+
+  static function fetchBaseSaveData():Null<RawSaveData>
+  {
+    trace("[SAVE] Checking for base save data...");
+    var baseSave:FlxSave = new FlxSave();
+    baseSave.bind(SAVE_NAME_BASE, SAVE_PATH_BASE);
+    if (baseSave.isEmpty())
+    {
+      trace("[SAVE] No base save data found.");
+      return null;
+    }
+    else
+    {
+      trace("[SAVE] Base save data found.");
+      trace(baseSave.data);
+      return cast baseSave.data;
     }
   }
 
@@ -1178,6 +1488,16 @@ typedef RawSaveData =
    * The user's preferences specific to the Stage Editor.
    */
   var optionsStageEditor:SaveDataStageEditorOptions;
+
+  /**
+   * The user's preferences specific to the Replay Manager.
+   */
+  var optionsReplayManager:SaveDataReplayManagerOptions;
+
+  /**
+   * The user's preferences specific to Gameplay Modifiers in the Freeplay menu.
+   */
+  var gameplayModifiers:SaveDataGameplayModifiers;
 };
 
 typedef SaveApiData =
@@ -1203,6 +1523,32 @@ typedef SaveDataUnlocks =
    * For the first time ever
    */
   var oldChar:Bool;
+
+  /**
+   * This is the list of achievements that the player can unlock
+   * Only if signed into GameJolt
+   */
+  var achievements:SaveDataAchievements;
+}
+
+/**
+ * This is the list of all achievements as of this version
+ * The names of the variables are somewhat close to the names of the achievements
+ * "Daddy Dearest" -> `daddy`, "Inherently Bad" -> `inherentlyballs`, etc.
+ */
+typedef SaveDataAchievements =
+{
+  var daddy:Bool;
+  var spooky:Bool;
+  var pico:Bool;
+  var mommy:Bool;
+  var redsnow:Bool;
+  var hatingsim:Bool;
+  var tankman:Bool;
+  var duedebts:Bool;
+  var getfreaky:Bool;
+  var inherentlyballs:Bool;
+  var poorlyperfect:Bool;
 }
 
 /**
@@ -1387,6 +1733,27 @@ typedef SaveDataOptions =
    * @default `false`
    */
   var unlockedFramerate:Bool;
+
+  /**
+   * If disabled, the score submission to GameJolt will be disabled.
+   * This also disables trophies.
+   * @default `true`
+   */
+  var scoreSub:Bool;
+
+  /**
+   * Should be in a seperated API thing like Newgrounds.
+   * This is the saved Username
+   * @default `''`
+   */
+  var savedUser:String;
+
+  /**
+   * Should be in a seperated API thing like Newgrounds.
+   * This is the saved Token
+   * @default `''`
+   */
+  var savedToken:String;
 
   var controls:
     {
@@ -1634,4 +2001,23 @@ typedef SaveDataStageEditorOptions =
    * @default `StageEditorTheme.Light`
    */
   var ?theme:StageEditorTheme;
+};
+
+typedef SaveDataReplayManagerOptions =
+{
+  /**
+   * Whether or not replays should be saved.
+   * @default `true`
+   */
+  var ?saveReplays:Bool;
+};
+
+typedef SaveDataGameplayModifiers =
+{
+  /**
+   * Whether or not the player should die if they do not hit a Sick! judgement.
+   * Maybe move this into a like "Shoot for - [Sick!]" option? or like "Golden Perfect"? And ability to switch to regular Perfect?
+   * @default `false`
+   */
+  var onlySick:Bool;
 };

@@ -104,6 +104,10 @@ class ChartEditorMetadataToolbox extends ChartEditorBaseToolbox
       }
     };
 
+    inputTableID.onChange = function(event:UIEvent) {
+      chartEditorState.currentSongMetadata.tableID = event.target.value;
+    };
+
     inputStage.onChange = function(event:UIEvent) {
       var valid:Bool = event.data != null && event.data.id != null;
 
@@ -193,6 +197,7 @@ class ChartEditorMetadataToolbox extends ChartEditorBaseToolbox
 
     inputSongName.value = chartEditorState.currentSongMetadata.songName;
     inputSongArtist.value = chartEditorState.currentSongMetadata.artist;
+    inputTableID.value = chartEditorState.currentSongMetadata.tableID;
     inputSongCharter.value = chartEditorState.currentSongMetadata.charter;
     inputStage.value = chartEditorState.currentSongMetadata.playData.stage;
     inputNoteStyle.value = chartEditorState.currentSongMetadata.playData.noteStyle;

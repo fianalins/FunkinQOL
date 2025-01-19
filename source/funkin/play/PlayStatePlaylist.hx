@@ -31,6 +31,11 @@ class PlayStatePlaylist
   public static var campaignTitle:String = 'UNKNOWN';
 
   /**
+   * The Table ID of this playlist.
+   */
+  public static var campaignTableID:Int = 947501;
+
+  /**
    * The internal ID of the current playlist, for example `week4` or `weekend-1`.
    * @default `null`, used when no playlist is loaded
    */
@@ -49,5 +54,6 @@ class PlayStatePlaylist
     campaignTitle = 'UNKNOWN';
     campaignId = null;
     campaignDifficulty = Constants.DEFAULT_DIFFICULTY;
+    campaignTableID = 947501;
   }
 }

@@ -38,6 +38,10 @@ import openfl.display.BitmapData;
 #if FEATURE_DISCORD_RPC
 import funkin.api.discord.DiscordClient;
 #end
+#if FEATURE_GAMEJOLT
+import funkin.api.gamejolt.GameJoltHelper;
+import funkin.data.api.APISecret;
+#end
 
 /**
  * A core class which performs initialization of the game.
@@ -130,6 +134,24 @@ class InitState extends FlxState
     lime.app.Application.current.onExit.add(function(exitCode) {
       DiscordClient.instance.shutdown();
     });
+    #end
+
+    //
+    // GAMEJOLT API SETUP
+    //
+    #if FEATURE_GAMEJOLT
+    // Initialize the GameJolt API
+    // We CAN NOT store the API key in plain text here.
+    // My super secret API file is (git)ignored.
+    // Please don't steal it.
+    // Please don't try and find a way to steal it.
+    // However I'm hopeful that people who download this don't care enough to steal my API key
+    // And nobody plays this anyway
+
+    GameJoltHelper.getInstance().init('919698', APISecret.API_KEY);
+    #else
+    // Because I forget. But I always seemingly always remember to log trace .
+    trace('GameJolt API is disabled. This build will not award trophies or log scores.');
     #end
 
     //
@@ -228,14 +250,14 @@ class InitState extends FlxState
     FlxG.switchState(() -> new funkin.play.ResultState(
       {
         storyMode: true,
-        title: "Cum Song Erect by Kawai Sprite",
         songId: "cum",
-        characterId: "pico-playable",
         difficultyId: "nightmare",
-        isNewHighscore: true,
+        characterId: "pico-playable",
+        title: "Cum Song Erect by Kawai Sprite",
+        tableID: 947501,
         scoreData:
           {
-            score: 1_234_567,
+            score: 1_234_567_890,
             tallies:
               {
                 sick: 130,
@@ -254,6 +276,7 @@ class InitState extends FlxState
             // 210 total notes = 91% = EXCELLENT
             // 190 total notes = PERFECT
           },
+        isNewHighscore: true,
       }));
     #elseif ANIMDEBUG
     // -DANIMDEBUG
@@ -261,6 +284,9 @@ class InitState extends FlxState
     #elseif LATENCY
     // -DLATENCY
     FlxG.switchState(() -> new funkin.LatencyState());
+    #elseif REPLAY
+    // -DREPLAY
+    FlxG.switchState(() -> new funkin.ui.replay.ReplayManagerState());
     #else
     startGameNormally();
     #end
@@ -361,6 +387,8 @@ class InitState extends FlxState
     PlayStatePlaylist.playlistSongIds = currentLevel.getSongs();
     PlayStatePlaylist.isStoryMode = true;
     PlayStatePlaylist.campaignScore = 0;
+
+    PlayStatePlaylist.campaignTableID = currentLevel.getTableID();
 
     var targetSongId:String = PlayStatePlaylist.playlistSongIds.shift();
 

@@ -282,7 +282,7 @@ class Preferences
       toggleDebugDisplay(value);
     }
 
-    var save = Save.instance;
+    var save:Save = Save.instance;
     save.options.debugDisplay = value;
     save.flush();
     return value;
@@ -309,6 +309,30 @@ class Preferences
     return value;
   }
 
+  /**
+   * If disabled, the score submission to GameJolt will be disabled.
+   * Also disables trophies.
+   * @default `true`
+   */
+  public static var scoreSub(get, set):Bool;
+
+  static function get_scoreSub():Bool
+  {
+    return Save?.instance?.options?.scoreSub ?? true;
+  }
+
+  static function set_scoreSub(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.scoreSub = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * If we want the framerate to be unlocked on HTML5.
+   * @default `false`
+   */
   public static var unlockedFramerate(get, set):Bool;
 
   static function get_unlockedFramerate():Bool
@@ -391,5 +415,67 @@ class Preferences
       FlxG.stage.removeChild(Main.memoryCounter);
       #end
     }
+  }
+
+  /**
+   * Stores the user's username here.
+   * @default `''`
+   */
+  public static var savedUser(get, set):String;
+
+  static function get_savedUser():String
+  {
+    return Save?.instance?.options?.savedUser;
+  }
+
+  static function set_savedUser(value:String):String
+  {
+    var save:Save = Save.instance;
+    save.options.savedUser = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * Stores the user's token here.
+   * @default `''`
+   */
+  public static var savedToken(get, set):String;
+
+  static function get_savedToken():String
+  {
+    return Save?.instance?.options?.savedToken;
+  }
+
+  static function set_savedToken(value:String):String
+  {
+    var save:Save = Save.instance;
+    save.options.savedToken = value;
+    save.flush();
+    return value;
+  }
+
+  //
+  // GAMEPLAY MODIFIERS
+  //
+  // This is a preference. It should be here.
+
+  /**
+   * Whether or not the player should die if they do not hit a Sick! judgement.
+   * @default `false`
+   */
+  public static var onlySick(get, set):Bool;
+
+  static function get_onlySick():Bool
+  {
+    return Save?.instance?.gameplayModifiers?.onlySick;
+  }
+
+  static function set_onlySick(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.gameplayModifiers.onlySick = value;
+    save.flush();
+    return value;
   }
 }

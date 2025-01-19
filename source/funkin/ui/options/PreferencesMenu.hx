@@ -63,7 +63,7 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Middlescroll', 'Enable to make notes in the middle', function(value:Bool):Void {
       Preferences.middlescroll = value;
     }, Preferences.middlescroll);
-    createPrefItemCheckbox('Show Opponent Strumline', 'Disable to remove opponent strums (Middlescroll Only)', function(value:Bool):Void {
+    createPrefItemCheckbox('Show Opponent Strumline', 'Disable to hide opponent strums', function(value:Bool):Void {
       Preferences.oppStrumVis = value;
     }, Preferences.oppStrumVis);
     createPrefItemCheckbox('Ghost Tapping', 'Enable for no penalty when there are no notes', function(value:Bool):Void {
@@ -115,6 +115,20 @@ class PreferencesMenu extends Page
     createPrefItemNumber('FPS Cap', 'The maximum framerate that the game targets', function(value:Float) {
       Preferences.framerate = Std.int(value);
     }, null, Preferences.framerate, 30, 300, 5, 0);
+    #end
+
+    #if FEATURE_GAMEJOLT
+    createPrefItemCheckbox('Score Submissiom', 'Toggle score/trophy submission to GameJolt', function(value:Bool):Void {
+      Preferences.scoreSub = value;
+    }, Preferences.scoreSub);
+    #end
+
+    #if FEATURE_GAMEPLAY_MODIFIERS
+    // -DFEATURE_GAMEPLAY_MODIFIERS
+    // Move to a Gameplay Modifiers state/substate. Or remove the feature entirely. :)
+    createPrefItemCheckbox('Only Sicks', 'Die if you don\'t get a Sick!', function(value:Bool):Void {
+      Preferences.onlySick = value;
+    }, Preferences.onlySick);
     #end
   }
 

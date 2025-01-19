@@ -11,7 +11,7 @@
       "name": "flixel",
       "type": "git",
       "dir": null,
-      "ref": "f2b090d6c608471e730b051c8ee22b8b378964b1",
+      "ref": "ffa691cb2d2d81de35b900a4411e4062ac84ab58",
       "url": "https://github.com/FunkinCrew/flixel"
     },
     {
@@ -107,6 +107,13 @@
       "dir": null,
       "ref": "82c47ecc1a454b7dd644e4fcac7e91155f176dec",
       "url": "https://github.com/FunkinCrew/hxdiscord_rpc"
+    },
+    {
+      "name": "hxgamejolt-api",
+      "type": "git",
+      "dir": null,
+      "ref": "02ed7b05b8989ac2f5846b30ab7cf815f85da6fa",
+      "url": "https://github.com/MAJigsaw77/hxgamejolt-api"
     },
     {
       "name": "hxjsonast",

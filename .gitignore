@@ -10,7 +10,7 @@ shitAudio/
 .swp
 
 # Very specific
-/source/funkin/data/api
+/source/funkin/data/api/
 helplist.md
 
 # Exclude JS stuff

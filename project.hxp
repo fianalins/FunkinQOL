@@ -21,11 +21,11 @@ class Project extends HXProject {
 	//
 
 	/**
-	 * The game's version number, as a Semantic Versioning string with no prefix.
+	 * The base game's version number, as a Semantic Versioning string with no prefix.
 	 * REMEMBER TO CHANGE THIS WHEN THE GAME UPDATES!
 	 * You only have to change it here, the rest of the game will query this value.
 	 */
-	static final VERSION:String = "0.5.2";
+	static final VERSION:String = "0.5.3";
 
 	/**
 	 * The game's name. Used as the default window title.
@@ -177,6 +177,16 @@ class Project extends HXProject {
 	 * This is used to provide Medal and Leaderboard support.
 	 */
 	static final FEATURE_NEWGROUNDS:FeatureFlag = "FEATURE_NEWGROUNDS";
+
+	/**
+	 * `-DFEATURE_GAMEJOLT`
+	 * If this flag is enabled, the game will enable the GameJolt API library.
+	 * This is used to provide Trophy and Score support.
+	 *
+	 * This is automatically enabled when building for Web.
+	 * You can not enable this and have it work unless you (painstakingly) change every Trophy ID, Score ID, and add the Secret Key to the files. (in the correct spot)
+	 */
+	static final FEATURE_GAMEJOLT:FeatureFlag = "FEATURE_GAMEJOLT";
 
 	/**
 	 * `-DFEATURE_FUNKVIS`
@@ -463,9 +473,12 @@ class Project extends HXProject {
 
 		// Should be false unless explicitly requested.
 		GITHUB_BUILD.apply(this, false);
-		FEATURE_STAGE_EDITOR.apply(this, false);
 		FEATURE_NEWGROUNDS.apply(this, false);
 		FEATURE_GHOST_TAPPING.apply(this, false);
+		// Because not everybody has an API key
+		// You'd also need to setup every leaderboard and trophy.
+		// This should be enabled for every web build made by me though.
+		FEATURE_GAMEJOLT.apply(this, false);
 
 		// Should be true unless explicitly requested.
 		HARDCODED_CREDITS.apply(this, true);
@@ -474,10 +487,14 @@ class Project extends HXProject {
 		FEATURE_FUNKVIS.apply(this, true);
 		FEATURE_PARTIAL_SOUNDS.apply(this, true);
 		FEATURE_VIDEO_PLAYBACK.apply(this, true);
+		FEATURE_STAGE_EDITOR.apply(this, true);
 
 		// Should be true on debug builds or if GITHUB_BUILD is enabled.
 		FEATURE_DEBUG_FUNCTIONS.apply(this, isDebug() || GITHUB_BUILD.isEnabled(this));
-		FEATURE_LOG_TRACE.apply(this, isDebug());
+
+		// Got a lot of complains about this being turned off by default on some builds.
+		// TODO: Look into ways to optimize logging (maybe by using a thread pool?)
+		FEATURE_LOG_TRACE.apply(this, true);
 
 		// Should default to true on workspace builds and false on release builds.
 		REDIRECT_ASSETS_FOLDER.apply(this, isDebug() && isDesktop());
@@ -661,6 +678,10 @@ class Project extends HXProject {
 
 		if (FEATURE_NEWGROUNDS.isEnabled(this)) {
 			addHaxelib('newgrounds'); // Newgrounds API
+		}
+
+		if (FEATURE_GAMEJOLT.isEnabled(this)) {
+			addHaxelib('hxgamejolt-api'); // GameJolt API
 		}
 
 		if (FEATURE_FUNKVIS.isEnabled(this)) {
