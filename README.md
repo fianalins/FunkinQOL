@@ -1,5 +1,10 @@
 # Funkin' QoL
 
+## Archival
+I am archiving these repos because I don't believe that any of this has any use. I don't plan on updating this and every feature could be implemented better in a script for the game, rather than source code changes. A lot of, if not all features already have an equivalent on Gamebanana.
+
+## Info
+
 Funkin' QoL adds features that I personally think should be in the base game. As to why they aren't ranges from devs stating they don't want to add the feature (like middlescroll) or features like a colored healthbar for the various icons being what I think is too unreasonable for what the game wants to be.
 
 - [Play the base game online](https://www.newgrounds.com/portal/view/770371)
